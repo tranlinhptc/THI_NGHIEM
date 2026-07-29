@@ -197,29 +197,56 @@
         </div>
     </div>
 
-    <!-- ĐIỀU KHIỂN -->
-    <div class="card">
-        <button class="btn-action" onclick="exportWord()">📝 Xuất Biên Bản Word (.docx)</button>
-        <button class="btn-action btn-cloud" onclick="syncOneDrive()">☁️ Lưu & Đồng Bộ Cloud (Cần Mã PIN)</button>
-    </div>
+<!-- ĐIỀU KHIỂN -->
+<div class="card">
+    <button class="btn-action" onclick="saveDraftManually()">💾 Tạm Lưu (Nháp)</button>
+    <button class="btn-action" onclick="exportWord()">📝 Xuất Biên Bản Word (.docx)</button>
+    <button class="btn-action btn-cloud" onclick="syncOneDrive()">☁️ Lưu & Đồng Bộ Cloud (Cần Mã PIN)</button>
+    <button class="btn-action" onclick="clearDraft()" style="background:#757575; font-size:11px; margin-top:6px;">🗑️ Xóa nháp để làm mới hoàn toàn</button>
 </div>
 
 <script>
     const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxEIhHLTKlF4qUVmDCkyiWsR8ZG2hvUp7rBIIQwrIMzDhAqmBdPbih99WD0NwACugEQtQ/exec";
     const SECRET_PIN = "789"; // Mã PIN bảo mật cố định 3 số
 
-    window.onload = function() {
-        // BỐC CHUẨN THÔNG TIN TỪ INDEX.HTML
-        const savedSession = localStorage.getItem('CURRENT_SESSION');
-        if (savedSession) {
-            const data = JSON.parse(savedSession);
-            document.getElementById('info_tram').value = `${data.tram || 'Chưa chọn'} - ${data.nganLo || 'Chưa chọn'}`;
-            document.getElementById('info_nguoi').value = data.nguoido || 'Chưa nhập tên';
-        }
+    // 1. TỰ ĐỘNG KHÔI PHỤC BẢN NHÁP KHI MỞ TRANG
+window.onload = function() {
+    const savedSession = localStorage.getItem('CURRENT_SESSION');
+    if (savedSession) {
+        const data = JSON.parse(savedSession);
+        document.getElementById('info_tram').value = `${data.tram || 'Chưa chọn'} - ${data.nganLo || 'Chưa chọn'}`;
+        document.getElementById('info_nguoi').value = data.nguoido || 'Chưa nhập tên';
+    }
 
-        renderAllTables();
-        loadDataFromCloudAsPlaceholder(); // Lấy số liệu mới nhất về làm chữ mờ
-    };
+    renderAllTables();
+    loadDraftData(); // Tự động điền lại bản nháp đã tạm lưu
+};
+
+// 2. HÀM TẠM LƯU BẰNG TAY BẤM NÚT
+function saveDraftManually() {
+    const draftData = captureCurrentInputValues();
+    localStorage.setItem('TU_DRAFT_DATA', JSON.stringify(draftData));
+    alert("💾 Đã tạm lưu bản nháp thành công vào thiết bị!\nAnh có thể yên tâm tắt máy hoặc chuyển trang.");
+}
+
+// 3. HÀM TỰ ĐỘNG ĐIỀN LẠI DỮ LIỆU TẠM LƯU
+function loadDraftData() {
+    const savedDraft = localStorage.getItem('TU_DRAFT_DATA');
+    if (!savedDraft) {
+        loadDataFromCloudAsPlaceholder(); // Nếu không có bản nháp thì mới load chữ mờ từ Cloud
+        return;
+    }
+    const draftValues = JSON.parse(savedDraft);
+    restoreInputValues(draftValues);
+}
+
+// 4. HÀM XÓA BẢN NHÁP
+function clearDraft() {
+    if (confirm("⚠️ Anh có chắc muốn xóa toàn bộ dữ liệu tạm lưu để làm mới không?")) {
+        localStorage.removeItem('TU_DRAFT_DATA');
+        location.reload();
+    }
+}
 
     function toggleSection(sectionId, chk) {
         document.getElementById(sectionId).classList.toggle('hidden-section', chk.checked);
