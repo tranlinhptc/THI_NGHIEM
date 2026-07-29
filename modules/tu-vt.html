@@ -520,18 +520,18 @@
 
     // 2. THU GỌM TOÀN BỘ DỮ LIỆU ĐO & ĐẨY VÀO EXCEL (SHEET "TU")[cite: 1]
    function syncOneDrive() {
-    // 🔗 DÁN ĐƯỜNG LINK WEB APP CỦA ANH VÀO GIỮA CẶP DẤU NGOẶC KÉP NÀY
-    const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxEIhHLTKlF4qUVmDCkyiWsR8ZG2hvUp7rBIIQwrIMzDhAqmBdPbih99WD0NwACugEQtQ/exec";
+    // 1. Dán URL Web App mới của anh vào đây
+    const GOOGLE_WEB_APP_URL = "DÁN_URL_WEB_APP_MỚI_CỦA_ANH_VÀO_ĐÂY";
 
     if (!GOOGLE_WEB_APP_URL || GOOGLE_WEB_APP_URL.includes("DÁN_URL")) {
-        alert("⚠️ Anh chưa dán URL Google Web App vào code!");
+        alert("⚠️ Anh chưa dán URL Google Web App!");
         return;
     }
 
     const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
     const numWindings = parseInt(document.getElementById('tu_num_windings').value);
 
-    // Thu thập trọn vẹn dữ liệu từ giao diện
+    // Thu thập trọn vẹn dữ liệu
     const payload = {
         maPhien: 'TU_' + Date.now(),
         timestamp: new Date().toLocaleString('vi-VN'),
@@ -558,7 +558,7 @@
             c4_a: document.getElementById('rcd_sec4_a')?.value || '', c4_b: document.getElementById('rcd_sec4_b')?.value || '', c4_c: document.getElementById('rcd_sec4_c')?.value || ''
         },
 
-        // RDC (Ghi nhận cả giá trị đo và giá trị 75C)
+        // RDC
         rdc: {
             c1_ref: document.getElementById('rdc_ref_1')?.value || '',
             c1_a: document.getElementById('rdc_m_1_a')?.value || '', c1_75a: document.getElementById('rdc_75_1_a')?.innerText || '',
@@ -620,7 +620,7 @@
             a_tgt: document.getElementById('tg_A_2')?.value || '', a_cnsxt: document.getElementById('cmfg_A_2')?.value || '', a_cdot: document.getElementById('cmeas_A_2')?.value || '', a_errt: document.getElementById('cerr_A_2')?.innerText || '',
 
             b_tg1: document.getElementById('tg_B_0')?.value || '', b_cnsx1: document.getElementById('cmfg_B_0')?.value || '', b_cdo1: document.getElementById('cmeas_B_0')?.value || '', b_err1: document.getElementById('cerr_B_0')?.innerText || '',
-            b_tg2: document.getElementById('tg_B_1')?.value || '', b_cnsx2: document.getElementById('cmfg_B_1')?.value || '', b_cdo2: document.getElementById('cmeas_B_1')?.value || '', b_err2: document.getElementById('cerr_B_1')?.innerText || '',
+            b_tg2: document.getElementById('tg_B_1')?.value || '', b_cnsx2: document.getElementById('cmfg_B_1')?.value || '', b_cdo2: document.getElementById('cmeas_B_1')?.value || '', b_err2: document.getElementById('cerr_B_2')?.innerText || '',
             b_tgt: document.getElementById('tg_B_2')?.value || '', b_cnsxt: document.getElementById('cmfg_B_2')?.value || '', b_cdot: document.getElementById('cmeas_B_2')?.value || '', b_errt: document.getElementById('cerr_B_2')?.innerText || '',
 
             c_tg1: document.getElementById('tg_C_0')?.value || '', c_cnsx1: document.getElementById('cmfg_C_0')?.value || '', c_cdo1: document.getElementById('cmeas_C_0')?.value || '', c_err1: document.getElementById('cerr_C_0')?.innerText || '',
@@ -629,21 +629,20 @@
         }
     };
 
-    // Bắt đầu gửi dữ liệu qua Internet lên Google Sheet
+    // Chuyển sang dạng URL-encoded Form Data để Google Sheet tiếp nhận trực tiếp
     fetch(GOOGLE_WEB_APP_URL, {
         method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ payload: JSON.stringify(payload) })
     })
-    .then(() => {
+    .then(response => response.text())
+    .then(data => {
         alert("🚀 ĐÃ ĐỒNG BỘ THÀNH CÔNG DỮ LIỆU TU LÊN SHEET EXCEL!");
     })
     .catch(err => {
-        alert("❌ Lỗi kết nối mạng: " + err);
+        alert("❌ Lỗi đồng bộ: " + err);
     });
 }
-
     function exportWord() { 
         alert("Đang tải dữ liệu xuất Biên Bản Word TU (.docx)..."); 
     }
