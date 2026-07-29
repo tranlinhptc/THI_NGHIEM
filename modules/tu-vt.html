@@ -227,14 +227,23 @@ window.onload = function() {
 
 // Hàm bắn request lên Google Sheet lấy dữ liệu dòng mới nhất điền vào placeholder mờ mờ
 function loadDataFromCloudAsPlaceholder() {
-    const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxLoolVc_5vBIP4jBu-pMV8F4XtvoCoLBbgwT33M6PCSXeui9lGBPeFl9SLd5m9xO2WcA/exec";
+    // Bốc dữ liệu Trạm và Ngăn Lộ lưu từ trang Index
+    const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
+    const tram = encodeURIComponent(sessionData.tram || '');
+    const nganLo = encodeURIComponent(sessionData.nganLo || '');
 
-    fetch(GOOGLE_WEB_APP_URL)
+    // Nếu chưa chọn Ngăn lộ thì dừng, không tải lung tung
+    if (!nganLo) return;
+
+    // Gửi chính xác Trạm & Ngăn Lộ lên Google Sheet để lọc
+    const fetchUrl = `${GOOGLE_WEB_APP_URL}?tram=${tram}&nganLo=${nganLo}`;
+
+    fetch(fetchUrl)
     .then(res => res.json())
     .then(data => {
         if (!data || Object.keys(data).length === 0) return;
 
-        // Điền placeholder mờ mờ R_CĐ Sơ cấp & Cuộn 1, 2, 3
+        // Điền mờ R_CĐ mới nhất của đúng Ngăn lộ này
         if(data.rcd_pri_a && document.getElementById('rcd_pri_a')) document.getElementById('rcd_pri_a').placeholder = data.rcd_pri_a;
         if(data.rcd_pri_b && document.getElementById('rcd_pri_b')) document.getElementById('rcd_pri_b').placeholder = data.rcd_pri_b;
         if(data.rcd_pri_c && document.getElementById('rcd_pri_c')) document.getElementById('rcd_pri_c').placeholder = data.rcd_pri_c;
@@ -243,19 +252,14 @@ function loadDataFromCloudAsPlaceholder() {
         if(data.rcd_sec1_b && document.getElementById('rcd_sec1_b')) document.getElementById('rcd_sec1_b').placeholder = data.rcd_sec1_b;
         if(data.rcd_sec1_c && document.getElementById('rcd_sec1_c')) document.getElementById('rcd_sec1_c').placeholder = data.rcd_sec1_c;
 
-        // Điền placeholder mờ mờ RDC Cuộn 1, 2
+        // Điền mờ R_1C mới nhất của đúng Ngăn lộ này
         if(data.rdc_1_a && document.getElementById('rdc_m_1_a')) document.getElementById('rdc_m_1_a').placeholder = data.rdc_1_a;
         if(data.rdc_1_b && document.getElementById('rdc_m_1_b')) document.getElementById('rdc_m_1_b').placeholder = data.rdc_1_b;
         if(data.rdc_1_c && document.getElementById('rdc_m_1_c')) document.getElementById('rdc_m_1_c').placeholder = data.rdc_1_c;
 
-        if(data.rdc_2_a && document.getElementById('rdc_m_2_a')) document.getElementById('rdc_m_2_a').placeholder = data.rdc_2_a;
-        if(data.rdc_2_b && document.getElementById('rdc_m_2_b')) document.getElementById('rdc_m_2_b').placeholder = data.rdc_2_b;
-        if(data.rdc_2_c && document.getElementById('rdc_m_2_c')) document.getElementById('rdc_m_2_c').placeholder = data.rdc_2_c;
-
-        // Tính toán lại theo số liệu vừa load
         calculateAll();
     })
-    .catch(err => console.log("Lỗi hoặc chưa có dữ liệu Cloud:", err));
+    .catch(err => console.log("Chưa có dữ liệu Cloud", err));
 }
     // ĐỔI SỐ CUỘN KHÔNG MẤT DỮ LIỆU ĐÃ NHẬP
     function changeWindingCount() {
