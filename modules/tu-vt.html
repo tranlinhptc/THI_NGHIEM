@@ -520,18 +520,12 @@
 
     // 2. THU GỌM TOÀN BỘ DỮ LIỆU ĐO & ĐẨY VÀO EXCEL (SHEET "TU")[cite: 1]
    function syncOneDrive() {
-    // 1. Dán URL Web App mới của anh vào đây
     const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxEIhHLTKlF4qUVmDCkyiWsR8ZG2hvUp7rBIIQwrIMzDhAqmBdPbih99WD0NwACugEQtQ/exec";
-
-    if (!GOOGLE_WEB_APP_URL || GOOGLE_WEB_APP_URL.includes("DÁN_URL")) {
-        alert("⚠️ Anh chưa dán URL Google Web App!");
-        return;
-    }
 
     const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
     const numWindings = parseInt(document.getElementById('tu_num_windings').value);
 
-    // Thu thập trọn vẹn dữ liệu
+    // Thu thập toàn bộ dữ liệu (ô nào trống tự động gán rỗng, không gây lỗi)
     const payload = {
         maPhien: 'TU_' + Date.now(),
         timestamp: new Date().toLocaleString('vi-VN'),
@@ -547,7 +541,6 @@
         soCuon: numWindings,
         visual: document.getElementById('tu_visual')?.value || '',
 
-        // RCD
         rcd: {
             pri_a: document.getElementById('rcd_pri_a')?.value || '',
             pri_b: document.getElementById('rcd_pri_b')?.value || '',
@@ -558,7 +551,6 @@
             c4_a: document.getElementById('rcd_sec4_a')?.value || '', c4_b: document.getElementById('rcd_sec4_b')?.value || '', c4_c: document.getElementById('rcd_sec4_c')?.value || ''
         },
 
-        // RDC
         rdc: {
             c1_ref: document.getElementById('rdc_ref_1')?.value || '',
             c1_a: document.getElementById('rdc_m_1_a')?.value || '', c1_75a: document.getElementById('rdc_75_1_a')?.innerText || '',
@@ -581,7 +573,6 @@
             c4_c: document.getElementById('rdc_m_4_c')?.value || '', c4_75c: document.getElementById('rdc_75_4_c')?.innerText || ''
         },
 
-        // Polarity
         pol: {
             c1_a: document.getElementById('pol_eval_1_a')?.value || '', c1_b: document.getElementById('pol_eval_1_b')?.value || '', c1_c: document.getElementById('pol_eval_1_c')?.value || '',
             c2_a: document.getElementById('pol_eval_2_a')?.value || '', c2_b: document.getElementById('pol_eval_2_b')?.value || '', c2_c: document.getElementById('pol_eval_2_c')?.value || '',
@@ -589,7 +580,6 @@
             c4_a: document.getElementById('pol_eval_4_a')?.value || '', c4_b: document.getElementById('pol_eval_4_b')?.value || '', c4_c: document.getElementById('pol_eval_4_c')?.value || ''
         },
 
-        // Ratio
         ratio: {
             u1_tn: document.getElementById('tu_u1_tn')?.value || '',
             c1_u2dm: document.getElementById('u2_dm_w1')?.value || '', c1_acc: document.getElementById('acc_w1')?.value || '',
@@ -613,7 +603,6 @@
             c4_c1: document.getElementById('u2_w4_C_1')?.value || '', c4_c2: document.getElementById('u2_w4_C_2')?.value || '', c4_kc: document.getElementById('kdo_w4_C')?.innerText || '', c4_fc: document.getElementById('err_w4_C')?.innerText || ''
         },
 
-        // TgDelta
         tg: {
             a_tg1: document.getElementById('tg_A_0')?.value || '', a_cnsx1: document.getElementById('cmfg_A_0')?.value || '', a_cdo1: document.getElementById('cmeas_A_0')?.value || '', a_err1: document.getElementById('cerr_A_0')?.innerText || '',
             a_tg2: document.getElementById('tg_A_1')?.value || '', a_cnsx2: document.getElementById('cmfg_A_1')?.value || '', a_cdo2: document.getElementById('cmeas_A_1')?.value || '', a_err2: document.getElementById('cerr_A_1')?.innerText || '',
@@ -629,14 +618,14 @@
         }
     };
 
-    // Chuyển sang dạng URL-encoded Form Data để Google Sheet tiếp nhận trực tiếp
+    // Đẩy trực tiếp vào Google Sheet bằng x-www-form-urlencoded
     fetch(GOOGLE_WEB_APP_URL, {
         method: 'POST',
+        mode: 'no-cors',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({ payload: JSON.stringify(payload) })
     })
-    .then(response => response.text())
-    .then(data => {
+    .then(() => {
         alert("🚀 ĐÃ ĐỒNG BỘ THÀNH CÔNG DỮ LIỆU TU LÊN SHEET EXCEL!");
     })
     .catch(err => {
