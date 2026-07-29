@@ -219,23 +219,32 @@
 
     // 1. TỰ ĐỘNG LẤY THÔNG TIN TRẠM & NGẮN LỘ TỪ INDEX
     // Bổ sung gọi hàm này trong window.onload
+// 1. PHỤC HỒI THÔNG TIN TỪ INDEX LÊN GIAO DIỆN
 window.onload = function() {
-    // ... các code cũ của anh giữ nguyên ...
+    const savedSession = localStorage.getItem('CURRENT_SESSION');
+    if (savedSession) {
+        const data = JSON.parse(savedSession);
+        // Điền lại Trạm & Ngăn Lộ bốc từ Index.html
+        document.getElementById('info_tram').value = `${data.tram || 'Chưa chọn'} - ${data.nganLo || 'Chưa chọn'}`;
+    } else {
+        document.getElementById('info_tram').value = "Chưa kết nối từ Trang chủ";
+    }
+
     renderAllTables();
-    loadDataFromCloudAsPlaceholder(); // <--- Thêm dòng này
+    loadDataFromCloudAsPlaceholder(); // Kéo dữ liệu mờ đúng ngăn lộ
+    loadDraftData(); // Phục hồi bản nháp (nếu có)
 };
 
-// Hàm bắn request lên Google Sheet lấy dữ liệu dòng mới nhất điền vào placeholder mờ mờ
+// 2. TẢI DỮ LIỆU CỦA ĐÚNG NGĂN LỘ TỪ CLOUD VỀ LÀM CHỮ MỜ
 function loadDataFromCloudAsPlaceholder() {
-    // Bốc dữ liệu Trạm và Ngăn Lộ lưu từ trang Index
     const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
     const tram = encodeURIComponent(sessionData.tram || '');
     const nganLo = encodeURIComponent(sessionData.nganLo || '');
 
-    // Nếu chưa chọn Ngăn lộ thì dừng, không tải lung tung
-    if (!nganLo) return;
+    // Nếu chưa chọn Ngăn lộ từ Index thì dừng, không tải
+    if (!nganLo && !tram) return;
 
-    // Gửi chính xác Trạm & Ngăn Lộ lên Google Sheet để lọc
+    // Gửi đúng tên Trạm và Ngăn Lộ bốc từ Index lên Cloud
     const fetchUrl = `${GOOGLE_WEB_APP_URL}?tram=${tram}&nganLo=${nganLo}`;
 
     fetch(fetchUrl)
@@ -243,7 +252,7 @@ function loadDataFromCloudAsPlaceholder() {
     .then(data => {
         if (!data || Object.keys(data).length === 0) return;
 
-        // Điền mờ R_CĐ mới nhất của đúng Ngăn lộ này
+        // Điền mờ R_CĐ của đúng Ngăn Lộ đang chọn
         if(data.rcd_pri_a && document.getElementById('rcd_pri_a')) document.getElementById('rcd_pri_a').placeholder = data.rcd_pri_a;
         if(data.rcd_pri_b && document.getElementById('rcd_pri_b')) document.getElementById('rcd_pri_b').placeholder = data.rcd_pri_b;
         if(data.rcd_pri_c && document.getElementById('rcd_pri_c')) document.getElementById('rcd_pri_c').placeholder = data.rcd_pri_c;
@@ -252,14 +261,14 @@ function loadDataFromCloudAsPlaceholder() {
         if(data.rcd_sec1_b && document.getElementById('rcd_sec1_b')) document.getElementById('rcd_sec1_b').placeholder = data.rcd_sec1_b;
         if(data.rcd_sec1_c && document.getElementById('rcd_sec1_c')) document.getElementById('rcd_sec1_c').placeholder = data.rcd_sec1_c;
 
-        // Điền mờ R_1C mới nhất của đúng Ngăn lộ này
+        // Điền mờ R_1C của đúng Ngăn Lộ đang chọn
         if(data.rdc_1_a && document.getElementById('rdc_m_1_a')) document.getElementById('rdc_m_1_a').placeholder = data.rdc_1_a;
         if(data.rdc_1_b && document.getElementById('rdc_m_1_b')) document.getElementById('rdc_m_1_b').placeholder = data.rdc_1_b;
         if(data.rdc_1_c && document.getElementById('rdc_m_1_c')) document.getElementById('rdc_m_1_c').placeholder = data.rdc_1_c;
 
         calculateAll();
     })
-    .catch(err => console.log("Chưa có dữ liệu Cloud", err));
+    .catch(err => console.log("Lỗi tải Cloud:", err));
 }
     // ĐỔI SỐ CUỘN KHÔNG MẤT DỮ LIỆU ĐÃ NHẬP
     function changeWindingCount() {
