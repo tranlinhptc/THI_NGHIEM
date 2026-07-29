@@ -232,21 +232,31 @@ function loadDataFromCloudAsPlaceholder() {
     fetch(GOOGLE_WEB_APP_URL)
     .then(res => res.json())
     .then(data => {
-        if (!data) return;
-        // Điền dạng chữ mờ (placeholder)
-        if(data.rcd_pri_a) document.getElementById('rcd_pri_a').placeholder = data.rcd_pri_a;
-        if(data.rcd_pri_b) document.getElementById('rcd_pri_b').placeholder = data.rcd_pri_b;
-        if(data.rcd_pri_c) document.getElementById('rcd_pri_c').placeholder = data.rcd_pri_c;
+        if (!data || Object.keys(data).length === 0) return;
 
-        if(data.rdc_1_a) document.getElementById('rdc_m_1_a').placeholder = data.rdc_1_a;
-        if(data.rdc_1_b) document.getElementById('rdc_m_1_b').placeholder = data.rdc_1_b;
-        if(data.rdc_1_c) document.getElementById('rdc_m_1_c').placeholder = data.rdc_1_c;
-        
-        calculateAll(); // Tự động tính toán theo số mờ
+        // Điền placeholder mờ mờ R_CĐ Sơ cấp & Cuộn 1, 2, 3
+        if(data.rcd_pri_a && document.getElementById('rcd_pri_a')) document.getElementById('rcd_pri_a').placeholder = data.rcd_pri_a;
+        if(data.rcd_pri_b && document.getElementById('rcd_pri_b')) document.getElementById('rcd_pri_b').placeholder = data.rcd_pri_b;
+        if(data.rcd_pri_c && document.getElementById('rcd_pri_c')) document.getElementById('rcd_pri_c').placeholder = data.rcd_pri_c;
+
+        if(data.rcd_sec1_a && document.getElementById('rcd_sec1_a')) document.getElementById('rcd_sec1_a').placeholder = data.rcd_sec1_a;
+        if(data.rcd_sec1_b && document.getElementById('rcd_sec1_b')) document.getElementById('rcd_sec1_b').placeholder = data.rcd_sec1_b;
+        if(data.rcd_sec1_c && document.getElementById('rcd_sec1_c')) document.getElementById('rcd_sec1_c').placeholder = data.rcd_sec1_c;
+
+        // Điền placeholder mờ mờ RDC Cuộn 1, 2
+        if(data.rdc_1_a && document.getElementById('rdc_m_1_a')) document.getElementById('rdc_m_1_a').placeholder = data.rdc_1_a;
+        if(data.rdc_1_b && document.getElementById('rdc_m_1_b')) document.getElementById('rdc_m_1_b').placeholder = data.rdc_1_b;
+        if(data.rdc_1_c && document.getElementById('rdc_m_1_c')) document.getElementById('rdc_m_1_c').placeholder = data.rdc_1_c;
+
+        if(data.rdc_2_a && document.getElementById('rdc_m_2_a')) document.getElementById('rdc_m_2_a').placeholder = data.rdc_2_a;
+        if(data.rdc_2_b && document.getElementById('rdc_m_2_b')) document.getElementById('rdc_m_2_b').placeholder = data.rdc_2_b;
+        if(data.rdc_2_c && document.getElementById('rdc_m_2_c')) document.getElementById('rdc_m_2_c').placeholder = data.rdc_2_c;
+
+        // Tính toán lại theo số liệu vừa load
+        calculateAll();
     })
-    .catch(err => console.log("Chưa có dữ liệu Cloud", err));
+    .catch(err => console.log("Lỗi hoặc chưa có dữ liệu Cloud:", err));
 }
-
     // ĐỔI SỐ CUỘN KHÔNG MẤT DỮ LIỆU ĐÃ NHẬP
     function changeWindingCount() {
         const currentData = captureCurrentInputValues();
