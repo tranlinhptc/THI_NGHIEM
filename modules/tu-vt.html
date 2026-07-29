@@ -218,26 +218,34 @@
     const SECRET_PIN = "789"; // Mã PIN xác thực khi đồng bộ Cloud
 
     // 1. TỰ ĐỘNG LẤY THÔNG TIN TRẠM & NGẮN LỘ TỪ INDEX
-    window.onload = function() {
-        const savedSession = localStorage.getItem('CURRENT_SESSION');
-        if (savedSession) {
-            const data = JSON.parse(savedSession);
-            document.getElementById('info_tram').value = `${data.tram || 'Chưa chọn Trạm'} - ${data.nganLo || 'Chưa chọn Ngăn Lộ'}`;
-        } else {
-            document.getElementById('info_tram').value = "Chưa kết nối từ Trang chủ";
-        }
-        renderAllTables();
-        loadDraftData(); // Tự động load bản nháp đã tạm lưu
-    };
+    // Bổ sung gọi hàm này trong window.onload
+window.onload = function() {
+    // ... các code cũ của anh giữ nguyên ...
+    renderAllTables();
+    loadDataFromCloudAsPlaceholder(); // <--- Thêm dòng này
+};
 
-    function toggleSection(sectionId, chk) {
-        const sec = document.getElementById(sectionId);
-        if (chk.checked) {
-            sec.classList.add('hidden-section');
-        } else {
-            sec.classList.remove('hidden-section');
-        }
-    }
+// Hàm bắn request lên Google Sheet lấy dữ liệu dòng mới nhất điền vào placeholder mờ mờ
+function loadDataFromCloudAsPlaceholder() {
+    const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzbcau5wc2Al3C-1jOBwnBCc5l9y7e4HdvEp--pJjXG8_tw2Yp8ECd6W-sgxx9SjfrZ/exec";
+
+    fetch(GOOGLE_WEB_APP_URL)
+    .then(res => res.json())
+    .then(data => {
+        if (!data) return;
+        // Điền dạng chữ mờ (placeholder)
+        if(data.rcd_pri_a) document.getElementById('rcd_pri_a').placeholder = data.rcd_pri_a;
+        if(data.rcd_pri_b) document.getElementById('rcd_pri_b').placeholder = data.rcd_pri_b;
+        if(data.rcd_pri_c) document.getElementById('rcd_pri_c').placeholder = data.rcd_pri_c;
+
+        if(data.rdc_1_a) document.getElementById('rdc_m_1_a').placeholder = data.rdc_1_a;
+        if(data.rdc_1_b) document.getElementById('rdc_m_1_b').placeholder = data.rdc_1_b;
+        if(data.rdc_1_c) document.getElementById('rdc_m_1_c').placeholder = data.rdc_1_c;
+        
+        calculateAll(); // Tự động tính toán theo số mờ
+    })
+    .catch(err => console.log("Chưa có dữ liệu Cloud", err));
+}
 
     // ĐỔI SỐ CUỘN KHÔNG MẤT DỮ LIỆU ĐÃ NHẬP
     function changeWindingCount() {
