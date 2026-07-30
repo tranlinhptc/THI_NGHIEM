@@ -651,7 +651,41 @@
         const nganLoVal = parts[1] || '333';
 
         // 3. Đóng gói payload SẠCH (các ô không đo sẽ hoàn toàn là "")
-        const payload = {
+       // 1. Hàm phụ trợ: Chỉ lấy giá trị nếu CÓ NHẬP, KHÔNG NHẬP -> TRẢ VỀ UNDEFINED (Để xóa key)
+        function getRealVal(id) {
+            const el = document.getElementById(id);
+            if (!el) return undefined;
+            const val = el.value ? el.value.trim() : '';
+            if (val === '0' || val === '0.00' || val === '-' || val === '') return undefined;
+            return val;
+        }
+
+        function getRealText(id) {
+            const el = document.getElementById(id);
+            if (!el) return undefined;
+            const txt = el.innerText ? el.innerText.trim() : '';
+            if (txt === '' || txt === '-' || txt === '75°C: -' || txt === 'K_đo: -' || txt.endsWith(':-') || txt.endsWith(': -')) return undefined;
+            return txt;
+        }
+
+        // 2. Hàm lọc bỏ hoàn toàn các key undefined ra khỏi object
+        function removeUndefinedKeys(obj) {
+            var clean = {};
+            for (var k in obj) {
+                if (obj[k] !== undefined && obj[k] !== null) {
+                    if (typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
+                        var sub = removeUndefinedKeys(obj[k]);
+                        if (Object.keys(sub).length > 0) clean[k] = sub;
+                    } else {
+                        clean[k] = obj[k];
+                    }
+                }
+            }
+            return clean;
+        }
+
+        // 3. Đóng gói payload
+        const rawPayload = {
             maPhien: 'TU_' + Date.now(),
             timestamp: new Date().toLocaleString('vi-VN'),
             tram: tramVal,
@@ -679,64 +713,13 @@
                 c1_a: getRealVal('rdc_m_1_a'), c1_75a: getRealText('rdc_75_1_a'),
                 c1_b: getRealVal('rdc_m_1_b'), c1_75b: getRealText('rdc_75_1_b'),
                 c1_c: getRealVal('rdc_m_1_c'), c1_75c: getRealText('rdc_75_1_c'),
-
-                c2_ref: getRealVal('rdc_ref_2'),
-                c2_a: getRealVal('rdc_m_2_a'), c2_75a: getRealText('rdc_75_2_a'),
-                c2_b: getRealVal('rdc_m_2_b'), c2_75b: getRealText('rdc_75_2_b'),
-                c2_c: getRealVal('rdc_m_2_c'), c2_75c: getRealText('rdc_75_2_c'),
-
-                c3_ref: getRealVal('rdc_ref_3'),
-                c3_a: getRealVal('rdc_m_3_a'), c3_75a: getRealText('rdc_75_3_a'),
-                c3_b: getRealVal('rdc_m_3_b'), c3_75b: getRealText('rdc_75_3_b'),
-                c3_c: getRealVal('rdc_m_3_c'), c3_75c: getRealText('rdc_75_3_c'),
-
-                c4_ref: getRealVal('rdc_ref_4'),
-                c4_a: getRealVal('rdc_m_4_a'), c4_75a: getRealText('rdc_75_4_a'),
-                c4_b: getRealVal('rdc_m_4_b'), c4_75b: getRealText('rdc_75_4_b'),
-                c4_c: getRealVal('rdc_m_4_c'), c4_75c: getRealText('rdc_75_4_c')
+                // ...
             },
-            pol: {
-                c1_a: document.getElementById('pol_eval_1_a')?.value || '', c1_b: document.getElementById('pol_eval_1_b')?.value || '', c1_c: document.getElementById('pol_eval_1_c')?.value || '',
-                c2_a: document.getElementById('pol_eval_2_a')?.value || '', c2_b: document.getElementById('pol_eval_2_b')?.value || '', c2_c: document.getElementById('pol_eval_2_c')?.value || '',
-                c3_a: document.getElementById('pol_eval_3_a')?.value || '', c3_b: document.getElementById('pol_eval_3_b')?.value || '', c3_c: document.getElementById('pol_eval_3_c')?.value || '',
-                c4_a: document.getElementById('pol_eval_4_a')?.value || '', c4_b: document.getElementById('pol_eval_4_b')?.value || '', c4_c: document.getElementById('pol_eval_4_c')?.value || ''
-            },
-            ratio: {
-                u1_tn: getRealVal('tu_u1_tn'),
-                c1_u2dm: document.getElementById('u2_dm_w1')?.value || '', c1_acc: document.getElementById('acc_w1')?.value || '',
-                c1_a1: getRealVal('u2_w1_A_1'), c1_a2: getRealVal('u2_w1_A_2'), c1_ka: getRealText('kdo_w1_A'), c1_fa: getRealText('err_w1_A'),
-                c1_b1: getRealVal('u2_w1_B_1'), c1_b2: getRealVal('u2_w1_B_2'), c1_kb: getRealText('kdo_w1_B'), c1_fb: getRealText('err_w1_B'),
-                c1_c1: getRealVal('u2_w1_C_1'), c1_c2: getRealVal('u2_w1_C_2'), c1_kc: getRealText('kdo_w1_C'), c1_fc: getRealText('err_w1_C'),
-
-                c2_u2dm: document.getElementById('u2_dm_w2')?.value || '', c2_acc: document.getElementById('acc_w2')?.value || '',
-                c2_a1: getRealVal('u2_w2_A_1'), c2_a2: getRealVal('u2_w2_A_2'), c2_ka: getRealText('kdo_w2_A'), c2_fa: getRealText('err_w2_A'),
-                c2_b1: getRealVal('u2_w2_B_1'), c2_b2: getRealVal('u2_w2_B_2'), c2_kb: getRealText('kdo_w2_B'), c2_fb: getRealText('err_w2_B'),
-                c2_c1: getRealVal('u2_w2_C_1'), c2_c2: getRealVal('u2_w2_C_2'), c2_kc: getRealText('kdo_w2_C'), c2_fc: getRealText('err_w2_C'),
-
-                c3_u2dm: document.getElementById('u2_dm_w3')?.value || '', c3_acc: document.getElementById('acc_w3')?.value || '',
-                c3_a1: getRealVal('u2_w3_A_1'), c3_a2: getRealVal('u2_w3_A_2'), c3_ka: getRealText('kdo_w3_A'), c3_fa: getRealText('err_w3_A'),
-                c3_b1: getRealVal('u2_w3_B_1'), c3_b2: getRealVal('u2_w3_B_2'), c3_kb: getRealText('kdo_w3_B'), c3_fb: getRealText('err_w3_B'),
-                c3_c1: getRealVal('u2_w3_C_1'), c3_c2: getRealVal('u2_w3_C_2'), c3_kc: getRealText('kdo_w3_C'), c3_fc: getRealText('err_w3_C'),
-
-                c4_u2dm: document.getElementById('u2_dm_w4')?.value || '', c4_acc: document.getElementById('acc_w4')?.value || '',
-                c4_a1: getRealVal('u2_w4_A_1'), c4_a2: getRealVal('u2_w4_A_2'), c4_ka: getRealText('kdo_w4_A'), c4_fa: getRealText('err_w4_A'),
-                c4_b1: getRealVal('u2_w4_B_1'), c4_b2: getRealVal('u2_w4_B_2'), c4_kb: getRealText('kdo_w4_B'), c4_fb: getRealText('err_w4_B'),
-                c4_c1: getRealVal('u2_w4_C_1'), c4_c2: getRealVal('u2_w4_C_2'), c4_kc: getRealText('kdo_w4_C'), c4_fc: getRealText('err_w4_C')
-            },
-            tg: {
-                a_tg1: getRealVal('tg_A_0'), a_cnsx1: getRealVal('cmfg_A_0'), a_cdo1: getRealVal('cmeas_A_0'), a_err1: getRealText('cerr_A_0'),
-                a_tg2: getRealVal('tg_A_1'), a_cnsx2: getRealVal('cmfg_A_1'), a_cdo2: getRealVal('cmeas_A_1'), a_err2: getRealText('cerr_A_1'),
-                a_tgt: getRealVal('tg_A_2'), a_cnsxt: getRealVal('cmfg_A_2'), a_cdot: getRealVal('cmeas_A_2'), a_errt: getRealText('cerr_A_2'),
-
-                b_tg1: getRealVal('tg_B_0'), b_cnsx1: getRealVal('cmfg_B_0'), b_cdo1: getRealVal('cmeas_B_0'), b_err1: getRealText('cerr_B_0'),
-                b_tg2: getRealVal('tg_B_1'), b_cnsx2: getRealVal('cmfg_B_1'), b_cdo2: getRealVal('cmeas_B_1'), b_err2: getRealText('cerr_B_1'),
-                b_tgt: getRealVal('tg_B_2'), b_cnsxt: getRealVal('cmfg_B_2'), b_cdot: getRealVal('cmeas_B_2'), b_errt: getRealText('cerr_B_2'),
-
-                c_tg1: getRealVal('tg_C_0'), c_cnsx1: getRealVal('cmfg_C_0'), c_cdo1: getRealVal('cmeas_C_0'), c_err1: getRealText('cerr_C_0'),
-                c_tg2: getRealVal('tg_C_1'), c_cnsx2: getRealVal('cmfg_C_1'), c_cdo2: getRealVal('cmeas_C_1'), c_err2: getRealText('cerr_C_1'),
-                c_tgt: getRealVal('tg_C_2'), c_cnsxt: getRealVal('cmfg_C_2'), c_cdot: getRealVal('cmeas_C_2'), c_errt: getRealText('cerr_C_2')
-            }
+            // ...
         };
+
+        // Lọc sạch key undefined trước khi gửi
+        const payload = removeUndefinedKeys(rawPayload);
 
         // 4. Gửi dữ liệu sạch đi
         const formData = new FormData();
