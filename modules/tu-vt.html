@@ -255,37 +255,39 @@
 
     // HÀM KÉO KẾT QUẢ CŨ THEO TỪNG HẠNG MỤC
     function loadOldDataSection(sectionType) {
-        const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
-        const nganLo = encodeURIComponent(sessionData.nganLo || '');
+    const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
+    const nganLo = encodeURIComponent(sessionData.nganLo || '');
 
-        if (!nganLo) {
-            alert("⚠️ Chưa có thông tin Ngăn Lộ từ trang chủ!");
+    if (!nganLo) {
+        alert("⚠️ Chưa chọn Ngăn Lộ từ Trang Chủ!");
+        return;
+    }
+
+    // Đọc siêu tốc từ sheet TU_LATEST
+    const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}`;
+
+    fetch(fetchUrl)
+    .then(res => res.json())
+    .then(data => {
+        if (!data || Object.keys(data).length === 0) {
+            alert("ℹ️ Chưa có dữ liệu cũ cho Ngăn Lộ này!");
             return;
         }
 
-        const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&section=${sectionType}`;
-
-        fetch(fetchUrl)
-        .then(res => res.json())
-        .then(data => {
-            if (!data || Object.keys(data).length === 0) {
-                alert("ℹ️ Chưa tìm thấy dữ liệu cũ của hạng mục này!");
-                return;
+        // Tự động điền Placeholder mờ mờ chuẩn 100%
+        for (let key in data) {
+            const el = document.getElementById(key);
+            if (el && data[key] !== '') {
+                if (el.tagName === 'INPUT') el.placeholder = data[key];
+                else if (el.tagName === 'SELECT') el.value = data[key];
             }
+        }
 
-            for (let key in data) {
-                const el = document.getElementById(key);
-                if (el && data[key] !== '') {
-                    if (el.tagName === 'INPUT') el.placeholder = data[key];
-                    else if (el.tagName === 'SELECT') el.value = data[key];
-                }
-            }
-
-            calculateAll();
-            alert("✅ Đã tải xong kết quả cũ (chữ mờ) của mục này!");
-        })
-        .catch(err => alert("❌ Lỗi tải Cloud: " + err));
-    }
+        calculateAll();
+        alert("⚡ Đã tải xong kết quả mới nhất!");
+    })
+    .catch(err => alert("❌ Lỗi tải Cloud: " + err));
+}
 
     function changeWindingCount() {
         const currentData = captureCurrentInputValues();
