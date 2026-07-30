@@ -263,7 +263,6 @@
         return;
     }
 
-    // Đọc siêu tốc từ sheet TU_LATEST
     const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}`;
 
     fetch(fetchUrl)
@@ -274,26 +273,29 @@
             return;
         }
 
-        // Tự động điền Placeholder mờ mờ chuẩn 100%
+        let count = 0;
         for (let key in data) {
             const el = document.getElementById(key);
-            if (el && data[key] !== '') {
-                if (el.tagName === 'INPUT') el.placeholder = data[key];
-                else if (el.tagName === 'SELECT') el.value = data[key];
+            if (el && data[key] !== undefined && data[key] !== '') {
+                if (el.tagName === 'INPUT') {
+                    el.placeholder = data[key];
+                    count++;
+                } else if (el.tagName === 'SELECT') {
+                    el.value = data[key];
+                    count++;
+                }
             }
         }
 
         calculateAll();
-        alert("⚡ Đã tải xong kết quả mới nhất!");
+        if (count > 0) {
+            alert("⚡ Đã tải xong kết quả mới nhất cho Ngăn lộ!");
+        } else {
+            alert("ℹ️ Không tìm thấy dữ liệu ô tương ứng!");
+        }
     })
     .catch(err => alert("❌ Lỗi tải Cloud: " + err));
 }
-
-    function changeWindingCount() {
-        const currentData = captureCurrentInputValues();
-        renderAllTables();
-        restoreInputValues(currentData);
-    }
 
     function captureCurrentInputValues() {
         const inputs = document.querySelectorAll('input[type="number"], input[type="text"]');
