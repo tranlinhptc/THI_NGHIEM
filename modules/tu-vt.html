@@ -611,14 +611,41 @@
             location.reload();
         }
     }
-function syncOneDrive() {
+
+    function syncOneDrive() {
     const userPin = prompt("🔒 XÁC THỰC BẢO MẬT:\nNhập mã PIN (3 chữ số) để xác nhận gửi Cloud:");
     if (userPin === null) return;
     if (userPin.trim() !== SECRET_PIN) {
         alert("❌ SAI MÃ PIN! Dữ liệu chưa được gửi để tránh bấm nhầm.");
         return;
     }
+// Hàm phụ trợ: Chỉ lấy giá trị nếu có nhập thực tế, không thì trả về rỗng ""
+function getRealVal(id) {
+    const el = document.getElementById(id);
+    if (!el) return '';
+    const val = el.value ? el.value.trim() : '';
+    if (val === '0' || val === '0.00' || val === '-') return '';
+    return val;
+}
 
+// Khi đóng gói payload:
+const payload = {
+    maPhien: 'TU_' + Date.now(),
+    timestamp: new Date().toLocaleString('vi-VN'),
+    tram: tramVal,
+    nganLo: nganLoVal,
+    // ... các thông tin chung
+    
+    rcd: {
+        pri_a: getRealVal('rcd_pri_a'), 
+        pri_b: getRealVal('rcd_pri_b'), 
+        pri_c: getRealVal('rcd_pri_c'),
+        // ... áp dụng hàm getRealVal cho toàn bộ các ô đo
+    }
+};
+
+
+        
     const infoVal = document.getElementById('info_tram')?.value || '';
     const parts = infoVal.split(' - ');
     const tramVal = parts[0] || 'Trạm TBA';
