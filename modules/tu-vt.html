@@ -613,116 +613,117 @@
     }
 
     function syncOneDrive() {
-        const userPin = prompt("🔒 XÁC THỰC BẢO MẬT:\nNhập mã PIN (3 chữ số) để xác nhận gửi Cloud:");
-        if (userPin === null) return;
-        if (userPin.trim() !== SECRET_PIN) {
-            alert("❌ SAI MÃ PIN! Dữ liệu chưa được gửi để tránh bấm nhầm.");
-            return;
-        }
-
-        const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
-        const numWindings = parseInt(document.getElementById('tu_num_windings').value);
-
-        const payload = {
-            maPhien: 'TU_' + Date.now(),
-            timestamp: new Date().toLocaleString('vi-VN'),
-            tram: sessionData.tram || '',
-            nganLo: sessionData.nganLo || '',
-            ngayTN: sessionData.ngayDo || '',
-            nguoiTN: sessionData.nguoido || '',
-            cheDo: document.getElementById('tu_mode')?.value || '',
-            hang: document.getElementById('tu_mfg')?.value || '',
-            cachDien: document.getElementById('tu_insulation')?.value || '',
-            nhietDo: document.getElementById('tu_temp')?.value || '',
-            doAm: document.getElementById('tu_humidity')?.value || '',
-            u1dm: document.getElementById('tu_u1_dm')?.value || '',
-            soCuon: numWindings,
-            visual: document.getElementById('tu_visual')?.value || '',
-
-            rcd: {
-                pri_a: document.getElementById('rcd_pri_a')?.value || '', pri_b: document.getElementById('rcd_pri_b')?.value || '', pri_c: document.getElementById('rcd_pri_c')?.value || '',
-                c1_a: document.getElementById('rcd_sec1_a')?.value || '', c1_b: document.getElementById('rcd_sec1_b')?.value || '', c1_c: document.getElementById('rcd_sec1_c')?.value || '',
-                c2_a: document.getElementById('rcd_sec2_a')?.value || '', c2_b: document.getElementById('rcd_sec2_b')?.value || '', c2_c: document.getElementById('rcd_sec2_c')?.value || '',
-                c3_a: document.getElementById('rcd_sec3_a')?.value || '', c3_b: document.getElementById('rcd_sec3_b')?.value || '', c3_c: document.getElementById('rcd_sec3_c')?.value || '',
-                c4_a: document.getElementById('rcd_sec4_a')?.value || '', c4_b: document.getElementById('rcd_sec4_b')?.value || '', c4_c: document.getElementById('rcd_sec4_c')?.value || ''
-            },
-
-            rdc: {
-                c1_ref: document.getElementById('rdc_ref_1')?.value || '',
-                c1_a: document.getElementById('rdc_m_1_a')?.value || '', c1_75a: document.getElementById('rdc_75_1_a')?.innerText || '',
-                c1_b: document.getElementById('rdc_m_1_b')?.value || '', c1_75b: document.getElementById('rdc_75_1_b')?.innerText || '',
-                c1_c: document.getElementById('rdc_m_1_c')?.value || '', c1_75c: document.getElementById('rdc_75_1_c')?.innerText || '',
-
-                c2_ref: document.getElementById('rdc_ref_2')?.value || '',
-                c2_a: document.getElementById('rdc_m_2_a')?.value || '', c2_75a: document.getElementById('rdc_75_2_a')?.innerText || '',
-                c2_b: document.getElementById('rdc_m_2_b')?.value || '', c2_75b: document.getElementById('rdc_75_2_b')?.innerText || '',
-                c2_c: document.getElementById('rdc_m_2_c')?.value || '', c2_75c: document.getElementById('rdc_75_2_c')?.innerText || '',
-
-                c3_ref: document.getElementById('rdc_ref_3')?.value || '',
-                c3_a: document.getElementById('rdc_m_3_a')?.value || '', c3_75a: document.getElementById('rdc_75_3_a')?.innerText || '',
-                c3_b: document.getElementById('rdc_m_3_b')?.value || '', c3_75b: document.getElementById('rdc_75_3_b')?.innerText || '',
-                c3_c: document.getElementById('rdc_m_3_c')?.value || '', c3_75c: document.getElementById('rdc_75_3_c')?.innerText || '',
-
-                c4_ref: document.getElementById('rdc_ref_4')?.value || '',
-                c4_a: document.getElementById('rdc_m_4_a')?.value || '', c4_75a: document.getElementById('rdc_75_4_a')?.innerText || '',
-                c4_b: document.getElementById('rdc_m_4_b')?.value || '', c4_75b: document.getElementById('rdc_75_4_b')?.innerText || '',
-                c4_c: document.getElementById('rdc_m_4_c')?.value || '', c4_75c: document.getElementById('rdc_75_4_c')?.innerText || ''
-            },
-
-            pol: {
-                c1_a: document.getElementById('pol_eval_1_a')?.value || '', c1_b: document.getElementById('pol_eval_1_b')?.value || '', c1_c: document.getElementById('pol_eval_1_c')?.value || '',
-                c2_a: document.getElementById('pol_eval_2_a')?.value || '', c2_b: document.getElementById('pol_eval_2_b')?.value || '', c2_c: document.getElementById('pol_eval_2_c')?.value || '',
-                c3_a: document.getElementById('pol_eval_3_a')?.value || '', c3_b: document.getElementById('pol_eval_3_b')?.value || '', c3_c: document.getElementById('pol_eval_3_c')?.value || '',
-                c4_a: document.getElementById('pol_eval_4_a')?.value || '', c4_b: document.getElementById('pol_eval_4_b')?.value || '', c4_c: document.getElementById('pol_eval_4_c')?.value || ''
-            },
-
-            ratio: {
-                u1_tn: document.getElementById('tu_u1_tn')?.value || '',
-                c1_u2dm: document.getElementById('u2_dm_w1')?.value || '', c1_acc: document.getElementById('acc_w1')?.value || '',
-                c1_a1: document.getElementById('u2_w1_A_1')?.value || '', c1_a2: document.getElementById('u2_w1_A_2')?.value || '', c1_ka: document.getElementById('kdo_w1_A')?.innerText || '', c1_fa: document.getElementById('err_w1_A')?.innerText || '',
-                c1_b1: document.getElementById('u2_w1_B_1')?.value || '', c1_b2: document.getElementById('u2_w1_B_2')?.value || '', c1_kb: document.getElementById('kdo_w1_B')?.innerText || '', c1_fb: document.getElementById('err_w1_B')?.innerText || '',
-                c1_c1: document.getElementById('u2_w1_C_1')?.value || '', c1_c2: document.getElementById('u2_w1_C_2')?.value || '', c1_kc: document.getElementById('kdo_w1_C')?.innerText || '', c1_fc: document.getElementById('err_w1_C')?.innerText || '',
-
-                c2_u2dm: document.getElementById('u2_dm_w2')?.value || '', c2_acc: document.getElementById('acc_w2')?.value || '',
-                c2_a1: document.getElementById('u2_w2_A_1')?.value || '', c2_a2: document.getElementById('u2_w2_A_2')?.value || '', c2_ka: document.getElementById('kdo_w2_A')?.innerText || '', c2_fa: document.getElementById('err_w2_A')?.innerText || '',
-                c2_b1: document.getElementById('u2_w2_B_1')?.value || '', c2_b2: document.getElementById('u2_w2_B_2')?.value || '', c2_kb: document.getElementById('kdo_w2_B')?.innerText || '', c2_fb: document.getElementById('err_w2_B')?.innerText || '',
-                c2_c1: document.getElementById('u2_w2_C_1')?.value || '', c2_c2: document.getElementById('u2_w2_C_2')?.value || '', c2_kc: document.getElementById('kdo_w2_C')?.innerText || '', c2_fc: document.getElementById('err_w2_C')?.innerText || '',
-
-                c3_u2dm: document.getElementById('u2_dm_w3')?.value || '', c3_acc: document.getElementById('acc_w3')?.value || '',
-                c3_a1: document.getElementById('u2_w3_A_1')?.value || '', c3_a2: document.getElementById('u2_w3_A_2')?.value || '', c3_ka: document.getElementById('kdo_w3_A')?.innerText || '', c3_fa: document.getElementById('err_w3_A')?.innerText || '',
-                c3_b1: document.getElementById('u2_w3_B_1')?.value || '', c3_b2: document.getElementById('u2_w3_B_2')?.value || '', c3_kb: document.getElementById('kdo_w3_B')?.innerText || '', c3_fb: document.getElementById('err_w3_B')?.innerText || '',
-                c3_c1: document.getElementById('u2_w3_C_1')?.value || '', c3_c2: document.getElementById('u2_w3_C_2')?.value || '', c3_kc: document.getElementById('kdo_w3_C')?.innerText || '', c3_fc: document.getElementById('err_w3_C')?.innerText || '',
-
-                c4_u2dm: document.getElementById('u2_dm_w4')?.value || '', c4_acc: document.getElementById('acc_w4')?.value || '',
-                c4_a1: document.getElementById('u2_w4_A_1')?.value || '', c4_a2: document.getElementById('u2_w4_A_2')?.value || '', c4_ka: document.getElementById('kdo_w4_A')?.innerText || '', c4_fa: document.getElementById('err_w4_A')?.innerText || '',
-                c4_b1: document.getElementById('u2_w4_B_1')?.value || '', c4_b2: document.getElementById('u2_w4_B_2')?.value || '', c4_kb: document.getElementById('kdo_w4_B')?.innerText || '', c4_fb: document.getElementById('err_w4_B')?.innerText || '',
-                c4_c1: document.getElementById('u2_w4_C_1')?.value || '', c4_c2: document.getElementById('u2_w4_C_2')?.value || '', c4_kc: document.getElementById('kdo_w4_C')?.innerText || '', c4_fc: document.getElementById('err_w4_C')?.innerText || ''
-            },
-
-            tg: {
-                a_tg1: document.getElementById('tg_A_0')?.value || '', a_cnsx1: document.getElementById('cmfg_A_0')?.value || '', a_cdo1: document.getElementById('cmeas_A_0')?.value || '', a_err1: document.getElementById('cerr_A_0')?.innerText || '',
-                a_tg2: document.getElementById('tg_A_1')?.value || '', a_cnsx2: document.getElementById('cmfg_A_1')?.value || '', a_cdo2: document.getElementById('cmeas_A_1')?.value || '', a_err2: document.getElementById('cerr_A_1')?.innerText || '',
-                a_tgt: document.getElementById('tg_A_2')?.value || '', a_cnsxt: document.getElementById('cmfg_A_2')?.value || '', a_cdot: document.getElementById('cmeas_A_2')?.value || '', a_errt: document.getElementById('cerr_A_2')?.innerText || '',
-
-                b_tg1: document.getElementById('tg_B_0')?.value || '', b_cnsx1: document.getElementById('cmfg_B_0')?.value || '', b_cdo1: document.getElementById('cmeas_B_0')?.value || '', b_err1: document.getElementById('cerr_B_0')?.innerText || '',
-                b_tg2: document.getElementById('tg_B_1')?.value || '', b_cnsx2: document.getElementById('cmfg_B_1')?.value || '', b_cdo2: document.getElementById('cmeas_B_1')?.value || '', b_err2: document.getElementById('cerr_B_2')?.innerText || '',
-                b_tgt: document.getElementById('tg_B_2')?.value || '', b_cnsxt: document.getElementById('cmfg_B_2')?.value || '', b_cdot: document.getElementById('cmeas_B_2')?.value || '', b_errt: document.getElementById('cerr_B_2')?.innerText || '',
-
-                c_tg1: document.getElementById('tg_C_0')?.value || '', c_cnsx1: document.getElementById('cmfg_C_0')?.value || '', c_cdo1: document.getElementById('cmeas_C_0')?.value || '', c_err1: document.getElementById('cerr_C_0')?.innerText || '',
-                c_tg2: document.getElementById('tg_C_1')?.value || '', c_cnsx2: document.getElementById('cmfg_C_1')?.value || '', c_cdo2: document.getElementById('cmeas_C_1')?.value || '', c_err2: document.getElementById('cerr_C_1')?.innerText || '',
-                c_tgt: document.getElementById('tg_C_2')?.value || '', c_cnsxt: document.getElementById('cmfg_C_2')?.value || '', c_cdot: document.getElementById('cmeas_C_2')?.value || '', c_errt: document.getElementById('cerr_C_2')?.innerText || ''
-            }
-        };
-
-        fetch(GOOGLE_WEB_APP_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ payload: JSON.stringify(payload) })
-        })
-        .then(() => alert("🚀 XÁC NHẬN MÃ ĐÚNG! ĐÃ ĐỒNG BỘ THÀNH CÔNG DỮ LIỆU TU LÊN SHEET EXCEL!"))
-        .catch(err => alert("❌ Lỗi đồng bộ: " + err));
+    const userPin = prompt("🔒 XÁC THỰC BẢO MẬT:\nNhập mã PIN (3 chữ số) để xác nhận gửi Cloud:");
+    if (userPin === null) return;
+    if (userPin.trim() !== SECRET_PIN) {
+        alert("❌ SAI MÃ PIN! Dữ liệu chưa được gửi để tránh bấm nhầm.");
+        return;
     }
+
+    const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
+    const numWindings = parseInt(document.getElementById('tu_num_windings').value);
+
+    const payload = {
+        maPhien: 'TU_' + Date.now(),
+        timestamp: new Date().toLocaleString('vi-VN'),
+        tram: sessionData.tram || '',
+        nganLo: sessionData.nganLo || '',
+        ngayTN: sessionData.ngayDo || '',
+        nguoiTN: sessionData.nguoido || '',
+        cheDo: document.getElementById('tu_mode')?.value || '',
+        hang: document.getElementById('tu_mfg')?.value || '',
+        cachDien: document.getElementById('tu_insulation')?.value || '',
+        nhietDo: document.getElementById('tu_temp')?.value || '',
+        doAm: document.getElementById('tu_humidity')?.value || '',
+        u1dm: document.getElementById('tu_u1_dm')?.value || '',
+        soCuon: numWindings,
+        visual: document.getElementById('tu_visual')?.value || '',
+
+        rcd: {
+            pri_a: document.getElementById('rcd_pri_a')?.value || '', pri_b: document.getElementById('rcd_pri_b')?.value || '', pri_c: document.getElementById('rcd_pri_c')?.value || '',
+            c1_a: document.getElementById('rcd_sec1_a')?.value || '', c1_b: document.getElementById('rcd_sec1_b')?.value || '', c1_c: document.getElementById('rcd_sec1_c')?.value || '',
+            c2_a: document.getElementById('rcd_sec2_a')?.value || '', c2_b: document.getElementById('rcd_sec2_b')?.value || '', c2_c: document.getElementById('rcd_sec2_c')?.value || '',
+            c3_a: document.getElementById('rcd_sec3_a')?.value || '', c3_b: document.getElementById('rcd_sec3_b')?.value || '', c3_c: document.getElementById('rcd_sec3_c')?.value || '',
+            c4_a: document.getElementById('rcd_sec4_a')?.value || '', c4_b: document.getElementById('rcd_sec4_b')?.value || '', c4_c: document.getElementById('rcd_sec4_c')?.value || ''
+        },
+
+        rdc: {
+            c1_ref: document.getElementById('rdc_ref_1')?.value || '',
+            c1_a: document.getElementById('rdc_m_1_a')?.value || '', c1_75a: document.getElementById('rdc_75_1_a')?.innerText || '',
+            c1_b: document.getElementById('rdc_m_1_b')?.value || '', c1_75b: document.getElementById('rdc_75_1_b')?.innerText || '',
+            c1_c: document.getElementById('rdc_m_1_c')?.value || '', c1_75c: document.getElementById('rdc_75_1_c')?.innerText || '',
+
+            c2_ref: document.getElementById('rdc_ref_2')?.value || '',
+            c2_a: document.getElementById('rdc_m_2_a')?.value || '', c2_75a: document.getElementById('rdc_75_2_a')?.innerText || '',
+            c2_b: document.getElementById('rdc_m_2_b')?.value || '', c2_75b: document.getElementById('rdc_75_2_b')?.innerText || '',
+            c2_c: document.getElementById('rdc_m_2_c')?.value || '', c2_75c: document.getElementById('rdc_75_2_c')?.innerText || '',
+
+            c3_ref: document.getElementById('rdc_ref_3')?.value || '',
+            c3_a: document.getElementById('rdc_m_3_a')?.value || '', c3_75a: document.getElementById('rdc_75_3_a')?.innerText || '',
+            c3_b: document.getElementById('rdc_m_3_b')?.value || '', c3_75b: document.getElementById('rdc_75_3_b')?.innerText || '',
+            c3_c: document.getElementById('rdc_m_3_c')?.value || '', c3_75c: document.getElementById('rdc_75_3_c')?.innerText || '',
+
+            c4_ref: document.getElementById('rdc_ref_4')?.value || '',
+            c4_a: document.getElementById('rdc_m_4_a')?.value || '', c4_75a: document.getElementById('rdc_75_4_a')?.innerText || '',
+            c4_b: document.getElementById('rdc_m_4_b')?.value || '', c4_75b: document.getElementById('rdc_75_4_b')?.innerText || '',
+            c4_c: document.getElementById('rdc_m_4_c')?.value || '', c4_75c: document.getElementById('rdc_75_4_c')?.innerText || ''
+        },
+
+        pol: {
+            c1_a: document.getElementById('pol_eval_1_a')?.value || '', c1_b: document.getElementById('pol_eval_1_b')?.value || '', c1_c: document.getElementById('pol_eval_1_c')?.value || '',
+            c2_a: document.getElementById('pol_eval_2_a')?.value || '', c2_b: document.getElementById('pol_eval_2_b')?.value || '', c2_c: document.getElementById('pol_eval_2_c')?.value || '',
+            c3_a: document.getElementById('pol_eval_3_a')?.value || '', c3_b: document.getElementById('pol_eval_3_b')?.value || '', c3_c: document.getElementById('pol_eval_3_c')?.value || '',
+            c4_a: document.getElementById('pol_eval_4_a')?.value || '', c4_b: document.getElementById('pol_eval_4_b')?.value || '', c4_c: document.getElementById('pol_eval_4_c')?.value || ''
+        },
+
+        ratio: {
+            u1_tn: document.getElementById('tu_u1_tn')?.value || '',
+            c1_u2dm: document.getElementById('u2_dm_w1')?.value || '', c1_acc: document.getElementById('acc_w1')?.value || '',
+            c1_a1: document.getElementById('u2_w1_A_1')?.value || '', c1_a2: document.getElementById('u2_w1_A_2')?.value || '', c1_ka: document.getElementById('kdo_w1_A')?.innerText || '', c1_fa: document.getElementById('err_w1_A')?.innerText || '',
+            c1_b1: document.getElementById('u2_w1_B_1')?.value || '', c1_b2: document.getElementById('u2_w1_B_2')?.value || '', c1_kb: document.getElementById('kdo_w1_B')?.innerText || '', c1_fb: document.getElementById('err_w1_B')?.innerText || '',
+            c1_c1: document.getElementById('u2_w1_C_1')?.value || '', c1_c2: document.getElementById('u2_w1_C_2')?.value || '', c1_kc: document.getElementById('kdo_w1_C')?.innerText || '', c1_fc: document.getElementById('err_w1_C')?.innerText || '',
+
+            c2_u2dm: document.getElementById('u2_dm_w2')?.value || '', c2_acc: document.getElementById('acc_w2')?.value || '',
+            c2_a1: document.getElementById('u2_w2_A_1')?.value || '', c2_a2: document.getElementById('u2_w2_A_2')?.value || '', c2_ka: document.getElementById('kdo_w2_A')?.innerText || '', c2_fa: document.getElementById('err_w2_A')?.innerText || '',
+            c2_b1: document.getElementById('u2_w2_B_1')?.value || '', c2_b2: document.getElementById('u2_w2_B_2')?.value || '', c2_kb: document.getElementById('kdo_w2_B')?.innerText || '', c2_fb: document.getElementById('err_w2_B')?.innerText || '',
+            c2_c1: document.getElementById('u2_w2_C_1')?.value || '', c2_c2: document.getElementById('u2_w2_C_2')?.value || '', c2_kc: document.getElementById('kdo_w2_C')?.innerText || '', c2_fc: document.getElementById('err_w2_C')?.innerText || '',
+
+            c3_u2dm: document.getElementById('u2_dm_w3')?.value || '', c3_acc: document.getElementById('acc_w3')?.value || '',
+            c3_a1: document.getElementById('u2_w3_A_1')?.value || '', c3_a2: document.getElementById('u2_w3_A_2')?.value || '', c3_ka: document.getElementById('kdo_w3_A')?.innerText || '', c3_fa: document.getElementById('err_w3_A')?.innerText || '',
+            c3_b1: document.getElementById('u2_w3_B_1')?.value || '', c3_b2: document.getElementById('u2_w3_B_2')?.value || '', c3_kb: document.getElementById('kdo_w3_B')?.innerText || '', c3_fb: document.getElementById('err_w3_B')?.innerText || '',
+            c3_c1: document.getElementById('u2_w3_C_1')?.value || '', c3_c2: document.getElementById('u2_w3_C_2')?.value || '', c3_kc: document.getElementById('kdo_w3_C')?.innerText || '', c3_fc: document.getElementById('err_w3_C')?.innerText || '',
+
+            c4_u2dm: document.getElementById('u2_dm_w4')?.value || '', c4_acc: document.getElementById('acc_w4')?.value || '',
+            c4_a1: document.getElementById('u2_w4_A_1')?.value || '', c4_a2: document.getElementById('u2_w4_A_2')?.value || '', c4_ka: document.getElementById('kdo_w4_A')?.innerText || '', c4_fa: document.getElementById('err_w4_A')?.innerText || '',
+            c4_b1: document.getElementById('u2_w4_B_1')?.value || '', c4_b2: document.getElementById('u2_w4_B_2')?.value || '', c4_kb: document.getElementById('kdo_w4_B')?.innerText || '', c4_fb: document.getElementById('err_w4_B')?.innerText || '',
+            c4_c1: document.getElementById('u2_w4_C_1')?.value || '', c4_c2: document.getElementById('u2_w4_C_2')?.value || '', c4_kc: document.getElementById('kdo_w4_C')?.innerText || '', c4_fc: document.getElementById('err_w4_C')?.innerText || ''
+        },
+
+        tg: {
+            a_tg1: document.getElementById('tg_A_0')?.value || '', a_cnsx1: document.getElementById('cmfg_A_0')?.value || '', a_cdo1: document.getElementById('cmeas_A_0')?.value || '', a_err1: document.getElementById('cerr_A_0')?.innerText || '',
+            a_tg2: document.getElementById('tg_A_1')?.value || '', a_cnsx2: document.getElementById('cmfg_A_1')?.value || '', a_cdo2: document.getElementById('cmeas_A_1')?.value || '', a_err2: document.getElementById('cerr_A_1')?.innerText || '',
+            a_tgt: document.getElementById('tg_A_2')?.value || '', a_cnsxt: document.getElementById('cmfg_A_2')?.value || '', a_cdot: document.getElementById('cmeas_A_2')?.value || '', a_errt: document.getElementById('cerr_A_2')?.innerText || '',
+
+            b_tg1: document.getElementById('tg_B_0')?.value || '', b_cnsx1: document.getElementById('cmfg_B_0')?.value || '', b_cdo1: document.getElementById('cmeas_B_0')?.value || '', b_err1: document.getElementById('cerr_B_0')?.innerText || '',
+            b_tg2: document.getElementById('tg_B_1')?.value || '', b_cnsx2: document.getElementById('cmfg_B_1')?.value || '', b_cdo2: document.getElementById('cmeas_B_1')?.value || '', b_err2: document.getElementById('cerr_B_2')?.innerText || '',
+            b_tgt: document.getElementById('tg_B_2')?.value || '', b_cnsxt: document.getElementById('cmfg_B_2')?.value || '', b_cdot: document.getElementById('cmeas_B_2')?.value || '', b_errt: document.getElementById('cerr_B_2')?.innerText || '',
+
+            c_tg1: document.getElementById('tg_C_0')?.value || '', c_cnsx1: document.getElementById('cmfg_C_0')?.value || '', c_cdo1: document.getElementById('cmeas_C_0')?.value || '', c_err1: document.getElementById('cerr_C_0')?.innerText || '',
+            c_tg2: document.getElementById('tg_C_1')?.value || '', c_cnsx2: document.getElementById('cmfg_C_1')?.value || '', c_cdo2: document.getElementById('cmeas_C_1')?.value || '', c_err2: document.getElementById('cerr_C_1')?.innerText || '',
+            c_tgt: document.getElementById('tg_C_2')?.value || '', c_cnsxt: document.getElementById('cmfg_C_2')?.value || '', c_cdot: document.getElementById('cmeas_C_2')?.value || '', c_errt: document.getElementById('cerr_C_2')?.innerText || ''
+        }
+    };
+
+    // Gửi dữ liệu theo định dạng text chuẩn để Apps Script bắt 100%
+    fetch(GOOGLE_WEB_APP_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+    })
+    .then(() => alert("🚀 ĐÃ ĐỒNG BỘ THÀNH CÔNG DỮ LIỆU TU LÊN SHEET EXCEL!"))
+    .catch(err => alert("❌ Lỗi đồng bộ: " + err));
+}
 
     function exportWord() { alert("Đang tải dữ liệu xuất Biên Bản Word TU (.docx)..."); }
 </script>
