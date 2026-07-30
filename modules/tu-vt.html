@@ -247,6 +247,12 @@
         loadDraftData(); 
     };
 
+    function changeWindingCount() {
+        const savedInputs = captureCurrentInputValues();
+        renderAllTables();
+        restoreInputValues(savedInputs);
+    }
+
     function toggleSection(sectionId, chk) {
         const sec = document.getElementById(sectionId);
         if (chk.checked) sec.classList.add('hidden-section');
@@ -255,47 +261,47 @@
 
     // HÀM KÉO KẾT QUẢ CŨ THEO TỪNG HẠNG MỤC
     function loadOldDataSection(sectionType) {
-    const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
-    const nganLo = encodeURIComponent(sessionData.nganLo || '');
+        const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
+        const nganLo = encodeURIComponent(sessionData.nganLo || '');
 
-    if (!nganLo) {
-        alert("⚠️ Chưa chọn Ngăn Lộ từ Trang Chủ!");
-        return;
-    }
-
-    const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}`;
-
-    fetch(fetchUrl)
-    .then(res => res.json())
-    .then(data => {
-        if (!data || Object.keys(data).length === 0) {
-            alert("ℹ️ Chưa có dữ liệu cũ cho Ngăn Lộ này!");
+        if (!nganLo) {
+            alert("⚠️ Chưa chọn Ngăn Lộ từ Trang Chủ!");
             return;
         }
 
-        let count = 0;
-        for (let key in data) {
-            const el = document.getElementById(key);
-            if (el && data[key] !== undefined && data[key] !== '') {
-                if (el.tagName === 'INPUT') {
-                    el.placeholder = data[key];
-                    count++;
-                } else if (el.tagName === 'SELECT') {
-                    el.value = data[key];
-                    count++;
+        const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}`;
+
+        fetch(fetchUrl)
+        .then(res => res.json())
+        .then(data => {
+            if (!data || Object.keys(data).length === 0) {
+                alert("ℹ️ Chưa có dữ liệu cũ cho Ngăn Lộ này!");
+                return;
+            }
+
+            let count = 0;
+            for (let key in data) {
+                const el = document.getElementById(key);
+                if (el && data[key] !== undefined && data[key] !== '') {
+                    if (el.tagName === 'INPUT') {
+                        el.placeholder = data[key];
+                        count++;
+                    } else if (el.tagName === 'SELECT') {
+                        el.value = data[key];
+                        count++;
+                    }
                 }
             }
-        }
 
-        calculateAll();
-        if (count > 0) {
-            alert("⚡ Đã tải xong kết quả mới nhất cho Ngăn lộ!");
-        } else {
-            alert("ℹ️ Không tìm thấy dữ liệu ô tương ứng!");
-        }
-    })
-    .catch(err => alert("❌ Lỗi tải Cloud: " + err));
-}
+            calculateAll();
+            if (count > 0) {
+                alert("⚡ Đã tải xong kết quả mới nhất cho Ngăn lộ!");
+            } else {
+                alert("ℹ️ Không tìm thấy dữ liệu ô tương ứng!");
+            }
+        })
+        .catch(err => alert("❌ Lỗi tải Cloud: " + err));
+    }
 
     function captureCurrentInputValues() {
         const inputs = document.querySelectorAll('input[type="number"], input[type="text"]');
@@ -612,130 +618,137 @@
         }
     }
 
-function syncOneDrive() {
-    const userPin = prompt("🔒 XÁC THỰC BẢO MẬT:\nNhập mã PIN (3 chữ số) để xác nhận gửi Cloud:");
-    if (userPin === null) return;
-    if (userPin.trim() !== SECRET_PIN) {
-        alert("❌ SAI MÃ PIN! Dữ liệu chưa được gửi để tránh bấm nhầm.");
-        return;
-    }
-
-    // 1. Hàm phụ trợ: Chỉ lấy giá trị nếu có nhập thực tế, không nhập/bằng 0 -> trả về rỗng ""
-    function getRealVal(id) {
-        const el = document.getElementById(id);
-        if (!el) return '';
-        const val = el.value ? el.value.trim() : '';
-        if (val === '0' || val === '0.00' || val === '-') return '';
-        return val;
-    }
-
-    // 2. Lấy thông tin trạm và ngăn lộ trước
-    const infoVal = document.getElementById('info_tram')?.value || '';
-    const parts = infoVal.split(' - ');
-    const tramVal = parts[0] || 'Trạm TBA';
-    const nganLoVal = parts[1] || '333';
-
-    // 3. Đóng gói payload sạch dữ liệu (ô không đo sẽ tự động = "")
-    const payload = {
-        maPhien: 'TU_' + Date.now(),
-        timestamp: new Date().toLocaleString('vi-VN'),
-        tram: tramVal,
-        nganLo: nganLoVal,
-        ngayTN: new Date().toISOString().split('T')[0],
-        nguoiTN: '',
-        cheDo: document.getElementById('tu_mode')?.value || '',
-        hang: document.getElementById('tu_mfg')?.value || '',
-        cachDien: document.getElementById('tu_insulation')?.value || '',
-        nhietDo: document.getElementById('tu_temp')?.value || '',
-        doAm: document.getElementById('tu_humidity')?.value || '',
-        u1dm: document.getElementById('tu_u1_dm')?.value || '',
-        soCuon: document.getElementById('tu_num_windings')?.value || '3',
-        visual: document.getElementById('tu_visual')?.value || '',
-
-        rcd: {
-            pri_a: getRealVal('rcd_pri_a'), pri_b: getRealVal('rcd_pri_b'), pri_c: getRealVal('rcd_pri_c'),
-            c1_a: getRealVal('rcd_sec1_a'), c1_b: getRealVal('rcd_sec1_b'), c1_c: getRealVal('rcd_sec1_c'),
-            c2_a: getRealVal('rcd_sec2_a'), c2_b: getRealVal('rcd_sec2_b'), c2_c: getRealVal('rcd_sec2_c'),
-            c3_a: getRealVal('rcd_sec3_a'), c3_b: getRealVal('rcd_sec3_b'), c3_c: getRealVal('rcd_sec3_c'),
-            c4_a: getRealVal('rcd_sec4_a'), c4_b: getRealVal('rcd_sec4_b'), c4_c: getRealVal('rcd_sec4_c')
-        },
-        rdc: {
-            c1_ref: getRealVal('rdc_ref_1'),
-            c1_a: getRealVal('rdc_m_1_a'), c1_75a: document.getElementById('rdc_75_1_a')?.innerText || '',
-            c1_b: getRealVal('rdc_m_1_b'), c1_75b: document.getElementById('rdc_75_1_b')?.innerText || '',
-            c1_c: getRealVal('rdc_m_1_c'), c1_75c: document.getElementById('rdc_75_1_c')?.innerText || '',
-
-            c2_ref: getRealVal('rdc_ref_2'),
-            c2_a: getRealVal('rdc_m_2_a'), c2_75a: document.getElementById('rdc_75_2_a')?.innerText || '',
-            c2_b: getRealVal('rdc_m_2_b'), c2_75b: document.getElementById('rdc_75_2_b')?.innerText || '',
-            c2_c: getRealVal('rdc_m_2_c'), c2_75c: document.getElementById('rdc_75_2_c')?.innerText || '',
-
-            c3_ref: getRealVal('rdc_ref_3'),
-            c3_a: getRealVal('rdc_m_3_a'), c3_75a: document.getElementById('rdc_75_3_a')?.innerText || '',
-            c3_b: getRealVal('rdc_m_3_b'), c3_75b: document.getElementById('rdc_75_3_b')?.innerText || '',
-            c3_c: getRealVal('rdc_m_3_c'), c3_75c: document.getElementById('rdc_75_3_c')?.innerText || '',
-
-            c4_ref: getRealVal('rdc_ref_4'),
-            c4_a: getRealVal('rdc_m_4_a'), c4_75a: document.getElementById('rdc_75_4_a')?.innerText || '',
-            c4_b: getRealVal('rdc_m_4_b'), c4_75b: document.getElementById('rdc_75_4_b')?.innerText || '',
-            c4_c: getRealVal('rdc_m_4_c'), c4_75c: document.getElementById('rdc_75_4_c')?.innerText || ''
-        },
-        pol: {
-            c1_a: document.getElementById('pol_eval_1_a')?.value || '', c1_b: document.getElementById('pol_eval_1_b')?.value || '', c1_c: document.getElementById('pol_eval_1_c')?.value || '',
-            c2_a: document.getElementById('pol_eval_2_a')?.value || '', c2_b: document.getElementById('pol_eval_2_b')?.value || '', c2_c: document.getElementById('pol_eval_2_c')?.value || '',
-            c3_a: document.getElementById('pol_eval_3_a')?.value || '', c3_b: document.getElementById('pol_eval_3_b')?.value || '', c3_c: document.getElementById('pol_eval_3_c')?.value || '',
-            c4_a: document.getElementById('pol_eval_4_a')?.value || '', c4_b: document.getElementById('pol_eval_4_b')?.value || '', c4_c: document.getElementById('pol_eval_4_c')?.value || ''
-        },
-        ratio: {
-            u1_tn: getRealVal('tu_u1_tn'),
-            c1_u2dm: document.getElementById('u2_dm_w1')?.value || '', c1_acc: document.getElementById('acc_w1')?.value || '',
-            c1_a1: getRealVal('u2_w1_A_1'), c1_a2: getRealVal('u2_w1_A_2'), c1_ka: document.getElementById('kdo_w1_A')?.innerText || '', c1_fa: document.getElementById('err_w1_A')?.innerText || '',
-            c1_b1: getRealVal('u2_w1_B_1'), c1_b2: getRealVal('u2_w1_B_2'), c1_kb: document.getElementById('kdo_w1_B')?.innerText || '', c1_fb: document.getElementById('err_w1_B')?.innerText || '',
-            c1_c1: getRealVal('u2_w1_C_1'), c1_c2: getRealVal('u2_w1_C_2'), c1_kc: document.getElementById('kdo_w1_C')?.innerText || '', c1_fc: document.getElementById('err_w1_C')?.innerText || '',
-
-            c2_u2dm: document.getElementById('u2_dm_w2')?.value || '', c2_acc: document.getElementById('acc_w2')?.value || '',
-            c2_a1: getRealVal('u2_w2_A_1'), c2_a2: getRealVal('u2_w2_A_2'), c2_ka: document.getElementById('kdo_w2_A')?.innerText || '', c2_fa: document.getElementById('err_w2_A')?.innerText || '',
-            c2_b1: getRealVal('u2_w2_B_1'), c2_b2: getRealVal('u2_w2_B_2'), c2_kb: document.getElementById('kdo_w2_B')?.innerText || '', c2_fb: document.getElementById('err_w2_B')?.innerText || '',
-            c2_c1: getRealVal('u2_w2_C_1'), c2_c2: getRealVal('u2_w2_C_2'), c2_kc: document.getElementById('kdo_w2_C')?.innerText || '', c2_fc: document.getElementById('err_w2_C')?.innerText || '',
-
-            c3_u2dm: document.getElementById('u2_dm_w3')?.value || '', c3_acc: document.getElementById('acc_w3')?.value || '',
-            c3_a1: getRealVal('u2_w3_A_1'), c3_a2: getRealVal('u2_w3_A_2'), c3_ka: document.getElementById('kdo_w3_A')?.innerText || '', c3_fa: document.getElementById('err_w3_A')?.innerText || '',
-            c3_b1: getRealVal('u2_w3_B_1'), c3_b2: getRealVal('u2_w3_B_2'), c3_kb: document.getElementById('kdo_w3_B')?.innerText || '', c3_fb: document.getElementById('err_w3_B')?.innerText || '',
-            c3_c1: getRealVal('u2_w3_C_1'), c3_c2: getRealVal('u2_w3_C_2'), c3_kc: document.getElementById('kdo_w3_C')?.innerText || '', c3_fc: document.getElementById('err_w3_C')?.innerText || '',
-
-            c4_u2dm: document.getElementById('u2_dm_w4')?.value || '', c4_acc: document.getElementById('acc_w4')?.value || '',
-            c4_a1: getRealVal('u2_w4_A_1'), c4_a2: getRealVal('u2_w4_A_2'), c4_ka: document.getElementById('kdo_w4_A')?.innerText || '', c4_fa: document.getElementById('err_w4_A')?.innerText || '',
-            c4_b1: getRealVal('u2_w4_B_1'), c4_b2: getRealVal('u2_w4_B_2'), c4_kb: document.getElementById('kdo_w4_B')?.innerText || '', c4_fb: document.getElementById('err_w4_B')?.innerText || '',
-            c4_c1: getRealVal('u2_w4_C_1'), c4_c2: getRealVal('u2_w4_C_2'), c4_kc: document.getElementById('kdo_w4_C')?.innerText || '', c4_fc: document.getElementById('err_w4_C')?.innerText || ''
-        },
-        tg: {
-            a_tg1: getRealVal('tg_A_0'), a_cnsx1: getRealVal('cmfg_A_0'), a_cdo1: getRealVal('cmeas_A_0'), a_err1: document.getElementById('cerr_A_0')?.innerText || '',
-            a_tg2: getRealVal('tg_A_1'), a_cnsx2: getRealVal('cmfg_A_1'), a_cdo2: getRealVal('cmeas_A_1'), a_err2: document.getElementById('cerr_A_1')?.innerText || '',
-            a_tgt: getRealVal('tg_A_2'), a_cnsxt: getRealVal('cmfg_A_2'), a_cdot: getRealVal('cmeas_A_2'), a_errt: document.getElementById('cerr_A_2')?.innerText || '',
-
-            b_tg1: getRealVal('tg_B_0'), b_cnsx1: getRealVal('cmfg_B_0'), b_cdo1: getRealVal('cmeas_B_0'), b_err1: document.getElementById('cerr_B_0')?.innerText || '',
-            b_tg2: getRealVal('tg_B_1'), b_cnsx2: getRealVal('cmfg_B_1'), b_cdo2: getRealVal('cmeas_B_1'), b_err2: document.getElementById('cerr_B_1')?.innerText || '',
-            b_tgt: getRealVal('tg_B_2'), b_cnsxt: getRealVal('cmfg_B_2'), b_cdot: getRealVal('cmeas_B_2'), b_errt: document.getElementById('cerr_B_2')?.innerText || '',
-
-            c_tg1: getRealVal('tg_C_0'), c_cnsx1: getRealVal('cmfg_C_0'), c_cdo1: getRealVal('cmeas_C_0'), c_err1: document.getElementById('cerr_C_0')?.innerText || '',
-            c_tg2: getRealVal('tg_C_1'), c_cnsx2: getRealVal('cmfg_C_1'), c_cdo2: getRealVal('cmeas_C_1'), c_err2: document.getElementById('cerr_C_1')?.innerText || '',
-            c_tgt: getRealVal('tg_C_2'), c_cnsxt: getRealVal('cmfg_C_2'), c_cdot: getRealVal('cmeas_C_2'), c_errt: document.getElementById('cerr_C_2')?.innerText || ''
+    function syncOneDrive() {
+        const userPin = prompt("🔒 XÁC THỰC BẢO MẬT:\nNhập mã PIN (3 chữ số) để xác nhận gửi Cloud:");
+        if (userPin === null) return;
+        if (userPin.trim() !== SECRET_PIN) {
+            alert("❌ SAI MÃ PIN! Dữ liệu chưa được gửi để tránh bấm nhầm.");
+            return;
         }
-    };
 
-    // 4. Gửi dữ liệu đi
-    const formData = new FormData();
-    formData.append('payload', JSON.stringify(payload));
+        // 1. Hàm phụ trợ lọc sạch: Ô nào KHÔNG ĐO thực tế sẽ biến thành rỗng "" để không làm đè dữ liệu cũ
+        function getRealVal(id) {
+            const el = document.getElementById(id);
+            if (!el) return '';
+            const val = el.value ? el.value.trim() : '';
+            if (val === '0' || val === '0.00' || val === '-' || val === '') return '';
+            return val;
+        }
 
-    fetch(GOOGLE_WEB_APP_URL, {
-        method: 'POST',
-        body: formData
-    })
-    .then(() => alert("🚀 ĐÃ GỬI DỮ LIỆU SẠCH THÀNH CÔNG LÊN GOOGLE SHEET!"))
-    .catch(err => alert("❌ Lỗi gửi: " + err));
-}
+        // Lấy giá trị chuỗi hiển thị (như 75°C, K_đo), nếu là chuỗi mặc định chưa đo thì bỏ qua
+        function getRealText(id) {
+            const el = document.getElementById(id);
+            if (!el) return '';
+            const txt = el.innerText ? el.innerText.trim() : '';
+            if (txt === '' || txt === '-' || txt === '75°C: -' || txt === 'K_đo: -' || txt.endsWith(':-') || txt.endsWith(': -')) return '';
+            return txt;
+        }
 
-    
+        // 2. Lấy thông tin trạm và ngăn lộ
+        const infoVal = document.getElementById('info_tram')?.value || '';
+        const parts = infoVal.split(' - ');
+        const tramVal = parts[0] || 'Trạm TBA';
+        const nganLoVal = parts[1] || '333';
+
+        // 3. Đóng gói payload SẠCH (các ô không đo sẽ hoàn toàn là "")
+        const payload = {
+            maPhien: 'TU_' + Date.now(),
+            timestamp: new Date().toLocaleString('vi-VN'),
+            tram: tramVal,
+            nganLo: nganLoVal,
+            ngayTN: new Date().toISOString().split('T')[0],
+            nguoiTN: '',
+            cheDo: document.getElementById('tu_mode')?.value || '',
+            hang: document.getElementById('tu_mfg')?.value || '',
+            cachDien: document.getElementById('tu_insulation')?.value || '',
+            nhietDo: document.getElementById('tu_temp')?.value || '',
+            doAm: document.getElementById('tu_humidity')?.value || '',
+            u1dm: document.getElementById('tu_u1_dm')?.value || '',
+            soCuon: document.getElementById('tu_num_windings')?.value || '3',
+            visual: document.getElementById('tu_visual')?.value || '',
+
+            rcd: {
+                pri_a: getRealVal('rcd_pri_a'), pri_b: getRealVal('rcd_pri_b'), pri_c: getRealVal('rcd_pri_c'),
+                c1_a: getRealVal('rcd_sec1_a'), c1_b: getRealVal('rcd_sec1_b'), c1_c: getRealVal('rcd_sec1_c'),
+                c2_a: getRealVal('rcd_sec2_a'), c2_b: getRealVal('rcd_sec2_b'), c2_c: getRealVal('rcd_sec2_c'),
+                c3_a: getRealVal('rcd_sec3_a'), c3_b: getRealVal('rcd_sec3_b'), c3_c: getRealVal('rcd_sec3_c'),
+                c4_a: getRealVal('rcd_sec4_a'), c4_b: getRealVal('rcd_sec4_b'), c4_c: getRealVal('rcd_sec4_c')
+            },
+            rdc: {
+                c1_ref: getRealVal('rdc_ref_1'),
+                c1_a: getRealVal('rdc_m_1_a'), c1_75a: getRealText('rdc_75_1_a'),
+                c1_b: getRealVal('rdc_m_1_b'), c1_75b: getRealText('rdc_75_1_b'),
+                c1_c: getRealVal('rdc_m_1_c'), c1_75c: getRealText('rdc_75_1_c'),
+
+                c2_ref: getRealVal('rdc_ref_2'),
+                c2_a: getRealVal('rdc_m_2_a'), c2_75a: getRealText('rdc_75_2_a'),
+                c2_b: getRealVal('rdc_m_2_b'), c2_75b: getRealText('rdc_75_2_b'),
+                c2_c: getRealVal('rdc_m_2_c'), c2_75c: getRealText('rdc_75_2_c'),
+
+                c3_ref: getRealVal('rdc_ref_3'),
+                c3_a: getRealVal('rdc_m_3_a'), c3_75a: getRealText('rdc_75_3_a'),
+                c3_b: getRealVal('rdc_m_3_b'), c3_75b: getRealText('rdc_75_3_b'),
+                c3_c: getRealVal('rdc_m_3_c'), c3_75c: getRealText('rdc_75_3_c'),
+
+                c4_ref: getRealVal('rdc_ref_4'),
+                c4_a: getRealVal('rdc_m_4_a'), c4_75a: getRealText('rdc_75_4_a'),
+                c4_b: getRealVal('rdc_m_4_b'), c4_75b: getRealText('rdc_75_4_b'),
+                c4_c: getRealVal('rdc_m_4_c'), c4_75c: getRealText('rdc_75_4_c')
+            },
+            pol: {
+                c1_a: document.getElementById('pol_eval_1_a')?.value || '', c1_b: document.getElementById('pol_eval_1_b')?.value || '', c1_c: document.getElementById('pol_eval_1_c')?.value || '',
+                c2_a: document.getElementById('pol_eval_2_a')?.value || '', c2_b: document.getElementById('pol_eval_2_b')?.value || '', c2_c: document.getElementById('pol_eval_2_c')?.value || '',
+                c3_a: document.getElementById('pol_eval_3_a')?.value || '', c3_b: document.getElementById('pol_eval_3_b')?.value || '', c3_c: document.getElementById('pol_eval_3_c')?.value || '',
+                c4_a: document.getElementById('pol_eval_4_a')?.value || '', c4_b: document.getElementById('pol_eval_4_b')?.value || '', c4_c: document.getElementById('pol_eval_4_c')?.value || ''
+            },
+            ratio: {
+                u1_tn: getRealVal('tu_u1_tn'),
+                c1_u2dm: document.getElementById('u2_dm_w1')?.value || '', c1_acc: document.getElementById('acc_w1')?.value || '',
+                c1_a1: getRealVal('u2_w1_A_1'), c1_a2: getRealVal('u2_w1_A_2'), c1_ka: getRealText('kdo_w1_A'), c1_fa: getRealText('err_w1_A'),
+                c1_b1: getRealVal('u2_w1_B_1'), c1_b2: getRealVal('u2_w1_B_2'), c1_kb: getRealText('kdo_w1_B'), c1_fb: getRealText('err_w1_B'),
+                c1_c1: getRealVal('u2_w1_C_1'), c1_c2: getRealVal('u2_w1_C_2'), c1_kc: getRealText('kdo_w1_C'), c1_fc: getRealText('err_w1_C'),
+
+                c2_u2dm: document.getElementById('u2_dm_w2')?.value || '', c2_acc: document.getElementById('acc_w2')?.value || '',
+                c2_a1: getRealVal('u2_w2_A_1'), c2_a2: getRealVal('u2_w2_A_2'), c2_ka: getRealText('kdo_w2_A'), c2_fa: getRealText('err_w2_A'),
+                c2_b1: getRealVal('u2_w2_B_1'), c2_b2: getRealVal('u2_w2_B_2'), c2_kb: getRealText('kdo_w2_B'), c2_fb: getRealText('err_w2_B'),
+                c2_c1: getRealVal('u2_w2_C_1'), c2_c2: getRealVal('u2_w2_C_2'), c2_kc: getRealText('kdo_w2_C'), c2_fc: getRealText('err_w2_C'),
+
+                c3_u2dm: document.getElementById('u2_dm_w3')?.value || '', c3_acc: document.getElementById('acc_w3')?.value || '',
+                c3_a1: getRealVal('u2_w3_A_1'), c3_a2: getRealVal('u2_w3_A_2'), c3_ka: getRealText('kdo_w3_A'), c3_fa: getRealText('err_w3_A'),
+                c3_b1: getRealVal('u2_w3_B_1'), c3_b2: getRealVal('u2_w3_B_2'), c3_kb: getRealText('kdo_w3_B'), c3_fb: getRealText('err_w3_B'),
+                c3_c1: getRealVal('u2_w3_C_1'), c3_c2: getRealVal('u2_w3_C_2'), c3_kc: getRealText('kdo_w3_C'), c3_fc: getRealText('err_w3_C'),
+
+                c4_u2dm: document.getElementById('u2_dm_w4')?.value || '', c4_acc: document.getElementById('acc_w4')?.value || '',
+                c4_a1: getRealVal('u2_w4_A_1'), c4_a2: getRealVal('u2_w4_A_2'), c4_ka: getRealText('kdo_w4_A'), c4_fa: getRealText('err_w4_A'),
+                c4_b1: getRealVal('u2_w4_B_1'), c4_b2: getRealVal('u2_w4_B_2'), c4_kb: getRealText('kdo_w4_B'), c4_fb: getRealText('err_w4_B'),
+                c4_c1: getRealVal('u2_w4_C_1'), c4_c2: getRealVal('u2_w4_C_2'), c4_kc: getRealText('kdo_w4_C'), c4_fc: getRealText('err_w4_C')
+            },
+            tg: {
+                a_tg1: getRealVal('tg_A_0'), a_cnsx1: getRealVal('cmfg_A_0'), a_cdo1: getRealVal('cmeas_A_0'), a_err1: getRealText('cerr_A_0'),
+                a_tg2: getRealVal('tg_A_1'), a_cnsx2: getRealVal('cmfg_A_1'), a_cdo2: getRealVal('cmeas_A_1'), a_err2: getRealText('cerr_A_1'),
+                a_tgt: getRealVal('tg_A_2'), a_cnsxt: getRealVal('cmfg_A_2'), a_cdot: getRealVal('cmeas_A_2'), a_errt: getRealText('cerr_A_2'),
+
+                b_tg1: getRealVal('tg_B_0'), b_cnsx1: getRealVal('cmfg_B_0'), b_cdo1: getRealVal('cmeas_B_0'), b_err1: getRealText('cerr_B_0'),
+                b_tg2: getRealVal('tg_B_1'), b_cnsx2: getRealVal('cmfg_B_1'), b_cdo2: getRealVal('cmeas_B_1'), b_err2: getRealText('cerr_B_1'),
+                b_tgt: getRealVal('tg_B_2'), b_cnsxt: getRealVal('cmfg_B_2'), b_cdot: getRealVal('cmeas_B_2'), b_errt: getRealText('cerr_B_2'),
+
+                c_tg1: getRealVal('tg_C_0'), c_cnsx1: getRealVal('cmfg_C_0'), c_cdo1: getRealVal('cmeas_C_0'), c_err1: getRealText('cerr_C_0'),
+                c_tg2: getRealVal('tg_C_1'), c_cnsx2: getRealVal('cmfg_C_1'), c_cdo2: getRealVal('cmeas_C_1'), c_err2: getRealText('cerr_C_1'),
+                c_tgt: getRealVal('tg_C_2'), c_cnsxt: getRealVal('cmfg_C_2'), c_cdot: getRealVal('cmeas_C_2'), c_errt: getRealText('cerr_C_2')
+            }
+        };
+
+        // 4. Gửi dữ liệu sạch đi
+        const formData = new FormData();
+        formData.append('payload', JSON.stringify(payload));
+
+        fetch(GOOGLE_WEB_APP_URL, {
+            method: 'POST',
+            body: formData
+        })
+        .then(() => alert("🚀 ĐÃ GỬI DỮ LIỆU SẠCH THÀNH CÔNG LÊN GOOGLE SHEET!"))
+        .catch(err => alert("❌ Lỗi gửi: " + err));
+    }
 
     function exportWord() { alert("Đang tải dữ liệu xuất Biên Bản Word TU (.docx)..."); }
 </script>
