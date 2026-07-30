@@ -611,8 +611,7 @@
             location.reload();
         }
     }
-
-    function syncOneDrive() {
+function syncOneDrive() {
     const userPin = prompt("🔒 XÁC THỰC BẢO MẬT:\nNhập mã PIN (3 chữ số) để xác nhận gửi Cloud:");
     if (userPin === null) return;
     if (userPin.trim() !== SECRET_PIN) {
@@ -620,15 +619,22 @@
         return;
     }
 
+    // Lấy thông tin trạm / ngăn lộ từ ô input nếu localStorage trống
+    const infoTramVal = document.getElementById('info_tram')?.value || '';
+    const parts = infoTramVal.split(' - ');
     const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
+    
+    const tramName = sessionData.tram || parts[0] || 'TBA Chưa Rõ';
+    const nganLoName = sessionData.nganLo || parts[1] || '333'; // Mặc định lấy ngăn lộ nếu rỗng
+
     const numWindings = parseInt(document.getElementById('tu_num_windings').value);
 
     const payload = {
         maPhien: 'TU_' + Date.now(),
         timestamp: new Date().toLocaleString('vi-VN'),
-        tram: sessionData.tram || '',
-        nganLo: sessionData.nganLo || '',
-        ngayTN: sessionData.ngayDo || '',
+        tram: tramName,
+        nganLo: nganLoName,
+        ngayTN: sessionData.ngayDo || new Date().toISOString().split('T')[0],
         nguoiTN: sessionData.nguoido || '',
         cheDo: document.getElementById('tu_mode')?.value || '',
         hang: document.getElementById('tu_mfg')?.value || '',
@@ -714,16 +720,21 @@
         }
     };
 
-    // Gửi dữ liệu theo định dạng text chuẩn để Apps Script bắt 100%
+    // Đóng gói dạng URLSearchParams chuẩn 100%
+    const searchParams = new URLSearchParams();
+    searchParams.append("payload", JSON.stringify(payload));
+
     fetch(GOOGLE_WEB_APP_URL, {
         method: 'POST',
         mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: searchParams.toString()
     })
-    .then(() => alert("🚀 ĐÃ ĐỒNG BỘ THÀNH CÔNG DỮ LIỆU TU LÊN SHEET EXCEL!"))
+    .then(() => alert("🚀 ĐÃ ĐỒNG BỘ THÀNH CÔNG DỮ LIỆU LÊN GOOGLE SHEET!"))
     .catch(err => alert("❌ Lỗi đồng bộ: " + err));
 }
+
+    
 
     function exportWord() { alert("Đang tải dữ liệu xuất Biên Bản Word TU (.docx)..."); }
 </script>
