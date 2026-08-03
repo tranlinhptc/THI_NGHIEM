@@ -58,7 +58,7 @@
 
 <div class="container">
     <div class="header-bar">
-        <h2>⚡ THỬ NGHIỆM BIẾN ĐIỆN ÁP (TU / VT)</h2>
+        <h2>⚡ THỬ NGHIỆM MÁY CẮT SF6</h2>
         <a href="../index.html" class="btn-back">← Trang Chủ</a>
     </div>
 
@@ -80,17 +80,7 @@
                     <option value="boost">Thí nghiệm tăng cường</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>Hãng Sản Xuất (Hỗ trợ R_CĐ):</label>
-                <select id="tu_mfg" onchange="calculateAll()">
-                    <option value="ABB">ABB (R_CĐ nhị thứ ≥ 5 MΩ)</option>
-                    <option value="Sieyun">Sieyun TYD (R_CĐ nhị thứ ≥ 1000 MΩ)</option>
-                    <option value="Areva">Areva (R_CĐ nhị thứ ≥ 50 MΩ)</option>
-                    <option value="Alstom">Alstom (R_CĐ nhị thứ ≥ 25 MΩ)</option>
-                    <option value="GE">GE (R_CĐ nhị thứ ≥ 50 MΩ)</option>
-                    <option value="Other" selected>Hãng khác (R_CĐ nhị thứ > 200 MΩ)</option>
-                </select>
-            </div>
+           
             <div class="form-group">
                 <label>Vật Liệu Cách Điện (Tgδ):</label>
                 <select id="tu_insulation" onchange="calculateAll()">
@@ -148,7 +138,7 @@
             <span>2. Điện Trở Cách Điện [MΩ]</span>
             <div>
                 <button class="btn-view-old" onclick="loadOldDataSection('rcd')">👁️ Kq cũ</button>
-                <label class="chk-disable"><input type="checkbox" id="chk_sec2" onchange="toggleSection('body_sec2', this)"> KTH</label>
+                <label class="chk-enable"><input type="checkbox" id="chk_sec2" onchange="toggleSection('body_sec2', this)"> KTH</label>
             </div>
         </div>
         <div id="body_sec2">
