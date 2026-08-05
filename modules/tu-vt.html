@@ -699,7 +699,7 @@ const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`
 
         try {
             // 2. Nạp file Word vào thư viện PizZip & Docxtemplater
-            const zip = new PizZip(arrayBuffer);
+            const zip = new window.PizZip(arrayBuffer);
             const doc = new window.docxtemplater(zip, {
                 paragraphLoop: true,
                 linebreaks: true,
