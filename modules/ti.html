@@ -633,14 +633,22 @@ const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`
         elements.forEach(el => {
             let id = el.id;
             let value = "";
+            
             if (el.tagName === "INPUT" || el.tagName === "SELECT") {
                 value = el.value ? el.value.trim() : "";
             } else if (el.tagName === "SPAN" || el.tagName === "TD") {
                 value = el.innerText ? el.innerText.trim() : "";
+                
+                // MÁY CẠO DỮ LIỆU: Xóa bỏ các chữ râu ria, chỉ lấy con số
+                value = value.replace("75°C:", "")
+                             .replace("K_đo:", "")
+                             .replace("f:", "")
+                             .replace("%", "")
+                             .trim();
             }
 
-            if (value === '0' || value === '0.00' || value === '-' || value === '' || 
-                value.includes(':-') || value === 'K_đo: -' || value === 'f: NaN%') {
+            // Chặn đứng các giá trị rỗng hoặc không hợp lệ (không cho gửi lên Sheet)
+            if (value === '0' || value === '0.00' || value === '-' || value === '' || value === 'NaN') {
                 return; 
             }
             payload[id] = value;
