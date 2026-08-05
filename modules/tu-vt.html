@@ -275,7 +275,9 @@
         const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
         const nganLo = encodeURIComponent(sessionData.nganLo || '');
         if (!nganLo) { alert("⚠️ Chưa chọn Ngăn Lộ từ Trang Chủ!"); return; }
-        const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}`;
+       // Tự động lấy tiền tố (ví dụ "ti_") biến thành chữ in hoa "TI"
+const modName = MODULE_PREFIX.replace('_', '').toUpperCase(); 
+const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`;
 
         fetch(fetchUrl).then(res => res.json()).then(data => {
             if (!data || Object.keys(data).length === 0) { alert("ℹ️ Chưa có dữ liệu cũ!"); return; }
