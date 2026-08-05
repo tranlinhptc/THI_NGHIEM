@@ -618,55 +618,72 @@
         }
     }
 
-    function syncOneDrive() {
-        const userPin = prompt("🔒 XÁC THỰC BẢO MẬT:\nNhập mã PIN (3 chữ số) để xác nhận gửi Cloud:");
-        if (userPin === null) return;
-        if (userPin.trim() !== SECRET_PIN) {
-            alert("❌ SAI MÃ PIN! Dữ liệu chưa được gửi để tránh bấm nhầm.");
-            return;
+    // ==============================================================================================================================================
+    const MODULE_PREFIX = "tu_"; 
+
+function syncOneDrive() {
+    const userPin = prompt("🔒 XÁC THỰC BẢO MẬT:\nNhập mã PIN (3 chữ số) để xác nhận gửi Cloud:");
+    if (userPin === null) return;
+    if (userPin.trim() !== SECRET_PIN) {
+        alert("❌ SAI MÃ PIN! Dữ liệu chưa được gửi để tránh bấm nhầm.");
+        return;
+    }
+
+    // 1. Khởi tạo Payload phẳng (Flat Object) - Rất tốt cho Word Templater
+    const payload = {
+        module_name: "TU", // Xác định sheet sẽ ghi trên Google Sheet (đổi thành "TI" cho file kia)
+        maPhien: 'TN_' + Date.now(),
+        timestamp: new Date().toLocaleString('vi-VN'),
+        ngayTN: new Date().toISOString().split('T')[0]
+        // Các thông tin chung khác lấy từ LocalStorage hoặc DOM...
+    };
+
+    // 2. Tự động thu thập TOÀN BỘ các thẻ có ID bắt đầu bằng MODULE_PREFIX (VD: "tu_")
+    // Bao gồm input, select và cả thẻ span chứa kết quả tính toán
+    const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"]`);
+    
+    elements.forEach(el => {
+        let id = el.id;
+        let value = "";
+
+        // Tách lấy giá trị tùy theo loại thẻ
+        if (el.tagName === "INPUT" || el.tagName === "SELECT") {
+            value = el.value ? el.value.trim() : "";
+        } else if (el.tagName === "SPAN" || el.tagName === "TD") {
+            value = el.innerText ? el.innerText.trim() : "";
         }
 
-        // 1. Hàm phụ trợ lọc sạch: Ô nào KHÔNG ĐO thực tế sẽ biến thành rỗng "" để không làm đè dữ liệu cũ
-        function getRealVal(id) {
-            const el = document.getElementById(id);
-            if (!el) return '';
-            const val = el.value ? el.value.trim() : '';
-            if (val === '0' || val === '0.00' || val === '-' || val === '') return '';
-            return val;
+        // Lọc nhiễu: Loại bỏ các giá trị không hợp lệ hoặc mặc định chưa đo
+        if (value === '0' || value === '0.00' || value === '-' || value === '' || 
+            value.includes(':-') || value === 'K_đo: -') {
+            return; // Bỏ qua, không đưa vào payload
         }
 
-        // Lấy giá trị chuỗi hiển thị (như 75°C, K_đo), nếu là chuỗi mặc định chưa đo thì bỏ qua
-        function getRealText(id) {
-            const el = document.getElementById(id);
-            if (!el) return '';
-            const txt = el.innerText ? el.innerText.trim() : '';
-            if (txt === '' || txt === '-' || txt === '75°C: -' || txt === 'K_đo: -' || txt.endsWith(':-') || txt.endsWith(': -')) return '';
-            return txt;
-        }
+        // Lưu vào payload với Key chính là ID của phần tử
+        payload[id] = value;
+    });
 
-        // 2. Lấy thông tin trạm và ngăn lộ
-        const infoVal = document.getElementById('info_tram')?.value || '';
-        const parts = infoVal.split(' - ');
-        const tramVal = parts[0] || 'Trạm TBA';
-        const nganLoVal = parts[1] || '333';
+    console.log("Payload gửi đi:", payload); // Anh có thể F12 bật Console để xem dữ liệu cực kỳ gọn gàng
 
-        // 3. Đóng gói payload SẠCH (các ô không đo sẽ hoàn toàn là "")
-       // 1. Hàm phụ trợ: Chỉ lấy giá trị nếu CÓ NHẬP, KHÔNG NHẬP -> TRẢ VỀ UNDEFINED (Để xóa key)
-        function getRealVal(id) {
-            const el = document.getElementById(id);
-            if (!el) return undefined;
-            const val = el.value ? el.value.trim() : '';
-            if (val === '0' || val === '0.00' || val === '-' || val === '') return undefined;
-            return val;
-        }
+    // 3. Gửi lên Google App Script
+    const formData = new FormData();
+    formData.append('payload', JSON.stringify(payload));
 
-        function getRealText(id) {
-            const el = document.getElementById(id);
-            if (!el) return undefined;
-            const txt = el.innerText ? el.innerText.trim() : '';
-            if (txt === '' || txt === '-' || txt === '75°C: -' || txt === 'K_đo: -' || txt.endsWith(':-') || txt.endsWith(': -')) return undefined;
-            return txt;
+    fetch(GOOGLE_WEB_APP_URL, {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.text())
+    .then(text => {
+        if(text === "OK") {
+            alert("🚀 ĐÃ GỬI DỮ LIỆU THÀNH CÔNG LÊN GOOGLE SHEET!");
+        } else {
+            alert("⚠️ Lỗi từ Server: " + text);
         }
+    })
+    .catch(err => alert("❌ Lỗi gửi: " + err));
+}
+    // ===============================================================================================================================================
 
         // 2. Hàm lọc bỏ hoàn toàn các key undefined ra khỏi object
         function removeUndefinedKeys(obj) {
