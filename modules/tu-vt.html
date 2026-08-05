@@ -222,9 +222,18 @@
     </div>
 
     <!-- ĐIỀU KHIỂN -->
+    <!-- ĐIỀU KHIỂN -->
     <div class="card">
         <button class="btn-action" onclick="saveDraftManually()" style="background:#0288d1;">💾 Tạm Lưu (Nháp)</button>
-        <button class="btn-action" onclick="exportWord()">📝 Xuất Biên Bản Word (.docx)</button>
+        
+        <!-- Thêm ô chọn file mẫu Word vào đây -->
+        <div style="margin: 10px 0; padding: 10px; background: #e3f2fd; border-radius: 6px; border: 1px dashed #1976d2;">
+            <label style="font-weight: bold; color: #1976d2;">1. Chọn File Word Mẫu (Template):</label><br>
+            <input type="file" id="template_file" accept=".docx" style="margin-top: 5px;">
+        </div>
+
+        <button class="btn-action" onclick="exportWord()">📝 2. Xuất Biên Bản Word (.docx)</button>
+        
         <button class="btn-action btn-cloud" onclick="syncOneDrive()">☁️ Lưu & Đồng Bộ OneDrive / Excel</button>
         <button class="btn-action" onclick="clearDraft()" style="background:#757575; font-size:11px; margin-top:4px;">🗑️ Xóa bản nháp để làm mới hoàn toàn</button>
     </div>
@@ -654,7 +663,67 @@
         .catch(err => alert("❌ Lỗi gửi: " + err));
     }
 
-    function exportWord() { alert("Đang tải dữ liệu xuất Biên Bản Word TU (.docx)..."); }
+    function exportWord() {
+    const fileInput = document.getElementById('template_file');
+    if (fileInput.files.length === 0) {
+        alert("⚠️ Anh phải chọn file Word mẫu (.docx) trước rồi mới xuất được nhé!");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+        const arrayBuffer = event.target.result;
+        
+        // 1. Gom toàn bộ dữ liệu hiện tại trên màn hình (Giống hệt lúc gửi Cloud)
+        const payload = {};
+        
+        // Lấy thông tin trạm từ LocalStorage
+        const sessionStr = localStorage.getItem('CURRENT_SESSION');
+        const sessionObj = sessionStr ? JSON.parse(sessionStr) : {};
+        payload["tu_tram"] = sessionObj.tram || "";
+        payload["tu_nganlo"] = sessionObj.nganLo || "";
+        payload["ngayTN"] = sessionObj.ngayDo || "";
+        payload["nguoiTN"] = sessionObj.nguoido || "";
+
+        // Quét lấy các con số đo được
+        const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], td[id^="${MODULE_PREFIX}"]`);
+        elements.forEach(el => {
+            let id = el.id;
+            let val = (el.tagName === "INPUT" || el.tagName === "SELECT") ? el.value : el.innerText;
+            payload[id] = val ? val.trim() : "";
+        });
+
+        try {
+            // 2. Nạp file Word vào thư viện PizZip & Docxtemplater
+            const zip = new PizZip(arrayBuffer);
+            const doc = new window.docxtemplater(zip, {
+                paragraphLoop: true,
+                linebreaks: true,
+            });
+
+            // 3. Trộn dữ liệu: Bơm toàn bộ payload phẳng vào file Word
+            doc.render(payload);
+
+            // 4. Đóng gói và tải file Word mới về máy
+            const out = doc.getZip().generate({
+                type: "blob",
+                mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            });
+            saveAs(out, `Bien_Ban_TU_${payload["tu_nganlo"] || "New"}.docx`);
+            
+            alert("🎉 Đã xuất Biên bản Word thành công! Anh kiểm tra thư mục Download nhé.");
+
+        } catch (error) {
+            console.error(error);
+            alert("❌ Lỗi tạo file Word. Anh bật F12 xem chi tiết. Lỗi: " + error.message);
+        }
+    };
+    
+    // Đọc file Word mẫu dưới dạng Array Buffer
+    reader.readAsArrayBuffer(file);
+}
 </script>
 
 </body>
