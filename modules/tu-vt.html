@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BIẾN ĐIỆN ÁP</title>
+    <!-- Cụm thư viện xuất Word chuẩn gốc -->
+    <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzip/3.1.4/pizzip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
         :root { --primary: #0d47a1; --bg: #f4f6f9; --card: rgba(255, 255, 255, 0.94); --border: #dadce0; }
@@ -699,7 +700,7 @@ const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`
 
         try {
             // 2. Nạp file Word vào thư viện PizZip & Docxtemplater
-            const zip = new window.PizZip(arrayBuffer);
+            const zip = new PizZip(arrayBuffer);
             const doc = new window.docxtemplater(zip, {
                 paragraphLoop: true,
                 linebreaks: true,
