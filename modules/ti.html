@@ -72,7 +72,7 @@
             </div>
             <div class="form-group">
                 <label>Chế Độ Thí Nghiệm:</label>
-                <select id="tu_mode" onchange="calculateAll()">
+                <select id="ti_mode" onchange="calculateAll()">
                     <option value="new" selected>Mới / Sau lắp đặt</option>
                     <option value="1yr">Sau 1 năm vận hành</option>
                     <option value="3yr">Sau 3 năm vận hành</option>
@@ -82,7 +82,7 @@
             </div>
             <div class="form-group">
                 <label>Hãng Sản Xuất (Hỗ trợ R_CĐ):</label>
-                <select id="tu_mfg" onchange="calculateAll()">
+                <select id="ti_mfg" onchange="calculateAll()">
                     <option value="ABB">ABB (R_CĐ nhị thứ ≥ 5 MΩ)</option>
                     <option value="Sieyun">Sieyun TYD (R_CĐ nhị thứ ≥ 1000 MΩ)</option>
                     <option value="Areva">Areva (R_CĐ nhị thứ ≥ 50 MΩ)</option>
@@ -93,7 +93,7 @@
             </div>
             <div class="form-group">
                 <label>Vật Liệu Cách Điện (Tgδ):</label>
-                <select id="tu_insulation" onchange="calculateAll()">
+                <select id="insulation" onchange="calculateAll()">
                     <option value="paper" selected>Loại Giấy (Mới ≤0.5%, Cũ ≤0.8%)</option>
                     <option value="paper_film_paper">Giấy-Film-Giấy (Mới ≤0.2%, Cũ ≤0.3%)</option>
                     <option value="film_paper_film">Film-Giấy-Film (Mới ≤0.2%, Cũ ≤0.3%)</option>
@@ -102,7 +102,7 @@
             </div>
             <div class="form-group">
                 <label>Số Cuộn Nhị Thứ:</label>
-                <select id="tu_num_windings" onchange="changeWindingCount()">
+                <select id="num_windings" onchange="changeWindingCount()">
                     <option value="2">2 Cuộn nhị thứ</option>
                     <option value="3" selected>3 Cuộn nhị thứ</option>
                     <option value="4">4 Cuộn nhị thứ</option>
@@ -110,15 +110,15 @@
             </div>
             <div class="form-group">
                 <label>Nhiệt Độ Dầu TU (°C):</label>
-                <input type="number" id="tu_temp" value="23" oninput="calculateAll()">
+                <input type="number" id="ti_temp" value="23" oninput="calculateAll()">
             </div>
             <div class="form-group">
                 <label>Độ Ẩm Môi Trường (%):</label>
-                <input type="number" id="tu_humidity" value="75" oninput="calculateAll()">
+                <input type="number" id="ti_humidity" value="75" oninput="calculateAll()">
             </div>
             <div class="form-group">
                 <label>U1đm Sơ Cấp (Cấp Điện Áp):</label>
-                <select id="tu_u1_dm" onchange="calculateAll()">
+                <select id="ti_u1_dm" onchange="calculateAll()">
                     <option value="550/1.73205">550 / √3 kV (> 66kV)</option>
                     <option value="220/1.73205" selected>220 / √3 kV (> 66kV)</option>
                     <option value="110/1.73205">110 / √3 kV (> 66kV)</option>
@@ -138,7 +138,7 @@
             <label class="chk-disable"><input type="checkbox" id="chk_sec1" onchange="toggleSection('body_sec1', this)"> KTH</label>
         </div>
         <div id="body_sec1">
-            <input type="text" id="tu_visual" value="Bình thường, sứ không nứt vỡ, không rò rỉ dầu.">
+            <input type="text" id="ti_visual" value="Bình thường, sứ không nứt vỡ, không rò rỉ dầu.">
         </div>
     </div>
 
@@ -199,7 +199,7 @@
             <div class="grid" style="margin-bottom:8px;">
                 <div class="form-group">
                     <label>U1_tn Thử Nghiệm Sơ Cấp (kV):</label>
-                    <input type="number" id="tu_u1_tn" value="10" oninput="calculateAll()">
+                    <input type="number" id="ti_u1_tn" value="10" oninput="calculateAll()">
                 </div>
             </div>
             <div class="table-responsive" id="table_ratio_container"></div>
@@ -331,25 +331,25 @@
         return 300;
     }
 
-    /* --- ĐÃ THÊM TIỀN TỐ TU_ VÀO CÁC ID TRONG RENDER --- */
+    /* --- ĐÃ THÊM TIỀN TỐ ti_ VÀO CÁC ID TRONG RENDER --- */
     function renderRcdTable() {
-        const num = parseInt(document.getElementById('tu_num_windings').value);
+        const num = parseInt(document.getElementById('ti_num_windings').value);
         let html = `<table><thead><tr><th>Hạng Mục Đo</th><th>Tiêu Chuẩn</th><th>Pha A (MΩ)</th><th>Pha B (MΩ)</th><th>Pha C (MΩ)</th></tr></thead><tbody>`;
         html += `<tr>
             <td><b>Sơ cấp - Thứ cấp + Vỏ</b></td>
-            <td id="tu_std_rcd_pri">-</td>
-            <td><input type="number" id="tu_rcd_pri_a" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_a"></span></td>
-            <td><input type="number" id="tu_rcd_pri_b" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_b"></span></td>
-            <td><input type="number" id="tu_rcd_pri_c" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_c"></span></td>
+            <td id="ti_std_rcd_pri">-</td>
+            <td><input type="number" id="ti_rcd_pri_a" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_pri_a"></span></td>
+            <td><input type="number" id="ti_rcd_pri_b" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_pri_b"></span></td>
+            <td><input type="number" id="ti_rcd_pri_c" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_pri_c"></span></td>
         </tr>`;
         
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td>Cuộn ${i} - Các cuộn + Vỏ</td>
-                <td id="tu_std_rcd_sec${i}">-</td>
-                <td><input type="number" id="tu_rcd_sec${i}_a" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_a"></span></td>
-                <td><input type="number" id="tu_rcd_sec${i}_b" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_b"></span></td>
-                <td><input type="number" id="tu_rcd_sec${i}_c" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_c"></span></td>
+                <td id="ti_std_rcd_sec${i}">-</td>
+                <td><input type="number" id="ti_rcd_sec${i}_a" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_sec${i}_a"></span></td>
+                <td><input type="number" id="ti_rcd_sec${i}_b" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_sec${i}_b"></span></td>
+                <td><input type="number" id="ti_rcd_sec${i}_c" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_sec${i}_c"></span></td>
             </tr>`;
         }
         html += `</tbody></table>`;
@@ -357,26 +357,26 @@
     }
 
     function renderRdcTable() {
-        const num = parseInt(document.getElementById('tu_num_windings').value);
+        const num = parseInt(document.getElementById('ti_num_windings').value);
         let html = `<table><thead><tr><th>Cuộn Dây Nhị Thứ</th><th>R_NSX / Lần Trước</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td><b>Cuộn ${i}</b></td>
-                <td><input type="number" id="tu_rdc_ref_${i}" value="120" oninput="calculateAll()"></td>
+                <td><input type="number" id="ti_rdc_ref_${i}" value="120" oninput="calculateAll()"></td>
                 <td>
-                    <input type="number" id="tu_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A">
-                    <span class="sub-val" id="tu_rdc_75_${i}_a">75°C: -</span>
-                    <span class="sub-val" id="tu_rdc_status_${i}_a"></span>
+                    <input type="number" id="ti_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A">
+                    <span class="sub-val" id="ti_rdc_75_${i}_a">75°C: -</span>
+                    <span class="sub-val" id="ti_rdc_status_${i}_a"></span>
                 </td>
                 <td>
-                    <input type="number" id="tu_rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B">
-                    <span class="sub-val" id="tu_rdc_75_${i}_b">75°C: -</span>
-                    <span class="sub-val" id="tu_rdc_status_${i}_b"></span>
+                    <input type="number" id="ti_rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B">
+                    <span class="sub-val" id="ti_rdc_75_${i}_b">75°C: -</span>
+                    <span class="sub-val" id="ti_rdc_status_${i}_b"></span>
                 </td>
                 <td>
-                    <input type="number" id="tu_rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C">
-                    <span class="sub-val" id="tu_rdc_75_${i}_c">75°C: -</span>
-                    <span class="sub-val" id="tu_rdc_status_${i}_c"></span>
+                    <input type="number" id="ti_rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C">
+                    <span class="sub-val" id="ti_rdc_75_${i}_c">75°C: -</span>
+                    <span class="sub-val" id="ti_rdc_status_${i}_c"></span>
                 </td>
             </tr>`;
         }
@@ -385,14 +385,14 @@
     }
 
     function renderPolTable() {
-        const num = parseInt(document.getElementById('tu_num_windings').value);
+        const num = parseInt(document.getElementById('ti_num_windings').value);
         let html = `<table><thead><tr><th>Cuộn Nhị Thứ</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td><b>Cuộn ${i}</b><br><span class="note-text">(Sơ: A-N; Thứ: ${i}a-${i}n)</span></td>
-                <td><select id="tu_pol_eval_${i}_a"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
-                <td><select id="tu_pol_eval_${i}_b"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
-                <td><select id="tu_pol_eval_${i}_c"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
+                <td><select id="ti_pol_eval_${i}_a"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
+                <td><select id="ti_pol_eval_${i}_b"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
+                <td><select id="ti_pol_eval_${i}_c"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
             </tr>`;
         }
         html += `</tbody></table>`;
@@ -400,16 +400,16 @@
     }
 
     function renderRatioTable() {
-        const num = parseInt(document.getElementById('tu_num_windings').value);
+        const num = parseInt(document.getElementById('ti_num_windings').value);
         let html = `<table><thead><tr><th rowspan="2">Pha</th>`;
         for(let i=1; i<=num; i++) {
             html += `<th colspan="2">Cuộn ${i}<br>
-                <select id="tu_u2_dm_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
+                <select id="ti_u2_dm_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
                     <option value="110/1.73205" selected>110/√3 V (63.51V)</option>
                     <option value="110/3">110/3 V (36.67V)</option>
                     <option value="110">110 V (Pha-Pha)</option>
                 </select><br>
-                <select id="tu_acc_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
+                <select id="ti_acc_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
                     <option value="0.2" selected>CCX 0.2 (±0.2%)</option>
                     <option value="0.5">CCX 0.5 (±0.5%)</option>
                     <option value="1.0">CCX 1.0 (±1.0%)</option>
@@ -428,12 +428,12 @@
             for(let i=1; i<=num; i++) {
                 html += `
                     <td>
-                        <input type="number" id="tu_u2_w${i}_${pha}_1" step="any" placeholder="L1 (V)" oninput="calculateAll()" style="margin-bottom:2px;">
-                        <input type="number" id="tu_u2_w${i}_${pha}_2" step="any" placeholder="L2 (V)" oninput="calculateAll()">
+                        <input type="number" id="ti_u2_w${i}_${pha}_1" step="any" placeholder="L1 (V)" oninput="calculateAll()" style="margin-bottom:2px;">
+                        <input type="number" id="ti_u2_w${i}_${pha}_2" step="any" placeholder="L2 (V)" oninput="calculateAll()">
                     </td>
                     <td>
-                        <span id="tu_err_w${i}_${pha}" style="font-weight:bold;">-</span>
-                        <span class="sub-val" id="tu_kdo_w${i}_${pha}">K_đo: -</span>
+                        <span id="ti_err_w${i}_${pha}" style="font-weight:bold;">-</span>
+                        <span class="sub-val" id="ti_kdo_w${i}_${pha}">K_đo: -</span>
                     </td>
                 `;
             }
@@ -450,10 +450,10 @@
                 html += `<tr>
                     ${idx === 0 ? `<td rowspan="3"><b>Pha ${pha}</b></td>` : ''}
                     <td><b>${cap}</b></td>
-                    <td><input type="number" id="tu_tg_${pha}_${idx}" step="0.001" placeholder="Nhập Tgδ" oninput="calculateAll()"></td>
-                    <td><input type="number" id="tu_cmfg_${pha}_${idx}" placeholder="Nhập C_NSX" oninput="calculateAll()"></td>
-                    <td><input type="number" id="tu_cmeas_${pha}_${idx}" placeholder="Nhập C_đo" oninput="calculateAll()"></td>
-                    <td id="tu_cerr_${pha}_${idx}">-</td>
+                    <td><input type="number" id="ti_tg_${pha}_${idx}" step="0.001" placeholder="Nhập Tgδ" oninput="calculateAll()"></td>
+                    <td><input type="number" id="ti_cmfg_${pha}_${idx}" placeholder="Nhập C_NSX" oninput="calculateAll()"></td>
+                    <td><input type="number" id="ti_cmeas_${pha}_${idx}" placeholder="Nhập C_đo" oninput="calculateAll()"></td>
+                    <td id="ti_cerr_${pha}_${idx}">-</td>
                 </tr>`;
             });
         });
@@ -461,20 +461,20 @@
         document.getElementById('table_tg_container').innerHTML = html;
     }
 
-    /* ĐÃ CẬP NHẬT TÊN ID BÊN TRONG HÀM CALCULATEALL THEO ĐÚNG TU_ */
+    /* ĐÃ CẬP NHẬT TÊN ID BÊN TRONG HÀM CALCULATEALL THEO ĐÚNG ti_ */
     function calculateAll() {
-        const temp = parseFloat(document.getElementById('tu_temp').value) || 23;
-        const u1_dm_str = document.getElementById('tu_u1_dm').value;
-        const mfg = document.getElementById('tu_mfg').value;
-        const num = parseInt(document.getElementById('tu_num_windings').value);
+        const temp = parseFloat(document.getElementById('ti_temp').value) || 23;
+        const u1_dm_str = document.getElementById('ti_u1_dm').value;
+        const mfg = document.getElementById('ti_mfg').value;
+        const num = parseInt(document.getElementById('ti_num_windings').value);
 
         const stdPriRcd = getInterpolatedPriRcd(temp, u1_dm_str);
-        const stdPriEl = document.getElementById('tu_std_rcd_pri');
+        const stdPriEl = document.getElementById('ti_std_rcd_pri');
         if(stdPriEl) stdPriEl.innerText = `≥ ${stdPriRcd.toFixed(0)} MΩ (${temp}°C)`;
 
         ['a', 'b', 'c'].forEach(p => {
-            const val = parseFloat(document.getElementById(`tu_rcd_pri_${p}`)?.value) || 0;
-            const el = document.getElementById(`tu_rcd_eval_pri_${p}`);
+            const val = parseFloat(document.getElementById(`ti_rcd_pri_${p}`)?.value) || 0;
+            const el = document.getElementById(`ti_rcd_eval_pri_${p}`);
             if(val > 0 && el) {
                 const pass = val >= stdPriRcd;
                 el.innerText = pass ? "✔ ĐẠT" : "✘ KHÔNG ĐẠT";
@@ -489,12 +489,12 @@
         else if (mfg === 'Alstom') stdSecRcd = 25;
 
         for(let i=1; i<=num; i++) {
-            const stdEl = document.getElementById(`tu_std_rcd_sec${i}`);
+            const stdEl = document.getElementById(`ti_std_rcd_sec${i}`);
             if(stdEl) stdEl.innerText = `≥ ${stdSecRcd} MΩ`;
             
             ['a', 'b', 'c'].forEach(p => {
-                const val = parseFloat(document.getElementById(`tu_rcd_sec${i}_${p}`)?.value) || 0;
-                const el = document.getElementById(`tu_rcd_eval_sec${i}_${p}`);
+                const val = parseFloat(document.getElementById(`ti_rcd_sec${i}_${p}`)?.value) || 0;
+                const el = document.getElementById(`ti_rcd_eval_sec${i}_${p}`);
                 if(val > 0 && el) {
                     const pass = val >= stdSecRcd;
                     el.innerText = pass ? "✔ ĐẠT" : "✘ KHÔNG ĐẠT";
@@ -504,11 +504,11 @@
         }
 
         for(let i=1; i<=num; i++) {
-            const ref = parseFloat(document.getElementById(`tu_rdc_ref_${i}`)?.value) || 0;
+            const ref = parseFloat(document.getElementById(`ti_rdc_ref_${i}`)?.value) || 0;
             ['a', 'b', 'c'].forEach(p => {
-                const mVal = parseFloat(document.getElementById(`tu_rdc_m_${i}_${p}`)?.value) || 0;
-                const el75 = document.getElementById(`tu_rdc_75_${i}_${p}`);
-                const elStatus = document.getElementById(`tu_rdc_status_${i}_${p}`);
+                const mVal = parseFloat(document.getElementById(`ti_rdc_m_${i}_${p}`)?.value) || 0;
+                const el75 = document.getElementById(`ti_rdc_75_${i}_${p}`);
+                const elStatus = document.getElementById(`ti_rdc_status_${i}_${p}`);
                 if(mVal > 0) {
                     const r75 = mVal * ((235 + 75) / (235 + temp));
                     if(el75) el75.innerText = `75°C: ${r75.toFixed(2)}`;
@@ -525,30 +525,30 @@
             });
         }
 
-        const u1_dm_val = eval(document.getElementById('tu_u1_dm').value) * 1000;
-        const u1_tn_val = parseFloat(document.getElementById('tu_u1_tn').value) * 1000;
+        const u1_dm_val = eval(document.getElementById('ti_u1_dm').value) * 1000;
+        const u1_tn_val = parseFloat(document.getElementById('ti_u1_tn').value) * 1000;
 
         if(u1_dm_val && u1_tn_val) {
             ['A', 'B', 'C'].forEach(pha => {
                 for(let i=1; i<=num; i++) {
-                    const u2_dm_w = eval(document.getElementById(`tu_u2_dm_w${i}`)?.value || "63.51");
-                    const accStr = document.getElementById(`tu_acc_w${i}`)?.value || "0.2";
+                    const u2_dm_w = eval(document.getElementById(`ti_u2_dm_w${i}`)?.value || "63.51");
+                    const accStr = document.getElementById(`ti_acc_w${i}`)?.value || "0.2";
                     let accLimit = (accStr === "3P" || accStr === "3.0") ? 3.0 : (accStr === "6P" ? 6.0 : parseFloat(accStr));
 
                     const K_dm = u1_dm_val / u2_dm_w;
-                    const u2_1 = parseFloat(document.getElementById(`tu_u2_w${i}_${pha}_1`)?.value);
-                    const u2_2 = parseFloat(document.getElementById(`tu_u2_w${i}_${pha}_2`)?.value);
+                    const u2_1 = parseFloat(document.getElementById(`ti_u2_w${i}_${pha}_1`)?.value);
+                    const u2_2 = parseFloat(document.getElementById(`ti_u2_w${i}_${pha}_2`)?.value);
 
                     if(!isNaN(u2_1) && !isNaN(u2_2)) {
                         const u2_avg = (u2_1 + u2_2) / 2;
                         const K_do = u1_tn_val / u2_avg;
                         const error = ((K_do - K_dm) / K_dm) * 100;
-                        const errCell = document.getElementById(`tu_err_w${i}_${pha}`);
+                        const errCell = document.getElementById(`ti_err_w${i}_${pha}`);
                         if(errCell) {
                             errCell.innerText = `f: ${error.toFixed(3)}%`;
                             errCell.className = Math.abs(error) <= accLimit ? 'pass' : 'fail';
                         }
-                        const kdoCell = document.getElementById(`tu_kdo_w${i}_${pha}`);
+                        const kdoCell = document.getElementById(`ti_kdo_w${i}_${pha}`);
                         if(kdoCell) kdoCell.innerText = `K_đo: ${K_do.toFixed(2)}`;
                     }
                 }
@@ -557,11 +557,11 @@
 
         ['A', 'B', 'C'].forEach(pha => {
             for(let idx=0; idx<3; idx++) {
-                const cmfg = parseFloat(document.getElementById(`tu_cmfg_${pha}_${idx}`)?.value);
-                const cmeas = parseFloat(document.getElementById(`tu_cmeas_${pha}_${idx}`)?.value);
+                const cmfg = parseFloat(document.getElementById(`ti_cmfg_${pha}_${idx}`)?.value);
+                const cmeas = parseFloat(document.getElementById(`ti_cmeas_${pha}_${idx}`)?.value);
                 if(!isNaN(cmfg) && !isNaN(cmeas) && cmfg > 0) {
                     const cerr = ((cmeas - cmfg) / cmfg) * 100;
-                    const errCell = document.getElementById(`tu_cerr_${pha}_${idx}`);
+                    const errCell = document.getElementById(`ti_cerr_${pha}_${idx}`);
                     if(errCell) {
                         errCell.innerText = cerr.toFixed(2) + '%';
                         errCell.className = (cerr >= -5.0 && cerr <= 10.0) ? 'pass' : 'fail';
@@ -573,12 +573,12 @@
 
     function saveDraftManually() {
         const draftData = captureCurrentInputValues();
-        localStorage.setItem('TU_DRAFT_DATA', JSON.stringify(draftData));
+        localStorage.setItem('ti_DRAFT_DATA', JSON.stringify(draftData));
         alert("💾 Đã tạm lưu bản nháp thành công vào thiết bị!");
     }
 
     function loadDraftData() {
-        const savedDraft = localStorage.getItem('TU_DRAFT_DATA');
+        const savedDraft = localStorage.getItem('ti_DRAFT_DATA');
         if (savedDraft) {
             const draftValues = JSON.parse(savedDraft);
             restoreInputValues(draftValues);
@@ -587,7 +587,7 @@
 
     function clearDraft() {
         if (confirm("⚠️ Anh có chắc muốn xóa toàn bộ dữ liệu tạm lưu để làm mới không?")) {
-            localStorage.removeItem('TU_DRAFT_DATA');
+            localStorage.removeItem('ti_DRAFT_DATA');
             location.reload();
         }
     }
@@ -609,8 +609,8 @@
         const ngDo = sessionObj.ngayDo || new Date().toISOString().split('T')[0];
 
         const payload = {
-            module_name: "TU",
-            maPhien: 'TU_' + Date.now(),
+            module_name: "TI",
+            maPhien: 'ti_' + Date.now(),
             timestamp: new Date().toLocaleString('vi-VN'),
             ngayTN: ngDo,
             tram: trVal,
