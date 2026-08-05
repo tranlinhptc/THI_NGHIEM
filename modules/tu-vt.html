@@ -233,6 +233,7 @@
 <script>
     const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyZM7MgZPEZHFU5Vj3h5u4o-Qaf8BAuGuETwVKs_jUikb9HhcPp-8ERBok-vVeUlDTx/exec";
     const SECRET_PIN = "789"; 
+    const MODULE_PREFIX = "tu_"; // Tiền tố cho module TU
 
     window.onload = function() {
         const savedSession = localStorage.getItem('CURRENT_SESSION');
@@ -259,48 +260,27 @@
         else sec.classList.remove('hidden-section');
     }
 
-    // HÀM KÉO KẾT QUẢ CŨ THEO TỪNG HẠNG MỤC
     function loadOldDataSection(sectionType) {
+        // (Giữ nguyên logic của anh)
         const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
         const nganLo = encodeURIComponent(sessionData.nganLo || '');
-
-        if (!nganLo) {
-            alert("⚠️ Chưa chọn Ngăn Lộ từ Trang Chủ!");
-            return;
-        }
-
+        if (!nganLo) { alert("⚠️ Chưa chọn Ngăn Lộ từ Trang Chủ!"); return; }
         const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}`;
 
-        fetch(fetchUrl)
-        .then(res => res.json())
-        .then(data => {
-            if (!data || Object.keys(data).length === 0) {
-                alert("ℹ️ Chưa có dữ liệu cũ cho Ngăn Lộ này!");
-                return;
-            }
-
+        fetch(fetchUrl).then(res => res.json()).then(data => {
+            if (!data || Object.keys(data).length === 0) { alert("ℹ️ Chưa có dữ liệu cũ!"); return; }
             let count = 0;
             for (let key in data) {
                 const el = document.getElementById(key);
                 if (el && data[key] !== undefined && data[key] !== '') {
-                    if (el.tagName === 'INPUT') {
-                        el.placeholder = data[key];
-                        count++;
-                    } else if (el.tagName === 'SELECT') {
-                        el.value = data[key];
-                        count++;
-                    }
+                    if (el.tagName === 'INPUT') { el.placeholder = data[key]; count++; } 
+                    else if (el.tagName === 'SELECT') { el.value = data[key]; count++; }
                 }
             }
-
             calculateAll();
-            if (count > 0) {
-                alert("⚡ Đã tải xong kết quả mới nhất cho Ngăn lộ!");
-            } else {
-                alert("ℹ️ Không tìm thấy dữ liệu ô tương ứng!");
-            }
-        })
-        .catch(err => alert("❌ Lỗi tải Cloud: " + err));
+            if (count > 0) alert("⚡ Đã tải xong kết quả mới nhất cho Ngăn lộ!");
+            else alert("ℹ️ Không tìm thấy dữ liệu ô tương ứng!");
+        }).catch(err => alert("❌ Lỗi tải Cloud: " + err));
     }
 
     function captureCurrentInputValues() {
@@ -338,11 +318,9 @@
         } else {
             points = [[20, 400], [30, 200], [40, 100], [50, 50], [60, 25]];
         }
-
         for (let p of points) { if (temp === p[0]) return p[1]; }
         if (temp < points[0][0]) return points[0][1];
         if (temp > points[points.length - 1][0]) return points[points.length - 1][1];
-
         for (let i = 0; i < points.length - 1; i++) {
             if (temp > points[i][0] && temp < points[i+1][0]) {
                 const t1 = points[i][0], r1 = points[i][1];
@@ -353,24 +331,25 @@
         return 300;
     }
 
+    /* --- ĐÃ THÊM TIỀN TỐ TU_ VÀO CÁC ID TRONG RENDER --- */
     function renderRcdTable() {
         const num = parseInt(document.getElementById('tu_num_windings').value);
         let html = `<table><thead><tr><th>Hạng Mục Đo</th><th>Tiêu Chuẩn</th><th>Pha A (MΩ)</th><th>Pha B (MΩ)</th><th>Pha C (MΩ)</th></tr></thead><tbody>`;
         html += `<tr>
             <td><b>Sơ cấp - Thứ cấp + Vỏ</b></td>
-            <td id="std_rcd_pri">-</td>
-            <td><input type="number" id="rcd_pri_a" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_pri_a"></span></td>
-            <td><input type="number" id="rcd_pri_b" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_pri_b"></span></td>
-            <td><input type="number" id="rcd_pri_c" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_pri_c"></span></td>
+            <td id="tu_std_rcd_pri">-</td>
+            <td><input type="number" id="tu_rcd_pri_a" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_a"></span></td>
+            <td><input type="number" id="tu_rcd_pri_b" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_b"></span></td>
+            <td><input type="number" id="tu_rcd_pri_c" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_c"></span></td>
         </tr>`;
         
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td>Cuộn ${i} - Các cuộn + Vỏ</td>
-                <td id="std_rcd_sec${i}">-</td>
-                <td><input type="number" id="rcd_sec${i}_a" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_sec${i}_a"></span></td>
-                <td><input type="number" id="rcd_sec${i}_b" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_sec${i}_b"></span></td>
-                <td><input type="number" id="rcd_sec${i}_c" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_sec${i}_c"></span></td>
+                <td id="tu_std_rcd_sec${i}">-</td>
+                <td><input type="number" id="tu_rcd_sec${i}_a" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_a"></span></td>
+                <td><input type="number" id="tu_rcd_sec${i}_b" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_b"></span></td>
+                <td><input type="number" id="tu_rcd_sec${i}_c" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_c"></span></td>
             </tr>`;
         }
         html += `</tbody></table>`;
@@ -380,25 +359,24 @@
     function renderRdcTable() {
         const num = parseInt(document.getElementById('tu_num_windings').value);
         let html = `<table><thead><tr><th>Cuộn Dây Nhị Thứ</th><th>R_NSX / Lần Trước</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
-
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td><b>Cuộn ${i}</b></td>
-                <td><input type="number" id="rdc_ref_${i}" value="120" oninput="calculateAll()"></td>
+                <td><input type="number" id="tu_rdc_ref_${i}" value="120" oninput="calculateAll()"></td>
                 <td>
-                    <input type="number" id="rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A">
-                    <span class="sub-val" id="rdc_75_${i}_a">75°C: -</span>
-                    <span class="sub-val" id="rdc_status_${i}_a"></span>
+                    <input type="number" id="tu_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A">
+                    <span class="sub-val" id="tu_rdc_75_${i}_a">75°C: -</span>
+                    <span class="sub-val" id="tu_rdc_status_${i}_a"></span>
                 </td>
                 <td>
-                    <input type="number" id="rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B">
-                    <span class="sub-val" id="rdc_75_${i}_b">75°C: -</span>
-                    <span class="sub-val" id="rdc_status_${i}_b"></span>
+                    <input type="number" id="tu_rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B">
+                    <span class="sub-val" id="tu_rdc_75_${i}_b">75°C: -</span>
+                    <span class="sub-val" id="tu_rdc_status_${i}_b"></span>
                 </td>
                 <td>
-                    <input type="number" id="rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C">
-                    <span class="sub-val" id="rdc_75_${i}_c">75°C: -</span>
-                    <span class="sub-val" id="rdc_status_${i}_c"></span>
+                    <input type="number" id="tu_rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C">
+                    <span class="sub-val" id="tu_rdc_75_${i}_c">75°C: -</span>
+                    <span class="sub-val" id="tu_rdc_status_${i}_c"></span>
                 </td>
             </tr>`;
         }
@@ -412,9 +390,9 @@
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td><b>Cuộn ${i}</b><br><span class="note-text">(Sơ: A-N; Thứ: ${i}a-${i}n)</span></td>
-                <td><select id="pol_eval_${i}_a"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
-                <td><select id="pol_eval_${i}_b"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
-                <td><select id="pol_eval_${i}_c"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
+                <td><select id="tu_pol_eval_${i}_a"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
+                <td><select id="tu_pol_eval_${i}_b"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
+                <td><select id="tu_pol_eval_${i}_c"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
             </tr>`;
         }
         html += `</tbody></table>`;
@@ -426,12 +404,12 @@
         let html = `<table><thead><tr><th rowspan="2">Pha</th>`;
         for(let i=1; i<=num; i++) {
             html += `<th colspan="2">Cuộn ${i}<br>
-                <select id="u2_dm_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
+                <select id="tu_u2_dm_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
                     <option value="110/1.73205" selected>110/√3 V (63.51V)</option>
                     <option value="110/3">110/3 V (36.67V)</option>
                     <option value="110">110 V (Pha-Pha)</option>
                 </select><br>
-                <select id="acc_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
+                <select id="tu_acc_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
                     <option value="0.2" selected>CCX 0.2 (±0.2%)</option>
                     <option value="0.5">CCX 0.5 (±0.5%)</option>
                     <option value="1.0">CCX 1.0 (±1.0%)</option>
@@ -450,12 +428,12 @@
             for(let i=1; i<=num; i++) {
                 html += `
                     <td>
-                        <input type="number" id="u2_w${i}_${pha}_1" step="any" placeholder="L1 (V)" oninput="calculateAll()" style="margin-bottom:2px;">
-                        <input type="number" id="u2_w${i}_${pha}_2" step="any" placeholder="L2 (V)" oninput="calculateAll()">
+                        <input type="number" id="tu_u2_w${i}_${pha}_1" step="any" placeholder="L1 (V)" oninput="calculateAll()" style="margin-bottom:2px;">
+                        <input type="number" id="tu_u2_w${i}_${pha}_2" step="any" placeholder="L2 (V)" oninput="calculateAll()">
                     </td>
                     <td>
-                        <span id="err_w${i}_${pha}" style="font-weight:bold;">-</span>
-                        <span class="sub-val" id="kdo_w${i}_${pha}">K_đo: -</span>
+                        <span id="tu_err_w${i}_${pha}" style="font-weight:bold;">-</span>
+                        <span class="sub-val" id="tu_kdo_w${i}_${pha}">K_đo: -</span>
                     </td>
                 `;
             }
@@ -467,16 +445,15 @@
 
     function renderTgTable() {
         let html = `<table><thead><tr><th>Pha</th><th>Tụ đo</th><th>Tgδ (%) Đo</th><th>C_NSX (pF)</th><th>C_Đo (pF)</th><th>Sai số %</th></tr></thead><tbody>`;
-
         ['A', 'B', 'C'].forEach(pha => {
             ['C1', 'C2', 'C_Total'].forEach((cap, idx) => {
                 html += `<tr>
                     ${idx === 0 ? `<td rowspan="3"><b>Pha ${pha}</b></td>` : ''}
                     <td><b>${cap}</b></td>
-                    <td><input type="number" id="tg_${pha}_${idx}" step="0.001" placeholder="Nhập Tgδ" oninput="calculateAll()"></td>
-                    <td><input type="number" id="cmfg_${pha}_${idx}" placeholder="Nhập C_NSX" oninput="calculateAll()"></td>
-                    <td><input type="number" id="cmeas_${pha}_${idx}" placeholder="Nhập C_đo" oninput="calculateAll()"></td>
-                    <td id="cerr_${pha}_${idx}">-</td>
+                    <td><input type="number" id="tu_tg_${pha}_${idx}" step="0.001" placeholder="Nhập Tgδ" oninput="calculateAll()"></td>
+                    <td><input type="number" id="tu_cmfg_${pha}_${idx}" placeholder="Nhập C_NSX" oninput="calculateAll()"></td>
+                    <td><input type="number" id="tu_cmeas_${pha}_${idx}" placeholder="Nhập C_đo" oninput="calculateAll()"></td>
+                    <td id="tu_cerr_${pha}_${idx}">-</td>
                 </tr>`;
             });
         });
@@ -484,6 +461,7 @@
         document.getElementById('table_tg_container').innerHTML = html;
     }
 
+    /* ĐÃ CẬP NHẬT TÊN ID BÊN TRONG HÀM CALCULATEALL THEO ĐÚNG TU_ */
     function calculateAll() {
         const temp = parseFloat(document.getElementById('tu_temp').value) || 23;
         const u1_dm_str = document.getElementById('tu_u1_dm').value;
@@ -491,11 +469,12 @@
         const num = parseInt(document.getElementById('tu_num_windings').value);
 
         const stdPriRcd = getInterpolatedPriRcd(temp, u1_dm_str);
-        document.getElementById('std_rcd_pri').innerText = `≥ ${stdPriRcd.toFixed(0)} MΩ (${temp}°C)`;
+        const stdPriEl = document.getElementById('tu_std_rcd_pri');
+        if(stdPriEl) stdPriEl.innerText = `≥ ${stdPriRcd.toFixed(0)} MΩ (${temp}°C)`;
 
         ['a', 'b', 'c'].forEach(p => {
-            const val = parseFloat(document.getElementById(`rcd_pri_${p}`)?.value) || 0;
-            const el = document.getElementById(`rcd_eval_pri_${p}`);
+            const val = parseFloat(document.getElementById(`tu_rcd_pri_${p}`)?.value) || 0;
+            const el = document.getElementById(`tu_rcd_eval_pri_${p}`);
             if(val > 0 && el) {
                 const pass = val >= stdPriRcd;
                 el.innerText = pass ? "✔ ĐẠT" : "✘ KHÔNG ĐẠT";
@@ -510,12 +489,12 @@
         else if (mfg === 'Alstom') stdSecRcd = 25;
 
         for(let i=1; i<=num; i++) {
-            const stdEl = document.getElementById(`std_rcd_sec${i}`);
+            const stdEl = document.getElementById(`tu_std_rcd_sec${i}`);
             if(stdEl) stdEl.innerText = `≥ ${stdSecRcd} MΩ`;
             
             ['a', 'b', 'c'].forEach(p => {
-                const val = parseFloat(document.getElementById(`rcd_sec${i}_${p}`)?.value) || 0;
-                const el = document.getElementById(`rcd_eval_sec${i}_${p}`);
+                const val = parseFloat(document.getElementById(`tu_rcd_sec${i}_${p}`)?.value) || 0;
+                const el = document.getElementById(`tu_rcd_eval_sec${i}_${p}`);
                 if(val > 0 && el) {
                     const pass = val >= stdSecRcd;
                     el.innerText = pass ? "✔ ĐẠT" : "✘ KHÔNG ĐẠT";
@@ -525,17 +504,14 @@
         }
 
         for(let i=1; i<=num; i++) {
-            const ref = parseFloat(document.getElementById(`rdc_ref_${i}`)?.value) || 0;
-
+            const ref = parseFloat(document.getElementById(`tu_rdc_ref_${i}`)?.value) || 0;
             ['a', 'b', 'c'].forEach(p => {
-                const mVal = parseFloat(document.getElementById(`rdc_m_${i}_${p}`)?.value) || 0;
-                const el75 = document.getElementById(`rdc_75_${i}_${p}`);
-                const elStatus = document.getElementById(`rdc_status_${i}_${p}`);
-
+                const mVal = parseFloat(document.getElementById(`tu_rdc_m_${i}_${p}`)?.value) || 0;
+                const el75 = document.getElementById(`tu_rdc_75_${i}_${p}`);
+                const elStatus = document.getElementById(`tu_rdc_status_${i}_${p}`);
                 if(mVal > 0) {
                     const r75 = mVal * ((235 + 75) / (235 + temp));
                     if(el75) el75.innerText = `75°C: ${r75.toFixed(2)}`;
-
                     let passPha = true;
                     if(ref > 0) passPha = Math.abs(r75 - ref) / ref * 100 <= 5.0;
                     if(elStatus) {
@@ -555,27 +531,25 @@
         if(u1_dm_val && u1_tn_val) {
             ['A', 'B', 'C'].forEach(pha => {
                 for(let i=1; i<=num; i++) {
-                    const u2_dm_w = eval(document.getElementById(`u2_dm_w${i}`)?.value || "63.51");
-                    const accStr = document.getElementById(`acc_w${i}`)?.value || "0.2";
-                    let accLimit = 0.2;
-                    if(accStr === "3P" || accStr === "3.0") accLimit = 3.0;
-                    else if(accStr === "6P") accLimit = 6.0;
-                    else accLimit = parseFloat(accStr);
+                    const u2_dm_w = eval(document.getElementById(`tu_u2_dm_w${i}`)?.value || "63.51");
+                    const accStr = document.getElementById(`tu_acc_w${i}`)?.value || "0.2";
+                    let accLimit = (accStr === "3P" || accStr === "3.0") ? 3.0 : (accStr === "6P" ? 6.0 : parseFloat(accStr));
 
                     const K_dm = u1_dm_val / u2_dm_w;
-                    const u2_1 = parseFloat(document.getElementById(`u2_w${i}_${pha}_1`)?.value);
-                    const u2_2 = parseFloat(document.getElementById(`u2_w${i}_${pha}_2`)?.value);
+                    const u2_1 = parseFloat(document.getElementById(`tu_u2_w${i}_${pha}_1`)?.value);
+                    const u2_2 = parseFloat(document.getElementById(`tu_u2_w${i}_${pha}_2`)?.value);
 
                     if(!isNaN(u2_1) && !isNaN(u2_2)) {
                         const u2_avg = (u2_1 + u2_2) / 2;
                         const K_do = u1_tn_val / u2_avg;
                         const error = ((K_do - K_dm) / K_dm) * 100;
-
-                        const errCell = document.getElementById(`err_w${i}_${pha}`);
-                        errCell.innerText = `f: ${error.toFixed(3)}%`;
-                        errCell.className = Math.abs(error) <= accLimit ? 'pass' : 'fail';
-
-                        document.getElementById(`kdo_w${i}_${pha}`).innerText = `K_đo: ${K_do.toFixed(2)}`;
+                        const errCell = document.getElementById(`tu_err_w${i}_${pha}`);
+                        if(errCell) {
+                            errCell.innerText = `f: ${error.toFixed(3)}%`;
+                            errCell.className = Math.abs(error) <= accLimit ? 'pass' : 'fail';
+                        }
+                        const kdoCell = document.getElementById(`tu_kdo_w${i}_${pha}`);
+                        if(kdoCell) kdoCell.innerText = `K_đo: ${K_do.toFixed(2)}`;
                     }
                 }
             });
@@ -583,15 +557,15 @@
 
         ['A', 'B', 'C'].forEach(pha => {
             for(let idx=0; idx<3; idx++) {
-                const cmfg = parseFloat(document.getElementById(`cmfg_${pha}_${idx}`)?.value);
-                const cmeas = parseFloat(document.getElementById(`cmeas_${pha}_${idx}`)?.value);
-
+                const cmfg = parseFloat(document.getElementById(`tu_cmfg_${pha}_${idx}`)?.value);
+                const cmeas = parseFloat(document.getElementById(`tu_cmeas_${pha}_${idx}`)?.value);
                 if(!isNaN(cmfg) && !isNaN(cmeas) && cmfg > 0) {
                     const cerr = ((cmeas - cmfg) / cmfg) * 100;
-                    const errCell = document.getElementById(`cerr_${pha}_${idx}`);
-                    errCell.innerText = cerr.toFixed(2) + '%';
-                    const passC = cerr >= -5.0 && cerr <= 10.0;
-                    errCell.className = passC ? 'pass' : 'fail';
+                    const errCell = document.getElementById(`tu_cerr_${pha}_${idx}`);
+                    if(errCell) {
+                        errCell.innerText = cerr.toFixed(2) + '%';
+                        errCell.className = (cerr >= -5.0 && cerr <= 10.0) ? 'pass' : 'fail';
+                    }
                 }
             }
         });
@@ -600,7 +574,7 @@
     function saveDraftManually() {
         const draftData = captureCurrentInputValues();
         localStorage.setItem('TU_DRAFT_DATA', JSON.stringify(draftData));
-        alert("💾 Đã tạm lưu bản nháp thành công vào thiết bị!\nAnh có thể yên tâm tắt máy hoặc chuyển trang.");
+        alert("💾 Đã tạm lưu bản nháp thành công vào thiết bị!");
     }
 
     function loadDraftData() {
@@ -618,127 +592,49 @@
         }
     }
 
-    // ==============================================================================================================================================
-    const MODULE_PREFIX = "tu_"; 
-
-function syncOneDrive() {
-    const userPin = prompt("🔒 XÁC THỰC BẢO MẬT:\nNhập mã PIN (3 chữ số) để xác nhận gửi Cloud:");
-    if (userPin === null) return;
-    if (userPin.trim() !== SECRET_PIN) {
-        alert("❌ SAI MÃ PIN! Dữ liệu chưa được gửi để tránh bấm nhầm.");
-        return;
-    }
-
-    // 1. Khởi tạo Payload phẳng (Flat Object) - Rất tốt cho Word Templater
-    const payload = {
-        module_name: "TU", // Xác định sheet sẽ ghi trên Google Sheet (đổi thành "TI" cho file kia)
-        maPhien: 'TN_' + Date.now(),
-        timestamp: new Date().toLocaleString('vi-VN'),
-        ngayTN: new Date().toISOString().split('T')[0]
-        // Các thông tin chung khác lấy từ LocalStorage hoặc DOM...
-    };
-
-    // 2. Tự động thu thập TOÀN BỘ các thẻ có ID bắt đầu bằng MODULE_PREFIX (VD: "tu_")
-    // Bao gồm input, select và cả thẻ span chứa kết quả tính toán
-    const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"]`);
-    
-    elements.forEach(el => {
-        let id = el.id;
-        let value = "";
-
-        // Tách lấy giá trị tùy theo loại thẻ
-        if (el.tagName === "INPUT" || el.tagName === "SELECT") {
-            value = el.value ? el.value.trim() : "";
-        } else if (el.tagName === "SPAN" || el.tagName === "TD") {
-            value = el.innerText ? el.innerText.trim() : "";
+    // HÀM ĐỒNG BỘ THÔNG MINH MỚI
+    function syncOneDrive() {
+        const userPin = prompt("🔒 XÁC THỰC BẢO MẬT:\nNhập mã PIN (3 chữ số) để xác nhận gửi Cloud:");
+        if (userPin === null) return;
+        if (userPin.trim() !== SECRET_PIN) {
+            alert("❌ SAI MÃ PIN! Dữ liệu chưa được gửi để tránh bấm nhầm.");
+            return;
         }
 
-        // Lọc nhiễu: Loại bỏ các giá trị không hợp lệ hoặc mặc định chưa đo
-        if (value === '0' || value === '0.00' || value === '-' || value === '' || 
-            value.includes(':-') || value === 'K_đo: -') {
-            return; // Bỏ qua, không đưa vào payload
-        }
+        // Lấy thông tin trạm
+        const sessionStr = localStorage.getItem('CURRENT_SESSION');
+        const sessionObj = sessionStr ? JSON.parse(sessionStr) : {};
+        const trVal = sessionObj.tram || "Chưa nhập trạm";
+        const nlVal = sessionObj.nganLo || "Chưa nhập ngăn lộ";
+        const ngDo = sessionObj.ngayDo || new Date().toISOString().split('T')[0];
 
-        // Lưu vào payload với Key chính là ID của phần tử
-        payload[id] = value;
-    });
-
-    console.log("Payload gửi đi:", payload); // Anh có thể F12 bật Console để xem dữ liệu cực kỳ gọn gàng
-
-    // 3. Gửi lên Google App Script
-    const formData = new FormData();
-    formData.append('payload', JSON.stringify(payload));
-
-    fetch(GOOGLE_WEB_APP_URL, {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.text())
-    .then(text => {
-        if(text === "OK") {
-            alert("🚀 ĐÃ GỬI DỮ LIỆU THÀNH CÔNG LÊN GOOGLE SHEET!");
-        } else {
-            alert("⚠️ Lỗi từ Server: " + text);
-        }
-    })
-    .catch(err => alert("❌ Lỗi gửi: " + err));
-}
-    // ===============================================================================================================================================
-
-        // 2. Hàm lọc bỏ hoàn toàn các key undefined ra khỏi object
-        function removeUndefinedKeys(obj) {
-            var clean = {};
-            for (var k in obj) {
-                if (obj[k] !== undefined && obj[k] !== null) {
-                    if (typeof obj[k] === 'object' && !Array.isArray(obj[k])) {
-                        var sub = removeUndefinedKeys(obj[k]);
-                        if (Object.keys(sub).length > 0) clean[k] = sub;
-                    } else {
-                        clean[k] = obj[k];
-                    }
-                }
-            }
-            return clean;
-        }
-
-        // 3. Đóng gói payload
-        const rawPayload = {
+        const payload = {
+            module_name: "TU",
             maPhien: 'TU_' + Date.now(),
             timestamp: new Date().toLocaleString('vi-VN'),
-            tram: tramVal,
-            nganLo: nganLoVal,
-            ngayTN: new Date().toISOString().split('T')[0],
-            nguoiTN: '',
-            cheDo: document.getElementById('tu_mode')?.value || '',
-            hang: document.getElementById('tu_mfg')?.value || '',
-            cachDien: document.getElementById('tu_insulation')?.value || '',
-            nhietDo: document.getElementById('tu_temp')?.value || '',
-            doAm: document.getElementById('tu_humidity')?.value || '',
-            u1dm: document.getElementById('tu_u1_dm')?.value || '',
-            soCuon: document.getElementById('tu_num_windings')?.value || '3',
-            visual: document.getElementById('tu_visual')?.value || '',
-
-            rcd: {
-                pri_a: getRealVal('rcd_pri_a'), pri_b: getRealVal('rcd_pri_b'), pri_c: getRealVal('rcd_pri_c'),
-                c1_a: getRealVal('rcd_sec1_a'), c1_b: getRealVal('rcd_sec1_b'), c1_c: getRealVal('rcd_sec1_c'),
-                c2_a: getRealVal('rcd_sec2_a'), c2_b: getRealVal('rcd_sec2_b'), c2_c: getRealVal('rcd_sec2_c'),
-                c3_a: getRealVal('rcd_sec3_a'), c3_b: getRealVal('rcd_sec3_b'), c3_c: getRealVal('rcd_sec3_c'),
-                c4_a: getRealVal('rcd_sec4_a'), c4_b: getRealVal('rcd_sec4_b'), c4_c: getRealVal('rcd_sec4_c')
-            },
-            rdc: {
-                c1_ref: getRealVal('rdc_ref_1'),
-                c1_a: getRealVal('rdc_m_1_a'), c1_75a: getRealText('rdc_75_1_a'),
-                c1_b: getRealVal('rdc_m_1_b'), c1_75b: getRealText('rdc_75_1_b'),
-                c1_c: getRealVal('rdc_m_1_c'), c1_75c: getRealText('rdc_75_1_c'),
-                // ...
-            },
-            // ...
+            ngayTN: ngDo,
+            tram: trVal,
+            nganLo: nlVal
         };
 
-        // Lọc sạch key undefined trước khi gửi
-        const payload = removeUndefinedKeys(rawPayload);
+        const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], td[id^="${MODULE_PREFIX}"]`);
+        
+        elements.forEach(el => {
+            let id = el.id;
+            let value = "";
+            if (el.tagName === "INPUT" || el.tagName === "SELECT") {
+                value = el.value ? el.value.trim() : "";
+            } else if (el.tagName === "SPAN" || el.tagName === "TD") {
+                value = el.innerText ? el.innerText.trim() : "";
+            }
 
-        // 4. Gửi dữ liệu sạch đi
+            if (value === '0' || value === '0.00' || value === '-' || value === '' || 
+                value.includes(':-') || value === 'K_đo: -' || value === 'f: NaN%') {
+                return; 
+            }
+            payload[id] = value;
+        });
+
         const formData = new FormData();
         formData.append('payload', JSON.stringify(payload));
 
@@ -746,11 +642,19 @@ function syncOneDrive() {
             method: 'POST',
             body: formData
         })
-        .then(() => alert("🚀 ĐÃ GỬI DỮ LIỆU SẠCH THÀNH CÔNG LÊN GOOGLE SHEET!"))
+        .then(res => res.text())
+        .then(text => {
+            if(text === "OK") {
+                alert("🚀 ĐÃ GỬI DỮ LIỆU PHẲNG THÀNH CÔNG LÊN GOOGLE SHEET!");
+            } else {
+                alert("⚠️ Lỗi từ Server: " + text);
+            }
+        })
         .catch(err => alert("❌ Lỗi gửi: " + err));
     }
 
     function exportWord() { alert("Đang tải dữ liệu xuất Biên Bản Word TU (.docx)..."); }
 </script>
+
 </body>
 </html>
