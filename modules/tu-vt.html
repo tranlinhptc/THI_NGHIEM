@@ -666,7 +666,7 @@ const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`
         .then(res => res.text())
         .then(text => {
             if(text === "OK") {
-                alert("🚀 ĐÃ GỬI DỮ LIỆU PHẲNG THÀNH CÔNG LÊN GOOGLE SHEET!");
+                alert("🚀 ĐÃ CẬP NHẬT DỮ LIỆU!");
             } else {
                 alert("⚠️ Lỗi từ Server: " + text);
             }
