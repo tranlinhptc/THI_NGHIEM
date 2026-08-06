@@ -165,7 +165,16 @@
             </div>
             <div class="form-group">
                 <label for="input-nguoido">Kỹ thuật viên thực hiện:</label>
-                <input type="text" id="input-nguoido" placeholder="VD: Nguyễn Văn A">
+                <!-- <input type="text" id="input-nguoido" placeholder="VD: Nguyễn Văn A"> -->
+                <select id="input-nguoido">
+                    <!-- <option value="">-- Bấm chọn Trạm / Kho --</option> -->
+                    <option value="">--Chọn NV--</option>
+                    <option value="A">Mr A</option>
+                    <option value="B">Mr B</option>
+                    <option value="C">Mr C</option>
+                    <option value="D">Mr D</option>
+
+                </select>
             </div>
         </div>
     </div>
@@ -256,16 +265,22 @@
     function openModule(fileName) {
         const tram = document.getElementById('select-tram').value.trim();
         const nganLo = document.getElementById('input-nganlo').value.trim();
+        const nganLo = document.getElementById('input-nguoido').value.trim();
 
         if (!tram) {
-            alert("⚠️ VUI LÒNG CHỌN TRẠM BIẾN ÁP HOẶC KHO TRƯỚC!");
+            alert("⚠️ ANH CHỊ CHƯA CHỌN TRẠM/KHO!");
             document.getElementById('select-tram').focus();
             return;
         }
 
         if (!nganLo) {
-            alert("⚠️ VUI LÒNG NHẬP VỊ TRÍ / NGĂN LỘ / THIẾT BỊ TRƯỚC!");
+            alert("⚠️ ANH CHỊ CHƯA NHẬP CHỈ DANH THIẾT BỊ!");
             document.getElementById('input-nganlo').focus();
+            return;
+        }
+         if (!tram) {
+            alert("⚠️ ANH CHỊ CHƯA NHẬP TÊN!");
+            document.getElementById('input-nguoido').focus();
             return;
         }
 
