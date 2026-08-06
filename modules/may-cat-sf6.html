@@ -89,17 +89,14 @@
                     <!-- <option value="film_paper_film">Film-Giấy-Film (Mới ≤0.2%, Cũ ≤0.3%)</option> -->
                     <!-- <option value="film">Loại Film (Mới ≤0.1%, Cũ ≤0.15%)</option> -->
                 <!-- </select> -->
-            <!-- </div> -->
+            <!-- </div> --> -->
             <div class="form-group">
-        <label>Số cuộn đóng cắt:</label>
-        <select id="mc_num_coils" onchange="renderCoilTable()">
-            <option value="1">1 cuộn đóng/2 cuộn cắt</option>
-            <option value="2">2 cuộn đóng/1 cuộn cắt</option>
-            <option value="3">2 cuộn đóng/2 cuộn cắt</option>
-            </select>
-            <!-- Container để chứa bảng -->
-            <div id="table_rcd_container"></div>
-                <!--==================================================================================-->
+                <label>Số Cuộn Nhị Thứ:</label>
+                <select id="tu_num_windings" onchange="changeWindingCount()">
+                    <option value="2">2 Cuộn nhị thứ</option>
+                    <option value="3" selected>3 Cuộn nhị thứ</option>
+                    <option value="4">4 Cuộn nhị thứ</option>
+                </select>
             </div>
             <div class="form-group">
                 <label>Nhiệt Độ Dầu TU (°C):</label>
@@ -320,160 +317,87 @@
         calculateAll();
     }
 
-// ==========================================================================
-    function renderCoilTable() {
-    // Lấy giá trị từ select box số cuộn
-    const coilConfig = document.getElementById('mc_num_coils').value;
-    let coils = [];
+    function getInterpolatedPriRcd(temp, u1Str) {
+        let points = [];
+        if (u1Str.includes('550') || u1Str.includes('220') || u1Str.includes('110')) {
+            points = [[20, 1200], [30, 600], [40, 300], [50, 150], [60, 75]];
+        } else if (u1Str.includes('35') || u1Str.includes('22')) {
+            points = [[20, 1000], [30, 500], [40, 250], [50, 125], [60, 65]];
+        } else if (u1Str.includes('15')) {
+            points = [[20, 800], [30, 400], [40, 200], [50, 100], [60, 50]];
+        } else {
+            points = [[20, 400], [30, 200], [40, 100], [50, 50], [60, 25]];
+        }
 
-    // Xác định danh sách các cuộn dựa trên lựa chọn
-    switch (coilConfig) {
-        case "1":
-            coils = ["Cuộn đóng", "Cuộn cắt 1", "Cuộn cắt 2"];
-            break;
-        case "2":
-            coils = ["Cuộn đóng 1", "Cuộn đóng 2", "Cuộn cắt"];
-            break;
-        case "3":
-            coils = ["Cuộn đóng 1", "Cuộn đóng 2", "Cuộn cắt 1", "Cuộn cắt 2"];
-            break;
-        default:
-            coils = ["Cuộn đóng", "Cuộn cắt"]; // Fallback an toàn
+        for (let p of points) { if (temp === p[0]) return p[1]; }
+        if (temp < points[0][0]) return points[0][1];
+        if (temp > points[points.length - 1][0]) return points[points.length - 1][1];
+
+        for (let i = 0; i < points.length - 1; i++) {
+            if (temp > points[i][0] && temp < points[i+1][0]) {
+                const t1 = points[i][0], r1 = points[i][1];
+                const t2 = points[i+1][0], r2 = points[i+1][1];
+                return r1 + (r2 - r1) * (temp - t1) / (t2 - t1);
+            }
+        }
+        return 300;
     }
 
-    // Khởi tạo Header của bảng
-    let html = `
-        <table border="1" style="border-collapse: collapse; width: 100%; text-align: center;">
-            <thead>
-                <tr>
-                    <th>Tên Cuộn</th>
-                    <th>Hạng Mục Đo</th>
-                    <th>Tiêu Chuẩn</th>
-                    <th>Pha A</th>
-                    <th>Pha B</th>
-                    <th>Pha C</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-    
-    // Tạo form nhập liệu cho từng cuộn
-    coils.forEach((coilName, index) => {
-        const id = index + 1;
+    function renderRcdTable() {
+        const num = parseInt(document.getElementById('tu_num_windings').value);
+        let html = `<table><thead><tr><th>Hạng Mục Đo</th><th>Tiêu Chuẩn</th><th>Pha A (MΩ)</th><th>Pha B (MΩ)</th><th>Pha C (MΩ)</th></tr></thead><tbody>`;
+        html += `<tr>
+            <td><b>Sơ cấp - Thứ cấp + Vỏ</b></td>
+            <td id="std_rcd_pri">-</td>
+            <td><input type="number" id="rcd_pri_a" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_pri_a"></span></td>
+            <td><input type="number" id="rcd_pri_b" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_pri_b"></span></td>
+            <td><input type="number" id="rcd_pri_c" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_pri_c"></span></td>
+        </tr>`;
         
-        html += `
-            <!-- Hàng thứ nhất: Cách điện (MΩ) -->
-            <tr>
-                <td rowspan="2"><b>${coilName}</b></td>
-                <td>Cách điện (MΩ)</td>
-                <td id="std_rcd_${id}">-</td>
-                <td><input type="number" id="rcd_${id}_a" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_${id}_a"></span></td>
-                <td><input type="number" id="rcd_${id}_b" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_${id}_b"></span></td>
-                <td><input type="number" id="rcd_${id}_c" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_${id}_c"></span></td>
-            </tr>
-            <!-- Hàng thứ hai: Điện trở 1 chiều (Ω) -->
-            <tr>
-                <td>Điện trở 1 chiều (Ω)</td>
-                <td id="std_rdc_${id}">-</td>
-                <td><input type="number" id="rdc_${id}_a" oninput="calculateAll()"><span class="sub-val" id="rdc_eval_${id}_a"></span></td>
-                <td><input type="number" id="rdc_${id}_b" oninput="calculateAll()"><span class="sub-val" id="rdc_eval_${id}_b"></span></td>
-                <td><input type="number" id="rdc_${id}_c" oninput="calculateAll()"><span class="sub-val" id="rdc_eval_${id}_c"></span></td>
-            </tr>
-        `;
-    });
-
-    html += `</tbody></table>`;
-    
-    // Gắn HTML vào container
-    document.getElementById('table_rcd_container').innerHTML = html;
-}
-
-// Gọi hàm lần đầu khi load trang để render bảng mặc định
-window.onload = function() {
-    renderCoilTable();
-};
-    // ===================================================================================
+        for(let i=1; i<=num; i++) {
+            html += `<tr>
+                <td>Cuộn ${i} - Các cuộn + Vỏ</td>
+                <td id="std_rcd_sec${i}">-</td>
+                <td><input type="number" id="rcd_sec${i}_a" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_sec${i}_a"></span></td>
+                <td><input type="number" id="rcd_sec${i}_b" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_sec${i}_b"></span></td>
+                <td><input type="number" id="rcd_sec${i}_c" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_sec${i}_c"></span></td>
+            </tr>`;
+        }
+        html += `</tbody></table>`;
+        document.getElementById('table_rcd_container').innerHTML = html;
+    }
 
     function renderRdcTable() {
-        const num = parseInt(document.getElementById('mc_num_contacts').value);
+        const num = parseInt(document.getElementById('tu_num_windings').value);
         let html = `<table><thead><tr><th>Cuộn Dây Nhị Thứ</th><th>R_NSX / Lần Trước</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
-function renderCoilTable() {
-    // Lấy giá trị từ select box số cuộn
-    const coilConfig = document.getElementById('mc_num_coils').value;
-    let coils = [];
 
-    // Xác định danh sách các cuộn dựa trên lựa chọn
-    switch (coilConfig) {
-        case "1":
-            coils = ["Cuộn đóng", "Cuộn cắt 1", "Cuộn cắt 2"];
-            break;
-        case "2":
-            coils = ["Cuộn đóng 1", "Cuộn đóng 2", "Cuộn cắt"];
-            break;
-        case "3":
-            coils = ["Cuộn đóng 1", "Cuộn đóng 2", "Cuộn cắt 1", "Cuộn cắt 2"];
-            break;
-        default:
-            coils = ["Cuộn đóng", "Cuộn cắt"]; // Fallback an toàn
+        for(let i=1; i<=num; i++) {
+            html += `<tr>
+                <td><b>Cuộn ${i}</b></td>
+                <td><input type="number" id="rdc_ref_${i}" value="120" oninput="calculateAll()"></td>
+                <td>
+                    <input type="number" id="rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A">
+                    <span class="sub-val" id="rdc_75_${i}_a">75°C: -</span>
+                    <span class="sub-val" id="rdc_status_${i}_a"></span>
+                </td>
+                <td>
+                    <input type="number" id="rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B">
+                    <span class="sub-val" id="rdc_75_${i}_b">75°C: -</span>
+                    <span class="sub-val" id="rdc_status_${i}_b"></span>
+                </td>
+                <td>
+                    <input type="number" id="rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C">
+                    <span class="sub-val" id="rdc_75_${i}_c">75°C: -</span>
+                    <span class="sub-val" id="rdc_status_${i}_c"></span>
+                </td>
+            </tr>`;
+        }
+        html += `</tbody></table>`;
+        document.getElementById('table_rdc_container').innerHTML = html;
     }
 
-    // Khởi tạo Header của bảng
-    let html = `
-        <table border="1" style="border-collapse: collapse; width: 100%; text-align: center;">
-            <thead>
-                <tr>
-                    <th>Tên Cuộn</th>
-                    <th>Hạng Mục Đo</th>
-                    <th>Tiêu Chuẩn</th>
-                    <th>Pha A</th>
-                    <th>Pha B</th>
-                    <th>Pha C</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-    
-    // Tạo form nhập liệu cho từng cuộn
-    coils.forEach((coilName, index) => {
-        const id = index + 1;
-        
-        html += `
-            <!-- Hàng thứ nhất: Cách điện (MΩ) -->
-            <tr>
-                <td rowspan="2"><b>${coilName}</b></td>
-                <td>Cách điện (MΩ)</td>
-                <td id="std_rcd_${id}">-</td>
-                <td><input type="number" id="rcd_${id}_a" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_${id}_a"></span></td>
-                <td><input type="number" id="rcd_${id}_b" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_${id}_b"></span></td>
-                <td><input type="number" id="rcd_${id}_c" oninput="calculateAll()"><span class="sub-val" id="rcd_eval_${id}_c"></span></td>
-            </tr>
-            <!-- Hàng thứ hai: Điện trở 1 chiều (Ω) -->
-            <tr>
-                <td>Điện trở 1 chiều (Ω)</td>
-                <td id="std_rdc_${id}">-</td>
-                <td><input type="number" id="rdc_${id}_a" oninput="calculateAll()"><span class="sub-val" id="rdc_eval_${id}_a"></span></td>
-                <td><input type="number" id="rdc_${id}_b" oninput="calculateAll()"><span class="sub-val" id="rdc_eval_${id}_b"></span></td>
-                <td><input type="number" id="rdc_${id}_c" oninput="calculateAll()"><span class="sub-val" id="rdc_eval_${id}_c"></span></td>
-            </tr>
-        `;
-    });
-
-    html += `</tbody></table>`;
-    
-    // Gắn HTML vào container
-    document.getElementById('table_rcd_container').innerHTML = html;
-}
-
-// Gọi hàm lần đầu khi load trang để render bảng mặc định
-window.onload = function() {
-    renderCoilTable();
-};
-
-
-        // =================================================
-
     function renderPolTable() {
-        const num = parseInt(document.getElementById('mc_num_contacts').value);
+        const num = parseInt(document.getElementById('tu_num_windings').value);
         let html = `<table><thead><tr><th>Cuộn Nhị Thứ</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
         for(let i=1; i<=num; i++) {
             html += `<tr>
@@ -488,7 +412,7 @@ window.onload = function() {
     }
 
     function renderRatioTable() {
-        const num = parseInt(document.getElementById('mc_num_contacts').value);
+        const num = parseInt(document.getElementById('tu_num_windings').value);
         let html = `<table><thead><tr><th rowspan="2">Pha</th>`;
         for(let i=1; i<=num; i++) {
             html += `<th colspan="2">Cuộn ${i}<br>
@@ -554,9 +478,10 @@ window.onload = function() {
         const temp = parseFloat(document.getElementById('tu_temp').value) || 23;
         const u1_dm_str = document.getElementById('tu_u1_dm').value;
         const mfg = document.getElementById('tu_mfg').value;
-        const num = parseInt(document.getElementById('mc_num_contacts').value);
+        const num = parseInt(document.getElementById('tu_num_windings').value);
 
-   
+        const stdPriRcd = getInterpolatedPriRcd(temp, u1_dm_str);
+        document.getElementById('std_rcd_pri').innerText = `≥ ${stdPriRcd.toFixed(0)} MΩ (${temp}°C)`;
 
         ['a', 'b', 'c'].forEach(p => {
             const val = parseFloat(document.getElementById(`rcd_pri_${p}`)?.value) || 0;
@@ -763,7 +688,7 @@ window.onload = function() {
             nhietDo: document.getElementById('tu_temp')?.value || '',
             doAm: document.getElementById('tu_humidity')?.value || '',
             u1dm: document.getElementById('tu_u1_dm')?.value || '',
-            soCuon: document.getElementById('mc_num_contacts')?.value || '3',
+            soCuon: document.getElementById('tu_num_windings')?.value || '3',
             visual: document.getElementById('tu_visual')?.value || '',
 
             rcd: {
