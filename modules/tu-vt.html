@@ -146,10 +146,8 @@
     <!-- 2. ĐO ĐIỆN TRỞ CÁCH ĐIỆN -->
     <div class="card">
         <div class="card-title">
-            <span>2. Điện Trở Cách Điện [MΩ]</span>
-            <div>
+            <span>2. Cách Điện [MΩ]</span><div><label class="chk-disable"><input type="checkbox" id="chk_sec2" onchange="toggleSection('body_sec2', this)"> KTH</label>
                 <button class="btn-view-old" onclick="loadOldDataSection('rcd')">👁️ Kq cũ</button>
-                <label class="chk-disable"><input type="checkbox" id="chk_sec2" onchange="toggleSection('body_sec2', this)"> KTH</label>
             </div>
         </div>
         <div id="body_sec2">
@@ -161,7 +159,7 @@
     <!-- 3. ĐIỆN TRỞ MỘT CHIỀU NHỊ THỨ -->
     <div class="card">
         <div class="card-title">
-            <span>3. R 1 Chiều[mΩ] (Lệch ≤ 5%)</span>
+            <span>3. R Một Chiều[mΩ]</span>
             <div>
                 <button class="btn-view-old" onclick="loadOldDataSection('rdc')">👁️ Kq cũ</button>
                 <label class="chk-disable"><input type="checkbox" id="chk_sec3" onchange="toggleSection('body_sec3', this)"> KTH</label>
@@ -176,7 +174,7 @@
     <!-- 4. CỰC TÍNH -->
     <div class="card">
         <div class="card-title">
-            <span>4. Kiểm Tra Cực Tính</span>
+            <span>4. Cực Tính</span>
             <div>
                 <button class="btn-view-old" onclick="loadOldDataSection('pol')">👁️ Kq cũ</button>
                 <label class="chk-disable"><input type="checkbox" id="chk_sec4" onchange="toggleSection('body_sec4', this)"> KTH</label>
@@ -371,7 +369,7 @@ const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`
 
     function renderRdcTable() {
         const num = parseInt(document.getElementById('tu_num_windings').value);
-        let html = `<table><thead><tr><th>Cuộn Dây Nhị Thứ</th><th>Giá trị NSX/(lần trước) ở 75°C</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
+        let html = `<table><thead><tr><th>Cuộn Dây Nhị Thứ</th><th>Số cũ (75°C) </th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td><b>Cuộn ${i}</b></td>
