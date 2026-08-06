@@ -111,11 +111,11 @@
             </div>
             <div class="form-group">
                 <label>Nhiệt Độ Dầu TU (°C):</label>
-                <input type="number" id="tu_temp" value="23" oninput="calculateAll()">
+                <input type="number" id="tu_temp" value="" oninput="calculateAll()">
             </div>
             <div class="form-group">
                 <label>Độ Ẩm Môi Trường (%):</label>
-                <input type="number" id="tu_humidity" value="75" oninput="calculateAll()">
+                <input type="number" id="tu_humidity" value="" oninput="calculateAll()">
             </div>
             <div class="form-group">
                 <label>U1đm Sơ Cấp (Cấp Điện Áp):</label>
@@ -375,7 +375,7 @@ const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td><b>Cuộn ${i}</b></td>
-                <td><input type="number" id="tu_rdc_ref_${i}" value="120" oninput="calculateAll()"></td>
+                <td><input type="number" id="tu_rdc_ref_${i}" value="" oninput="calculateAll()"></td>
                 <td>
                     <input type="number" id="tu_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A">
                     <span class="sub-val" id="tu_rdc_75_${i}_a">75°C: -</span>
