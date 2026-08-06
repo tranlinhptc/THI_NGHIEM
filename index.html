@@ -264,8 +264,8 @@
     // Kiểm tra thông tin BẮT BUỘC trước khi mở Module
     function openModule(fileName) {
         const tram = document.getElementById('select-tram').value.trim();
-        const nganLo = document.getElementById('input-nganlo').value.trim();
-        const nguoido = document.getElementById('input-nguoido').value.trim();
+        // const nganLo = document.getElementById('input-nganlo').value.trim();
+        // const nguoido = document.getElementById('input-nguoido').value.trim();
 
         if (!tram) {
             alert("⚠️ ANH CHỊ CHƯA CHỌN TRẠM/KHO!");
@@ -273,16 +273,16 @@
             return;
         }
 
-        if (!nganLo) {
-            alert("⚠️ ANH CHỊ CHƯA NHẬP CHỈ DANH THIẾT BỊ!");
-            document.getElementById('input-nganlo').focus();
-            return;
+        // if (!nganLo) {
+            // alert("⚠️ ANH CHỊ CHƯA NHẬP CHỈ DANH THIẾT BỊ!");
+            // document.getElementById('input-nganlo').focus();
+            // return;
         }
-         if (!nguoido) {
-            alert("⚠️ ANH CHỊ CHƯA NHẬP TÊN!");
-            document.getElementById('input-nguoido').focus();
-            return;
-        }
+         // if (!nguoido) {
+        //     alert("⚠️ ANH CHỊ CHƯA NHẬP TÊN!");
+        //     document.getElementById('input-nguoido').focus();
+        //     return;
+        // }
 
         // Lưu thông tin vào bộ nhớ tạm trình duyệt
         const sessionData = {
