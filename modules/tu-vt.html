@@ -183,7 +183,7 @@
             <div class="table-responsive" id="table_rcd_container"></div>
         </div>
     </div>
-    <!-- /////////////////////////////////////////////////////////////  -->
+    <!-- =============================================================================  -->
    
 
     <!-- 3. ĐIỆN TRỞ MỘT CHIỀU NHỊ THỨ -->
@@ -324,7 +324,7 @@
 //             else alert("ℹ️ Không tìm thấy dữ liệu ô tương ứng!");
 //         }).catch(err => alert("❌ Lỗi tải Cloud: " + err));
 //     }
-       <!-- =========================END=========================7/8/26============================================== -->
+       // <!-- =========================END=========================7/8/26============================================== -->
 let globalHistoryData = []; // Biến toàn cục chứa 10 lịch sử tải về
 
     function loadOldDataSection(sectionType) {
@@ -873,7 +873,7 @@ function showHistoryModal(dataArray) {
                 type: "blob",
                 mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             });
-       <!-- ==================================================7/8/26============================================== -->
+       // <!-- ==================================================7/8/26============================================== -->
 
             const modNameStr = MODULE_PREFIX.replace('_', '').toUpperCase();
         const dateStr = payload["ngayTN"] ? payload["ngayTN"].replace(/\//g, '-') : "New";
@@ -882,7 +882,7 @@ function showHistoryModal(dataArray) {
             
             
             // saveAs(out, `Bien_Ban_TU_${payload["tu_nganlo"] || "New"}.docx`);
-       <!-- ==================================================7/8/26============================================== -->
+       // <!-- ==================================================7/8/26============================================== -->
 
             alert("🎉 Đã xuất Biên bản Word thành công! Anh kiểm tra thư mục Download nhé.");
 
