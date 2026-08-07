@@ -344,26 +344,58 @@ let globalHistoryData = []; // Biến toàn cục chứa 10 lịch sử tải v�
         }).catch(err => alert("❌ Lỗi tải Cloud: " + err));
     }
 
-    function showHistoryModal(dataArray) {
+    // function showHistoryModal(dataArray) {===================================LAY THEO TEN NGUOI DO
+    //     const listDiv = document.getElementById('historyList');
+    //     listDiv.innerHTML = '';
+    //     dataArray.forEach((row, index) => {
+    //         const ngay = row.ngayTN || 'Không rõ ngày';
+    //         const nguoi = row.nguoiTN || 'Vô danh';
+    //         const div = document.createElement('div');
+    //         div.className = 'history-item';
+    //         div.innerHTML = `<div class="history-date">📅 Ngày: ${ngay}</div>
+    //                          <div class="history-person">👤 Người thử: ${nguoi}</div>`;
+    //         div.onclick = () => applyHistoryData(index);
+    //         listDiv.appendChild(div);
+    //     });
+    //     document.getElementById('historyModal').style.display = 'flex';
+    // }
+
+    // function closeHistoryModal() {
+    //     document.getElementById('historyModal').style.display = 'none';
+    // }
+    // =======================================================================================LẤY THEO CHE DO THI NGHIEM
+function showHistoryModal(dataArray) {
         const listDiv = document.getElementById('historyList');
         listDiv.innerHTML = '';
+        
+        // Từ điển dịch mã Chế độ sang Tiếng Việt cho đẹp
+        const modeTranslate = {
+            "new": "Mới / Sau lắp đặt",
+            "1yr": "Sau 1 năm vận hành",
+            "3yr": "Sau 3 năm vận hành",
+            "6yr": "Sau 6 năm vận hành",
+            "boost": "Thí nghiệm tăng cường"
+        };
+
         dataArray.forEach((row, index) => {
             const ngay = row.ngayTN || 'Không rõ ngày';
-            const nguoi = row.nguoiTN || 'Vô danh';
+            
+            // Lấy mã chế độ từ Sheet, nếu không có thì để trống
+            const maCheDo = row.tu_mode || ''; 
+            const cheDoText = modeTranslate[maCheDo] || maCheDo || 'Không rõ';
+
             const div = document.createElement('div');
             div.className = 'history-item';
+            
+            // Thay icon và nội dung hiển thị ở đây
             div.innerHTML = `<div class="history-date">📅 Ngày: ${ngay}</div>
-                             <div class="history-person">👤 Người thử: ${nguoi}</div>`;
+                             <div class="history-person">⚙️ Chế độ: ${cheDoText}</div>`;
+                             
             div.onclick = () => applyHistoryData(index);
             listDiv.appendChild(div);
         });
         document.getElementById('historyModal').style.display = 'flex';
     }
-
-    function closeHistoryModal() {
-        document.getElementById('historyModal').style.display = 'none';
-    }
-
     // Đổ số liệu cũ vào form & Đánh dấu CẢNH BÁO
     function applyHistoryData(index) {
         closeHistoryModal();
