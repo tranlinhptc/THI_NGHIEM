@@ -53,7 +53,11 @@
         .fail { color: #c62828; font-weight: bold; }
         .note-text { font-size: 10px; color: #666; font-style: italic; margin-top: 3px; }
         .hidden-section { display: none !important; }
-/* <!-- THÊM MOI 7/8=================================== --> */
+
+        
+        
+        
+        /*=================================================7/8/26=================================================  */
         /* Giao diện Popup Chọn Ngày */
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
 .modal-content { background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
@@ -65,13 +69,13 @@
 .btn-close-modal { background: #d32f2f; color: white; border: none; padding: 10px; border-radius: 6px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
 /* Nền màu vàng cảnh báo suy giảm tuổi thọ */
 .bg-warning { background-color: #fff9c4 !important; border-color: #fbc02d !important; color: #c62828 !important; font-weight: bold; }
-        /* KET THUC 7/8/ THEM MOI 1. Chèn CSS (Làm đẹp cho cái bảng Popup & Màu Vàng cảnh báo) */
+        //*==============================END===================7/8/26=================================================  */
 
         
     </style>
 </head>
 <body>
-<!-- THÊM MOI 7/8=================================== -->
+        //*=================================================7/8/26=================================================  */
     <div id="historyModal" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-title">⏱ LỊCH SỬ THÍ NGHIỆM THIẾT BỊ</div>
@@ -80,7 +84,7 @@
         <button class="btn-close-modal" onclick="closeHistoryModal()">Đóng</button>
     </div>
 </div>
-    <!--KẾT THUC THEM MOI 7/8  ========================-->
+        //*===========================END======================7/8/26=================================================  */
 
 <div class="container">
     <div class="header-bar">
@@ -322,7 +326,7 @@
 //             else alert("ℹ️ Không tìm thấy dữ liệu ô tương ứng!");
 //         }).catch(err => alert("❌ Lỗi tải Cloud: " + err));
 //     }
-// <!-- THÊM MOI 7/8=================================== -->
+        //*========================END=========================7/8/26=================================================  */
 let globalHistoryData = []; // Biến toàn cục chứa 10 lịch sử tải về
 
     function loadOldDataSection(sectionType) {
@@ -871,7 +875,7 @@ function showHistoryModal(dataArray) {
                 type: "blob",
                 mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             });
-        // <!-- THÊM MOI 7/8=================================== -->
+        //*=================================================7/8/26=================================================  */
 
             const modNameStr = MODULE_PREFIX.replace('_', '').toUpperCase();
         const dateStr = payload["ngayTN"] ? payload["ngayTN"].replace(/\//g, '-') : "New";
@@ -880,7 +884,7 @@ function showHistoryModal(dataArray) {
             
             
             // saveAs(out, `Bien_Ban_TU_${payload["tu_nganlo"] || "New"}.docx`);
-                // <!--KẾT THUC THEM MOI 7/8  ========================-->
+        //*=================================================7/8/26=================================================  */
 
             alert("🎉 Đã xuất Biên bản Word thành công! Anh kiểm tra thư mục Download nhé.");
 
