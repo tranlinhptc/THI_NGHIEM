@@ -774,14 +774,17 @@
         reader.onload = function(event) {
             const arrayBuffer = event.target.result;
             
-            const payload = {};
-            
-            const sessionStr = localStorage.getItem('CURRENT_SESSION');
-            const sessionObj = sessionStr ? JSON.parse(sessionStr) : {};
-            payload["tu_tram"] = sessionObj.tram || "";
-            payload["tu_nganlo"] = sessionObj.nganLo || "";
-            payload["ngayTN"] = sessionObj.ngayDo || "";
-            payload["nguoiTN"] = sessionObj.nguoido || "";
+        // ĐOẠN CODE MỚI (Bắt trọn vẹn Trạm, Ngăn lộ, Ngày, Người đo không sót gì)
+        const payload = {};
+        
+        const sessionStr = localStorage.getItem('CURRENT_SESSION');
+        const sessionObj = sessionStr ? JSON.parse(sessionStr) : {};
+        
+        // Gán tường minh các thẻ thông tin chung
+        payload["tu_tram"] = sessionObj.tram || "Chưa xác định";
+        payload["tu_nganlo"] = sessionObj.nganLo || "Chưa xác định";
+        payload["ngayTN"] = sessionObj.ngayDo || new Date().toISOString().split('T')[0];
+        payload["nguoiTN"] = sessionObj.nguoido || "Kỹ thuật viên";
 
             const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], td[id^="${MODULE_PREFIX}"]`);
             elements.forEach(el => {
