@@ -289,60 +289,24 @@
         else sec.classList.remove('hidden-section');
     }
 
-    // function loadOldDataSection(sectionType) {
-    //     const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
-    //     const nganLo = encodeURIComponent(sessionData.nganLo || '');
-    //     const tram = encodeURIComponent(sessionData.tram || '');
-    //     if (!nganLo) { alert("⚠️ Chưa chọn Ngăn Lộ từ Trang Chủ!"); return; }
-
-    //     const modName = MODULE_PREFIX.replace('_', '').toUpperCase();
-    //     const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&tram=${tram}&module_name=${modName}`;
-
-    //     fetch(fetchUrl).then(res => res.json()).then(data => {
-    //         if (!data || data.length === 0 || data.error) {
-    //             alert("ℹ️ Không tìm thấy dữ liệu lịch sử cho thiết bị này!");
-    //             return;
-    //         }
-    //         globalHistoryData = data; 
-    //         showHistoryModal(data); 
-    //     }).catch(err => alert("❌ Lỗi tải Cloud: " + err));
-    // }
-
-
     function loadOldDataSection(sectionType) {
         const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
         const nganLo = encodeURIComponent(sessionData.nganLo || '');
         const tram = encodeURIComponent(sessionData.tram || '');
         if (!nganLo) { alert("⚠️ Chưa chọn Ngăn Lộ từ Trang Chủ!"); return; }
 
-        // Lấy chính xác cái nút đang được bấm dựa vào event
-        const btn = event.currentTarget || event.target;
-        const oldText = btn.innerText;
-        btn.innerText = "⏳ Đang tải...";
-        btn.style.opacity = "0.7";
-
         const modName = MODULE_PREFIX.replace('_', '').toUpperCase();
         const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&tram=${tram}&module_name=${modName}`;
 
         fetch(fetchUrl).then(res => res.json()).then(data => {
-            btn.innerText = oldText;
-            btn.style.opacity = "1";
-
             if (!data || data.length === 0 || data.error) {
                 alert("ℹ️ Không tìm thấy dữ liệu lịch sử cho thiết bị này!");
                 return;
             }
             globalHistoryData = data; 
             showHistoryModal(data); 
-        }).catch(err => {
-            btn.innerText = oldText;
-            btn.style.opacity = "1";
-            alert("❌ Lỗi tải Cloud: " + err);
-        });
+        }).catch(err => alert("❌ Lỗi tải Cloud: " + err));
     }
-
-
-    
 
     function showHistoryModal(dataArray) {
         const listDiv = document.getElementById('historyList');
@@ -806,38 +770,11 @@
             payload["ngayTN"] = sessionObj.ngayDo || "";
             payload["nguoiTN"] = sessionObj.nguoido || "";
 
-            // const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], td[id^="${MODULE_PREFIX}"]`);
-            // elements.forEach(el => {
-            //     let id = el.id;
-            //     let val = (el.tagName === "INPUT" || el.tagName === "SELECT") ? el.value : el.innerText;
-            //     payload[id] = val ? val.trim() : "";
-            // });
-
-            // ĐOẠN CODE MỚI (Đã gọt sạch rác, chỉ lấy con số thuần túy)
             const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], td[id^="${MODULE_PREFIX}"]`);
             elements.forEach(el => {
                 let id = el.id;
-                let value = "";
-                
-                if (el.tagName === "INPUT" || el.tagName === "SELECT") {
-                    value = el.value ? el.value.trim() : "";
-                } else if (el.tagName === "SPAN" || el.tagName === "TD") {
-                    value = el.innerText ? el.innerText.trim() : "";
-                    
-                    // 🧹 MÁY CẠO DỮ LIỆU: Xóa sạch chữ râu ria trước khi nhét vào Word
-                    value = value.replace("75°C:", "")
-                                 .replace("K_đo:", "")
-                                 .replace("f:", "")
-                                 .replace("%", "")
-                                 .trim();
-                }
-
-                // Không đưa các giá trị vô nghĩa vào payload xuất Word
-                if (value === '0' || value === '0.00' || value === '-' || value === '' || value === 'NaN') {
-                    payload[id] = ""; 
-                    return;
-                }
-                payload[id] = value;
+                let val = (el.tagName === "INPUT" || el.tagName === "SELECT") ? el.value : el.innerText;
+                payload[id] = val ? val.trim() : "";
             });
 
             try {
