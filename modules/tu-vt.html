@@ -806,39 +806,39 @@
             payload["ngayTN"] = sessionObj.ngayDo || "";
             payload["nguoiTN"] = sessionObj.nguoido || "";
 
-            // const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], td[id^="${MODULE_PREFIX}"]`);
-            // elements.forEach(el => {
-            //     let id = el.id;
-            //     let val = (el.tagName === "INPUT" || el.tagName === "SELECT") ? el.value : el.innerText;
-            //     payload[id] = val ? val.trim() : "";
-            // });
-
-            // ĐOẠN CODE MỚI (Đã gọt sạch rác, chỉ lấy con số thuần túy)
             const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], td[id^="${MODULE_PREFIX}"]`);
             elements.forEach(el => {
                 let id = el.id;
-                let value = "";
+                let val = (el.tagName === "INPUT" || el.tagName === "SELECT") ? el.value : el.innerText;
+                payload[id] = val ? val.trim() : "";
+            });
+
+            // ĐOẠN CODE MỚI (Đã gọt sạch rác, chỉ lấy con số thuần túy)
+            // const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], td[id^="${MODULE_PREFIX}"]`);
+            // elements.forEach(el => {
+            //     let id = el.id;
+            //     let value = "";
                 
-                if (el.tagName === "INPUT" || el.tagName === "SELECT") {
-                    value = el.value ? el.value.trim() : "";
-                } else if (el.tagName === "SPAN" || el.tagName === "TD") {
-                    value = el.innerText ? el.innerText.trim() : "";
+            //     if (el.tagName === "INPUT" || el.tagName === "SELECT") {
+            //         value = el.value ? el.value.trim() : "";
+            //     } else if (el.tagName === "SPAN" || el.tagName === "TD") {
+            //         value = el.innerText ? el.innerText.trim() : "";
                     
-                    // 🧹 MÁY CẠO DỮ LIỆU: Xóa sạch chữ râu ria trước khi nhét vào Word
-                    value = value.replace("75°C:", "")
-                                 .replace("K_đo:", "")
-                                 .replace("f:", "")
-                                 .replace("%", "")
-                                 .trim();
+            //         // 🧹 MÁY CẠO DỮ LIỆU: Xóa sạch chữ râu ria trước khi nhét vào Word
+            //         value = value.replace("75°C:", "")
+            //                      .replace("K_đo:", "")
+            //                      .replace("f:", "")
+            //                      .replace("%", "")
+            //                      .trim();
                 }
 
-                // Không đưa các giá trị vô nghĩa vào payload xuất Word
-                if (value === '0' || value === '0.00' || value === '-' || value === '' || value === 'NaN') {
-                    payload[id] = ""; 
-                    return;
-                }
-                payload[id] = value;
-            });
+                // ==========Không đưa các giá trị vô nghĩa vào payload xuất Word
+            //     if (value === '0' || value === '0.00' || value === '-' || value === '' || value === 'NaN') {
+            //         payload[id] = ""; 
+            //         return;
+            //     }
+            //     payload[id] = value;
+            // });
 
             try {
                 const zip = new PizZip(arrayBuffer);
