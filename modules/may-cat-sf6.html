@@ -63,7 +63,7 @@
         /* CSS KHÓA FORM */
         .form-locked {
             opacity: 0.4;
-            pointer-events: none; /* Khóa hoàn toàn các thao tác click, gõ */
+            pointer-events: none;
             filter: grayscale(0.8);
             transition: all 0.3s ease;
         }
@@ -108,7 +108,6 @@
             </div>
             <div class="form-group">
                 <label>Ngày Thí Nghiệm:</label>
-                <!-- Đổi thành thẻ input type="date" để cho phép sửa ngày -->
                 <input type="date" id="info_ngay" onchange="checkUnlockForm()">
             </div>
         </div>
@@ -238,7 +237,7 @@
 
 <script>
     // 🔴 BƯỚC QUAN TRỌNG: ANH PASTE ID CỦA FILE WORD TRÊN GOOGLE DRIVE VÀO ĐÂY
-    const TEMPLATE_DRIVE_ID = "1-VQ8Femmz7jaOoys3UvTeJyV1kAYRFjH"; 
+    const TEMPLATE_DRIVE_ID = "1aBcDeFgHiJkLmNoPqRsTuVwXyZ"; 
     const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyQHrmflRBAOgsPtr6kzyRZLAveQbmnRO927UDThae72U81DynZnrJo9xAMfNgxYqCf/exec";
     const MODULE_PREFIX = "mc_"; 
     let globalHistoryData = [];
@@ -385,6 +384,10 @@
         else if(cdType === '2C1O') actions = [{id:'C1', name:'ĐÓNG 1 (C1)'}, {id:'C2', name:'ĐÓNG 2 (C2)'}, {id:'O', name:'CẮT (O)'}];
         else if(cdType === '2C2O') actions = [{id:'C1', name:'ĐÓNG 1 (C1)'}, {id:'C2', name:'ĐÓNG 2 (C2)'}, {id:'O1', name:'CẮT 1 (O1)'}, {id:'O2', name:'CẮT 2 (O2)'}];
 
+        // 🔥 THÊM 2 THÔNG SỐ CO VÀ DEAD TIME CHO TẤT CẢ CÁC LOẠI MÁY CẮT
+        actions.push({id:'CO', name:'TIẾP XÚC TRONG CHU TRÌNH CO (CO time)'});
+        actions.push({id:'DEAD', name:'NGỪNG TIẾP XÚC TRONG CHU TRÌNH O-0,3s-CO (Dead time)'});
+
         let html = ``;
         actions.forEach(act => {
             html += `<h4 style="margin-top:10px; color:#1565c0;">🔹 Chu trình: ${act.name}</h4>`;
@@ -454,9 +457,13 @@
         else if(cdType === '2C1O') actions = ['C1', 'C2', 'O'];
         else if(cdType === '2C2O') actions = ['C1', 'C2', 'O1', 'O2'];
 
+        // 🔥 THÊM VÀO MẢNG TÍNH TOÁN
+        actions.push('CO', 'DEAD');
+
         actions.forEach(act => {
-            let limitTd = act.includes('C') ? 3.3 : 2.5; 
-            let limitPha = act.includes('C') ? 5.0 : 3.3; 
+            // Loại trừ 'CO' khỏi việc áp dụng tiêu chuẩn Cắt (Vì chữ 'CO' có chứa chữ 'C')
+            let limitTd = (act.startsWith('C') && act !== 'CO') ? 3.3 : 2.5; 
+            let limitPha = (act.startsWith('C') && act !== 'CO') ? 5.0 : 3.3; 
             let allPhaseTimes = [];
 
             ['A', 'B', 'C'].forEach(p => {
@@ -488,7 +495,6 @@
         const nganLo = encodeURIComponent(document.getElementById('info_nganlo').value.trim());
         const tram = encodeURIComponent(document.getElementById('info_tram').value);
         
-        // Mặc dù form đã khóa nếu thiếu, nhưng phòng hờ người ta F12 đổi code
         if (!nganLo || !tram) { alert("⚠️ Chưa chọn Trạm và Ngăn Lộ!"); return; }
 
         showLoading("Đang tải dữ liệu lịch sử từ Google Sheet...");
@@ -559,7 +565,6 @@
         const str = localStorage.getItem(MODULE_PREFIX + 'DRAFT');
         if (str) {
             const data = JSON.parse(str);
-            // Lấy riêng thông tin định danh trước để mở khóa form
             if (data['info_tram']) document.getElementById('info_tram').value = data['info_tram'];
             if (data['info_nganlo']) document.getElementById('info_nganlo').value = data['info_nganlo'];
             if (data['info_ngay']) document.getElementById('info_ngay').value = data['info_ngay'];
@@ -578,7 +583,6 @@
 
     function syncOneDrive() {
         showLoading("Đang đẩy dữ liệu phẳng lên Google Sheet...");
-        // Dữ liệu người dùng sẽ được nhập từ một ô khác hoặc có thể để trống nếu anh muốn
         const nguoiDo = prompt("Nhập tên người thực hiện (để trống nếu không cần):", "");
 
         const payload = {
@@ -626,7 +630,6 @@
             payload["mc_tram"] = document.getElementById('info_tram').value || ""; 
             payload["mc_nganlo"] = document.getElementById('info_nganlo').value || "";
             payload["ngayTN"] = document.getElementById('info_ngay').value || ""; 
-            // Giả định người dùng có thể nhập tên, nếu không anh có thể lấy từ localStorage như trước
             payload["nguoiTN"] = ""; 
             
             document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], div[id^="${MODULE_PREFIX}"]`).forEach(el => {
