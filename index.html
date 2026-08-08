@@ -127,48 +127,6 @@
     <p>Cơ Sở Dữ Liệu & Biên Bản Thí Nghiệm Hiện Trường</p>
 </header>
  
-<div class="container">
-    <!-- 1. CHỌN TRẠM & NGẮN LỘ -->
-    <div class="info-card">
-        <h2>📍 THÔNG TIN BẮT BUỘC TRƯỚC KHI THÍ NGHIỆM</h2>
-        <div class="form-grid">
-            <div class="form-group">
-                <label for="select-tram">1. Chọn Trạm Biến Áp / Kho (*):</label>
-                <select id="select-tram">
-                    <option value="">-- Bấm chọn Trạm / Kho --</option>
-                    <option value="TBA 500kV Di Linh">TBA 500kV Di Linh</option>
-                    <option value="TBA 220kV Bảo Lộc">TBA 220kV Bảo Lộc</option>
-                    <option value="TBA 220kV Đức Trọng">TBA 220kV Đức Trọng</option>
-                    <option value="TBA 500kV Đắk Nông">TBA 500kV Đắk Nông</option>
-                    <option value="TBA 220kV Đắk Nông">TBA 220kV Đắk Nông</option>
-                    <option value="TBA 500kV Vĩnh Tân">TBA 500kV Vĩnh Tân</option>
-                    <option value="TBA 220kV Phan Thiết">TBA 220kV Phan Thiết</option>
-                    <option value="TBA 220kV Hàm Tân">TBA 220kV Hàm Tân</option>
-                    <option value="TBA 220kV Phan Rí">TBA 220kV Phan Rí</option>
-                    <option value="TBA 220kV Tháp Chàm">TBA 220kV Tháp Chàm</option>
-                    <option value="TBA 220kV Ninh Phước">TBA 220kV Ninh Phước</option>
-                    <option value="TBA 500kV Thuận Nam">TBA 500kV Thuận Nam</option>
-                    <option value="TBA 220kV Vĩnh Hảo">TBA 220kV Vĩnh Hảo</option>
-                    <option value="TBA 220kV Phước Thái">TBA 220kV Phước Thái</option>
-                    <option value="Kho VLDP Lâm Đồng">Kho VLDP Lâm Đồng</option>
-                    <option value="Kho VLDP Đắk Nông">Kho VLDP Đắk Nông</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="input-nganlo">2. Nhập ngăn lộ/Thiết bị (*):</label>
-                <input type="text" id="input-nganlo" placeholder="VD: Ngăn 271 / MBA T1">
-            </div>
-            <div class="form-group">
-                <label for="input-ngaydo">Ngày thí nghiệm:</label>
-                <input type="date" id="input-ngaydo">
-            </div>
-            <div class="form-group">
-                <label for="input-nguoido">Kỹ thuật viên thực hiện:</label>
-                <input type="text" id="input-nguoido" placeholder="VD: Nguyễn Văn A">
-            </div>
-        </div>
-    </div>
-
     <!-- 2. DANH MỤC THIẾT BỊ -->
     <div class="section-title">⚡ CHỌN HẠNG MỤC THIẾT BỊ THÍ NGHIỆM</div>
     <!-- 
@@ -244,42 +202,6 @@
     </div>
 </div> -->
 
-<!-- <script>
-    // Mặc định cài đặt ngày đo hôm nay khi mở trang
-     window.onload = function() {
-         document.getElementById('input-ngaydo').valueAsDate = new Date();
-    };
-
-     // Kiểm tra thông tin BẮT BUỘC trước khi mở Module
-     function openModule(fileName) {
-         const tram = document.getElementById('select-tram').value.trim();
-        const nganLo = document.getElementById('input-nganlo').value.trim();
-
-         if (!tram) {
-             alert("⚠️ VUI LÒNG CHỌN TRẠM BIẾN ÁP HOẶC KHO TRƯỚC!");
-             document.getElementById('select-tram').focus();
-             return;
-         }
-
-         if (!nganLo) {
-             alert("⚠️ VUI LÒNG NHẬP VỊ TRÍ / NGĂN LỘ / THIẾT BỊ TRƯỚC!");
-             document.getElementById('input-nganlo').focus();
-             return;
-         }
-<!-- 
-        // Lưu thông tin vào bộ nhớ tạm trình duyệt
-         const sessionData = {
-             tram: tram,
-            nganLo: nganLo,
-            ngayDo: document.getElementById('input-ngaydo').value,
-            nguoido: document.getElementById('input-nguoido').value
-        };
-       localStorage.setItem('CURRENT_SESSION', JSON.stringify(sessionData));
-
-        // Mở file module thiết bị -->
-        window.location.href = `modules/${fileName}`;
-    }
-</script> -->
 
 </body>
 </html>
