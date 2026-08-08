@@ -34,14 +34,17 @@
         
         .sub-val { font-size: 10px; color: #1565c0; font-weight: 600; margin-top: 2px; display: block; }
         .chk-disable { font-size: 12px; font-weight: bold; color: #d84315; cursor: pointer; background: #fbe9e7; padding: 2px 8px; border-radius: 4px; }
-        .btn-view-old { background: #0288d1; color: white; border: none; padding: 2px 6px; border-radius: 4px; font-size: 10px; cursor: pointer; margin-right: 8px; font-weight: 600; }
+        .btn-view-old { background: #0288d1; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: 600; }
         .btn-action { background: var(--primary); color: white; border: none; padding: 10px 15px; font-size: 13px; font-weight: 600; border-radius: 6px; cursor: pointer; margin: 4px 0; width: 100%; }
         .btn-cloud { background: #2e7d32; }
+        .btn-draft { background: #0288d1; }
+        .btn-clear { background: #757575; font-size:11px; margin-top:4px; }
         .pass { color: #2e7d32; font-weight: bold; }
         .fail { color: #c62828; font-weight: bold; }
         .note-text { font-size: 10px; color: #666; font-style: italic; margin-top: 3px; }
         .hidden-section { display: none !important; }
 
+        /* Popups & Loading */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .modal-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: var(--primary); border-bottom: 2px solid #fbe9e7; padding-bottom: 8px; text-align: center; }
@@ -51,11 +54,20 @@
         .history-person { font-size: 12px; color: #666; margin-top: 4px; }
         .btn-close-modal { background: #d32f2f; color: white; border: none; padding: 10px; border-radius: 6px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         .bg-warning { background-color: #fff9c4 !important; border-color: #fbc02d !important; color: #c62828 !important; font-weight: bold; }
         .err-box { background: #ffebee; border: 1px solid #ef5350; border-radius: 4px; padding: 2px; margin-top: 2px;}
     </style>
 </head>
 <body>
+
+<!-- MÀN HÌNH LOADING -->
+<div id="loadingOverlay" class="modal-overlay" style="z-index: 2000; flex-direction: column;">
+    <div class="loader"></div>
+    <div id="loadingText" style="color: white; margin-top: 15px; font-weight: bold; font-size:14px;">Đang xử lý...</div>
+</div>
 
 <div class="container">
     <div class="header-bar">
@@ -65,7 +77,10 @@
 
     <!-- 0. CẤU HÌNH ĐỘNG -->
     <div class="card">
-        <div class="card-title"><span>THÔNG TIN CẤU HÌNH THIẾT BỊ</span></div>
+        <div class="card-title">
+            <span>THÔNG TIN CẤU HÌNH THIẾT BỊ</span>
+            <button class="btn-view-old" onclick="loadOldDataSection()">👁️ Lịch sử</button>
+        </div>
         <div class="grid">
             <div class="form-group"><label>Trạm / Ngăn Lộ:</label><input type="text" id="info_tram" readonly style="background:#eee; font-weight:bold;"></div>
             <div class="form-group"><label>Ngày Thí Nghiệm:</label><input type="text" id="info_ngay" readonly style="background:#eee; font-weight:bold;"></div>
@@ -94,7 +109,7 @@
                 <label>Cấu hình Cuộn dây:</label>
                 <select id="mc_cuonday" onchange="refreshTables()">
                     <option value="1C2O" selected>1 Đóng (C) - 2 Cắt (O1, O2)</option>
-                    <option value="1C1O">1 Đóng (C) - 1 Cắt (O)</option>
+                    <option value="2C1O">2 Đóng (C1, C2) - 1 Cắt (O)</option>
                     <option value="2C2O">2 Đóng (C1, C2) - 2 Cắt (O1, O2)</option>
                 </select>
             </div>
@@ -111,11 +126,10 @@
         </div>
     </div>
 
-    <!-- 1. MẠCH ĐIỀU KHIỂN -->
+    <!-- CÁC HẠNG MỤC -->
     <div class="card">
         <div class="card-title">
             <span>1. R Cách Điện Mạch Điều Khiển [MΩ]</span>
-            <div><button class="btn-view-old" onclick="loadOldDataSection()">👁️ Kq cũ</button></div>
         </div>
         <div class="grid">
             <div class="form-group">
@@ -126,7 +140,6 @@
         </div>
     </div>
 
-    <!-- 2. CUỘN DÂY & ĐỘNG CƠ -->
     <div class="card">
         <div class="card-title">
             <span>2. Cuộn Dây & Động Cơ Tích Năng</span>
@@ -138,54 +151,52 @@
         </div>
     </div>
 
-    <!-- 3. TIẾP ĐIỂM CHÍNH -->
     <div class="card">
         <div class="card-title">
             <span>3. Tiếp Điểm Chính (Rtx & R_CĐ)</span>
             <label class="chk-disable"><input type="checkbox" id="chk_sec3" onchange="toggleSection('body_sec3', this)"> ✏️ Nhập</label>
         </div>
         <div id="body_sec3" class="table-responsive hidden-section">
-            <div class="grid" style="margin-bottom:6px;">
-                <div class="form-group"><label>Rtx_NSX Yêu cầu (µΩ):</label><input type="number" id="mc_rtx_nsx" value="50" oninput="calculateAll()"></div>
-            </div>
+            <div class="grid" style="margin-bottom:6px;"><div class="form-group"><label>Rtx_NSX Yêu cầu (µΩ):</label><input type="number" id="mc_rtx_nsx" value="50" oninput="calculateAll()"></div></div>
             <div class="note-text">* Rtx Đạt nếu ≤ 120% Rtx_NSX. R_CĐ Đất ≥ 100 MΩ.</div>
             <div id="table_contacts_container"></div>
         </div>
     </div>
 
-    <!-- 4. THỜI GIAN HÀNH TRÌNH -->
     <div class="card">
         <div class="card-title">
             <span>4. Thời Gian Hành Trình (Timing) [ms]</span>
             <label class="chk-disable"><input type="checkbox" id="chk_sec4" onchange="toggleSection('body_sec4', this)"> ✏️ Nhập</label>
         </div>
         <div id="body_sec4" class="table-responsive hidden-section">
-            <div class="note-text">* Hệ thống TỰ TÍNH MAX, MIN và độ lệch (Δ). Tự báo Đỏ nếu vi phạm (Đóng: 3.3/5ms | Cắt: 2.5/3.3ms).</div>
+            <div class="note-text">* Tự tính Max/Min/Lệch (Δ). Tự báo Đỏ vi phạm (Đóng: 3.3/5ms | Cắt: 2.5/3.3ms).</div>
             <div id="table_timing_container"></div>
         </div>
     </div>
 
-    <!-- ĐIỀU KHIỂN -->
+    <!-- NÚT CHỨC NĂNG TÍCH HỢP -->
     <div class="card">
-        <div style="margin: 10px 0; padding: 10px; background: #fbe9e7; border-radius: 6px; border: 1px dashed var(--primary);">
-            <label style="font-weight: bold; color: var(--primary);">1. Chọn File Word Mẫu (Template):</label><br>
-            <input type="file" id="template_file" accept=".docx" style="margin-top: 5px;">
-        </div>
-        <button class="btn-action" onclick="exportWord()">📝 2. Xuất Biên Bản Word (.docx)</button>
-        <button class="btn-action btn-cloud" onclick="syncOneDrive()">☁️ Lưu & Đồng Bộ Google Sheet</button>
+        <button class="btn-action btn-draft" onclick="saveDraftManually()">💾 Tạm Lưu (Nháp)</button>
+        <button class="btn-action" onclick="exportWordFromDrive()" style="background:#0288d1; margin-top:8px;">📝 Xuất Biên Bản Word (Auto Template)</button>
+        <button class="btn-action btn-cloud" onclick="syncOneDrive()" style="margin-top:8px;">☁️ Lưu & Đồng Bộ Google Sheet</button>
+        <button class="btn-action btn-clear" onclick="clearDraft()">🗑️ Xóa bản nháp làm lại</button>
     </div>
 </div>
 
 <div id="historyModal" class="modal-overlay">
     <div class="modal-content">
-        <div class="modal-title">⏱ LỊCH SỬ THÍ NGHIỆM THIẾT BỊ</div>
-        <div style="font-size: 12px; color: #666; margin-bottom: 10px; text-align:center;">Vui lòng chọn 1 ngày để tải số liệu đối chiếu</div>
+        <div class="modal-title">⏱ LỊCH SỬ THÍ NGHIỆM</div>
+        <div style="font-size: 12px; color: #666; margin-bottom: 10px; text-align:center;">Chọn để điền mờ (Placeholder) số liệu cũ đối chiếu</div>
         <div id="historyList"></div>
         <button class="btn-close-modal" onclick="closeHistoryModal()">Đóng</button>
     </div>
 </div>
 
 <script>
+    // 🔴 BƯỚC QUAN TRỌNG: ANH PASTE ID CỦA FILE WORD TRÊN GOOGLE DRIVE VÀO ĐÂY
+    // Cách lấy ID: Chuột phải file Word trên Drive -> Chia sẻ -> Sao chép đường liên kết -> ID là dải chữ ngoằn ngoèo nằm giữa /d/ và /view
+    const TEMPLATE_DRIVE_ID = "1aBcDeFgHiJkLmNoPqRsTuVwXyZ"; 
+
     const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx91kxV-_KHL4GJVtzdQXl5Yfy9Hm-dOvE5AQ1my7xwjSXjG0pxWVXIUr2iyS4yM8ob/exec";
     const MODULE_PREFIX = "mc_"; 
     let globalHistoryData = [];
@@ -198,18 +209,16 @@
             document.getElementById('info_ngay').value = data.ngayDo || new Date().toISOString().split('T')[0];
         }
         refreshTables();
+        loadDraftData();
     };
 
-    function refreshTables() {
-        renderCoilTable();
-        renderContactTable();
-        renderTimingTable();
-        calculateAll();
-    }
+    function showLoading(text) { document.getElementById('loadingText').innerText = text; document.getElementById('loadingOverlay').style.display = 'flex'; }
+    function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
 
-    function toggleSection(sectionId, chk) {
-        document.getElementById(sectionId).classList.toggle('hidden-section', !chk.checked);
+    function refreshTables() {
+        renderCoilTable(); renderContactTable(); renderTimingTable(); calculateAll();
     }
+    function toggleSection(sectionId, chk) { document.getElementById(sectionId).classList.toggle('hidden-section', !chk.checked); }
 
     function renderCoilTable() {
         const tuDK = parseInt(document.getElementById('mc_tudk').value);
@@ -218,8 +227,8 @@
         
         let coils = [];
         if(cdType === '1C2O') coils = [{id:'C', name:'Đóng (YC)'}, {id:'O1', name:'Cắt 1 (YT1)'}, {id:'O2', name:'Cắt 2 (YT2)'}];
-        else if(cdType === '1C1O') coils = [{id:'C', name:'Đóng (YC)'}, {id:'O', name:'Cắt (YT)'}];
-        else if(cdType === '2C2O') coils = [{id:'C1', name:'Đóng 1 (YC1)'}, {id:'C2', name:'Đóng 2 (YC2)'}, {id:'O1', name:'Cắt 1'}, {id:'O2', name:'Cắt 2'}];
+        else if(cdType === '2C1O') coils = [{id:'C1', name:'Đóng 1 (YC1)'}, {id:'C2', name:'Đóng 2 (YC2)'}, {id:'O', name:'Cắt (YT)'}];
+        else if(cdType === '2C2O') coils = [{id:'C1', name:'Đóng 1 (YC1)'}, {id:'C2', name:'Đóng 2 (YC2)'}, {id:'O1', name:'Cắt 1 (YT1)'}, {id:'O2', name:'Cắt 2 (YT2)'}];
 
         let html = `<table><thead><tr><th>Hạng mục</th>`;
         phases.forEach(p => html += `<th>${tuDK===1 ? 'Tủ Điều Khiển' : 'Tủ Pha '+p}</th>`);
@@ -276,7 +285,7 @@
         let actions = [];
         
         if(cdType === '1C2O') actions = [{id:'C', name:'ĐÓNG (C)'}, {id:'O1', name:'CẮT 1 (O1)'}, {id:'O2', name:'CẮT 2 (O2)'}];
-        else if(cdType === '1C1O') actions = [{id:'C', name:'ĐÓNG (C)'}, {id:'O', name:'CẮT (O)'}];
+        else if(cdType === '2C1O') actions = [{id:'C1', name:'ĐÓNG 1 (C1)'}, {id:'C2', name:'ĐÓNG 2 (C2)'}, {id:'O', name:'CẮT (O)'}];
         else if(cdType === '2C2O') actions = [{id:'C1', name:'ĐÓNG 1 (C1)'}, {id:'C2', name:'ĐÓNG 2 (C2)'}, {id:'O1', name:'CẮT 1 (O1)'}, {id:'O2', name:'CẮT 2 (O2)'}];
 
         let html = ``;
@@ -285,7 +294,6 @@
             html += `<table><thead><tr><th>Pha</th>`;
             for(let i=1; i<=numTd; i++) html += `<th>TĐ ${i}</th>`;
             html += `<th>Δ TĐ / Pha</th></tr></thead><tbody>`;
-            
             ['A', 'B', 'C'].forEach(p => {
                 html += `<tr><td><b>${p}</b></td>`;
                 for(let i=1; i<=numTd; i++) { html += `<td><input type="number" step="0.1" id="mc_t_${act.id}_${p}_${i}" oninput="calculateAll()"></td>`; }
@@ -298,6 +306,7 @@
         document.getElementById('table_timing_container').innerHTML = html;
     }
 
+    // Tính toán & Highlight vàng nếu giảm
     function calculateAll() {
         const temp = parseFloat(document.getElementById('mc_temp').value) || 25;
         
@@ -305,15 +314,28 @@
         const elMdk = document.getElementById('mc_eval_mdk');
         if(mdk) { elMdk.innerText = mdk >= 2 ? "✔ ĐẠT" : "✘ LỖI"; elMdk.className = mdk >= 2 ? "sub-val pass" : "sub-val fail"; }
 
-        document.querySelectorAll('input[id*="_r1c_"]').forEach(el => {
-            if(el.id.includes("mot")) return; 
-            const v = parseFloat(el.value);
-            const r75Id = el.id.replace('_r1c_', '_r75_');
-            const elR75 = document.getElementById(r75Id);
-            if(elR75 && !isNaN(v)) {
-                const r75 = v * ((235 + 75) / (235 + temp));
-                elR75.innerText = `75°C: ${r75.toFixed(2)}`;
-            } else if (elR75) elR75.innerText = `75°C: -`;
+        document.querySelectorAll('input').forEach(el => {
+            if(el.id.includes('_r1c_') && !el.id.includes("mot")) {
+                const v = parseFloat(el.value);
+                const elR75 = document.getElementById(el.id.replace('_r1c_', '_r75_'));
+                if(elR75 && !isNaN(v)) elR75.innerText = `75°C: ${(v * ((235 + 75) / (235 + temp))).toFixed(2)}`;
+                else if (elR75) elR75.innerText = `75°C: -`;
+            }
+
+            // SO SÁNH GIẢM > 30% THEO REAL-TIME
+            if(el.value !== "" && el.dataset.oldval && (el.id.includes("rcd") || el.id.includes("mdk"))) {
+                const oldV = parseFloat(el.dataset.oldval.replace(',', '.'));
+                const newV = parseFloat(el.value);
+                if (!isNaN(oldV) && !isNaN(newV) && oldV > 0) {
+                    const suyGiam = (oldV - newV) / oldV;
+                    if (suyGiam >= 0.30) {
+                        el.classList.add("bg-warning");
+                        el.title = `Cũ: ${oldV} MΩ. Đã giảm ${(suyGiam*100).toFixed(1)}%!`;
+                    } else {
+                        el.classList.remove("bg-warning"); el.title = "";
+                    }
+                }
+            } else if (el.value === "") { el.classList.remove("bg-warning"); el.title = ""; }
         });
 
         const rtxNsx = parseFloat(document.getElementById('mc_rtx_nsx').value) || 50;
@@ -332,10 +354,9 @@
 
         const numTd = parseInt(document.getElementById('mc_tiepdiem').value);
         const cdType = document.getElementById('mc_cuonday').value;
-        
         let actions = [];
         if(cdType === '1C2O') actions = ['C', 'O1', 'O2'];
-        else if(cdType === '1C1O') actions = ['C', 'O'];
+        else if(cdType === '2C1O') actions = ['C1', 'C2', 'O'];
         else if(cdType === '2C2O') actions = ['C1', 'C2', 'O1', 'O2'];
 
         actions.forEach(act => {
@@ -368,31 +389,32 @@
         });
     }
 
+    // --- XỬ LÝ LỊCH SỬ THÍ NGHIỆM MỜ (PLACEHOLDER) ---
     function loadOldDataSection() {
         const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
         const nganLo = encodeURIComponent(sessionData.nganLo || '');
         const tram = encodeURIComponent(sessionData.tram || '');
         if (!nganLo) { alert("⚠️ Chưa chọn Ngăn Lộ từ Trang Chủ!"); return; }
 
+        showLoading("Đang tải dữ liệu lịch sử từ Google Sheet...");
         const modName = MODULE_PREFIX.replace('_', '').toUpperCase();
         const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&tram=${tram}&module_name=${modName}`;
 
         fetch(fetchUrl).then(res => res.json()).then(data => {
+            hideLoading();
             if (!data || data.length === 0 || data.error) { alert("ℹ️ Không tìm thấy dữ liệu cũ!"); return; }
             globalHistoryData = data; 
             showHistoryModal(data);
-        }).catch(err => alert("❌ Lỗi tải Cloud: " + err));
+        }).catch(err => { hideLoading(); alert("❌ Lỗi tải Cloud: " + err); });
     }
 
     function showHistoryModal(dataArray) {
         const listDiv = document.getElementById('historyList');
         listDiv.innerHTML = '';
         dataArray.forEach((row, index) => {
-            const ngay = row.ngayTN || 'Không rõ ngày';
-            const nguoi = row.nguoiTN || 'Vô danh';
             const div = document.createElement('div');
             div.className = 'history-item';
-            div.innerHTML = `<div class="history-date">📅 Ngày: ${ngay}</div><div class="history-person">👤 Người thử: ${nguoi}</div>`;
+            div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div><div class="history-person">👤 Nhập: ${row.nguoiTN || '?'}</div>`;
             div.onclick = () => applyHistoryData(index);
             listDiv.appendChild(div);
         });
@@ -404,85 +426,102 @@
     function applyHistoryData(index) {
         closeHistoryModal();
         const data = globalHistoryData[index];
-        let warnCount = 0;
 
-        // 1. Điền thông số Cấu hình trước để vẽ form
-        ['mc_tudk', 'mc_cuonday', 'mc_tiepdiem', 'mc_temp', 'mc_nsx', 'mc_kieu', 'mc_mode', 'mc_ghichu'].forEach(id => {
-            if(data[id] !== undefined) {
-                const el = document.getElementById(id);
-                if(el) el.value = data[id];
-            }
+        ['mc_tudk', 'mc_cuonday', 'mc_tiepdiem'].forEach(id => {
+            if(data[id] !== undefined) { const el = document.getElementById(id); if(el) el.value = data[id]; }
         });
-
-        // 2. Load lại khung bảng Form theo cấu hình vừa nhận
         refreshTables();
 
-        // 3. Đổ dữ liệu thật vào đúng ô (dùng Value để có thể xuất Word và Lưu ngay)
         for (let key in data) {
             const el = document.getElementById(key);
             if (el && data[key] !== undefined && data[key] !== '') {
                 if (el.tagName === 'INPUT' && !['mc_temp', 'mc_nsx', 'mc_kieu', 'mc_ghichu'].includes(key)) {
-                    el.value = data[key]; 
-                    
-                    if (el.value !== "" && (key.includes("rcd") || key.includes("mdk"))) {
-                        const oldVal = parseFloat(String(data[key]).replace(',', '.'));
-                        const newVal = parseFloat(el.value);
-                        if (!isNaN(oldVal) && !isNaN(newVal) && oldVal > 0) {
-                            const suyGiam = (oldVal - newVal) / oldVal;
-                            if (suyGiam >= 0.30) {
-                                el.classList.add("bg-warning");
-                                el.title = `Cũ: ${data[key]}. Đã giảm ${(suyGiam*100).toFixed(1)}%!`;
-                                warnCount++;
-                            }
-                        }
-                    }
+                    el.value = ""; // Dọn ô
+                    el.placeholder = data[key]; // Chèn số liệu cũ làm nền tham khảo mờ
+                    el.dataset.oldval = data[key]; // Lưu ngầm để so sánh bôi vàng
                 } else if (el.tagName === 'SELECT') { el.value = data[key]; }
             }
         }
-
-        // Tự động mở (Tick) các form ra để anh em xem dữ liệu vừa load
+        
         ['chk_sec2', 'chk_sec3', 'chk_sec4'].forEach(id => {
             document.getElementById(id).checked = true;
             toggleSection(id.replace('chk', 'body'), document.getElementById(id));
         });
 
-        calculateAll();
-        let msg = `⚡ Đã tải xong kết quả ngày ${data.ngayTN || ''}! (Dữ liệu đã tự động điền thật vào ô để anh có thể Xuất Word ngay lập tức).`;
-        if (warnCount > 0) msg += `\n⚠️ Có ${warnCount} vị trí Cách điện giảm > 30% (Bôi Vàng)!`;
-        alert(msg);
+        alert(`⚡ Đã tải mờ số liệu ngày ${data.ngayTN || ''} để tham khảo!\n(Gõ số mới vào nếu giảm > 30% ô sẽ tự bôi vàng)`);
     }
 
+    // --- TẠM LƯU VÀ XÓA NHÁP ---
+    function captureInputs() {
+        const data = {};
+        document.querySelectorAll('input, select').forEach(el => { if(el.id && el.value) data[el.id] = el.value; });
+        return data;
+    }
+    function saveDraftManually() {
+        localStorage.setItem(MODULE_PREFIX + 'DRAFT', JSON.stringify(captureInputs()));
+        alert("💾 Đã lưu nháp xuống thiết bị!");
+    }
+    function loadDraftData() {
+        const str = localStorage.getItem(MODULE_PREFIX + 'DRAFT');
+        if (str) {
+            const data = JSON.parse(str);
+            ['mc_tudk', 'mc_cuonday', 'mc_tiepdiem'].forEach(id => { if(data[id]) document.getElementById(id).value = data[id]; });
+            refreshTables();
+            for(let key in data) { const el = document.getElementById(key); if(el) el.value = data[key]; }
+            calculateAll();
+        }
+    }
+    function clearDraft() {
+        if(confirm("⚠️ Anh có chắc muốn xóa sạch bản nháp để làm mới?")) {
+            localStorage.removeItem(MODULE_PREFIX + 'DRAFT'); location.reload();
+        }
+    }
+
+    // --- ĐỒNG BỘ CLOUD ---
     function syncOneDrive() {
+        showLoading("Đang đẩy dữ liệu phẳng lên Google Sheet...");
         const sessionObj = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
         const payload = {
-            module_name: "MC", maPhien: 'MC_' + Date.now(),
-            timestamp: new Date().toLocaleString('vi-VN'),
-            ngayTN: document.getElementById('info_ngay').value || new Date().toISOString().split('T')[0],
-            tram: sessionObj.tram || "", nganLo: sessionObj.nganLo || ""
+            module_name: "MC", maPhien: 'MC_' + Date.now(), timestamp: new Date().toLocaleString('vi-VN'),
+            ngayTN: document.getElementById('info_ngay').value, tram: sessionObj.tram || "", nganLo: sessionObj.nganLo || "", nguoiTN: sessionObj.nguoido || ""
         };
 
         const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], div[id^="${MODULE_PREFIX}"]`);
         elements.forEach(el => {
-            let id = el.id;
             let value = (el.tagName === "INPUT" || el.tagName === "SELECT") ? el.value : el.innerText;
             value = value ? value.trim().replace("75°C:", "").replace("ms", "").trim() : "";
-            if (value && value !== '-' && value !== 'NaN' && value !== '0') payload[id] = value;
+            if (value && value !== '-' && value !== 'NaN' && value !== '0') payload[el.id] = value;
         });
 
         const formData = new FormData(); formData.append('payload', JSON.stringify(payload));
         fetch(GOOGLE_WEB_APP_URL, { method: 'POST', body: formData })
         .then(res => res.text()).then(text => {
+            hideLoading();
             if(text === "OK") alert("🚀 ĐÃ LƯU & GOM DỮ LIỆU THÀNH CÔNG LÊN SHEET!");
             else alert("⚠️ Lỗi Server: " + text);
-        }).catch(err => alert("❌ Lỗi gửi: " + err));
+        }).catch(err => { hideLoading(); alert("❌ Lỗi gửi: " + err); });
     }
 
-    function exportWord() {
-        const fileInput = document.getElementById('template_file');
-        if (fileInput.files.length === 0) { alert("⚠️ Hãy chọn file Word mẫu!"); return; }
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const arrayBuffer = event.target.result;
+    // --- TẢI WORD TEMPLATE TỪ GOOGLE DRIVE ---
+    async function exportWordFromDrive() {
+        if (!TEMPLATE_DRIVE_ID || TEMPLATE_DRIVE_ID === "1aBcDeFgHiJkLmNoPqRsTuVwXyZ") {
+            alert("⚠️ Anh chưa dán ID của file Word mẫu vào biến TEMPLATE_DRIVE_ID trong code HTML!");
+            return;
+        }
+
+        showLoading("Đang kết nối Drive tải File Word Mẫu & Trộn dữ liệu...");
+        try {
+            const res = await fetch(`${GOOGLE_WEB_APP_URL}?action=getTemplate&fileId=${TEMPLATE_DRIVE_ID}`);
+            const data = await res.json();
+            
+            if (data.error) throw new Error(data.error);
+
+            // Decode Base64 từ Google Drive trả về
+            const binaryString = window.atob(data.base64);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+            
+            // Lấy dữ liệu đẩy vào Word (Bỏ qua các ô Placeholder rỗng)
             const payload = {};
             const sessionObj = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
             payload["mc_tram"] = sessionObj.tram || ""; payload["mc_nganlo"] = sessionObj.nganLo || "";
@@ -494,19 +533,21 @@
                 payload[el.id] = val ? val.trim().replace("75°C:", "").trim() : "";
             });
 
-            try {
-                const zip = new PizZip(arrayBuffer);
-                const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
-                doc.render(payload);
-                const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-                
-                const dateStr = payload["ngayTN"] ? payload["ngayTN"].replace(/\//g, '-') : "New";
-                const nganLoStr = payload["mc_nganlo"] ? payload["mc_nganlo"].replace(/[\/\\]/g, '-') : "NL";
-                saveAs(out, `BienBan_MC_${nganLoStr}_${dateStr}.docx`);
-                alert("🎉 Đã xuất Biên bản Word thành công!");
-            } catch (error) { alert("❌ Lỗi tạo Word: " + error.message); }
-        };
-        reader.readAsArrayBuffer(fileInput.files[0]);
+            // Gọi PizZip kết hợp
+            const zip = new PizZip(bytes.buffer);
+            const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+            doc.render(payload);
+            const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+            
+            const dateStr = payload["ngayTN"] ? payload["ngayTN"].replace(/\//g, '-') : "New";
+            const nganLoStr = payload["mc_nganlo"] ? payload["mc_nganlo"].replace(/[\/\\]/g, '-') : "NL";
+            saveAs(out, `BienBan_MC_${nganLoStr}_${dateStr}.docx`);
+            
+            hideLoading();
+        } catch (e) {
+            hideLoading();
+            alert("❌ Lỗi xuất Word: " + e.message);
+        }
     }
 </script>
 </body>
