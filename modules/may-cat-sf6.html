@@ -33,7 +33,7 @@
         th { background-color: #f1f3f4; font-weight: 700; color: #3c4043; white-space: nowrap; }
         
         .sub-val { font-size: 10px; color: #1565c0; font-weight: 600; margin-top: 2px; display: block; }
-        .chk-disable { font-size: 11px; font-weight: normal; color: #d32f2f; cursor: pointer; }
+        .chk-disable { font-size: 12px; font-weight: bold; color: #d84315; cursor: pointer; background: #fbe9e7; padding: 2px 8px; border-radius: 4px; }
         .btn-view-old { background: #0288d1; color: white; border: none; padding: 2px 6px; border-radius: 4px; font-size: 10px; cursor: pointer; margin-right: 8px; font-weight: 600; }
         .btn-action { background: var(--primary); color: white; border: none; padding: 10px 15px; font-size: 13px; font-weight: 600; border-radius: 6px; cursor: pointer; margin: 4px 0; width: 100%; }
         .btn-cloud { background: #2e7d32; }
@@ -42,7 +42,6 @@
         .note-text { font-size: 10px; color: #666; font-style: italic; margin-top: 3px; }
         .hidden-section { display: none !important; }
 
-        /* Giao diện Popup Chọn Ngày */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         .modal-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: var(--primary); border-bottom: 2px solid #fbe9e7; padding-bottom: 8px; text-align: center; }
@@ -69,6 +68,17 @@
         <div class="card-title"><span>THÔNG TIN CẤU HÌNH THIẾT BỊ</span></div>
         <div class="grid">
             <div class="form-group"><label>Trạm / Ngăn Lộ:</label><input type="text" id="info_tram" readonly style="background:#eee; font-weight:bold;"></div>
+            <div class="form-group"><label>Ngày Thí Nghiệm:</label><input type="text" id="info_ngay" readonly style="background:#eee; font-weight:bold;"></div>
+            <div class="form-group">
+                <label>Chế Độ Thí Nghiệm:</label>
+                <select id="mc_mode">
+                    <option value="new" selected>Mới / Sau lắp đặt</option>
+                    <option value="1yr">Sau 1 năm vận hành</option>
+                    <option value="3yr">Sau 3 năm vận hành</option>
+                    <option value="6yr">Sau 6 năm vận hành</option>
+                    <option value="boost">Thí nghiệm tăng cường</option>
+                </select>
+            </div>
             <div class="form-group"><label>Hiệu / NSX:</label><input type="text" id="mc_nsx" placeholder="ABB, Siemens..."></div>
             <div class="form-group"><label>Kiểu (Type):</label><input type="text" id="mc_kieu" placeholder="VD: LTB 145..."></div>
             <div class="form-group"><label>Nhiệt độ MT (°C):</label><input type="number" id="mc_temp" value="25" oninput="calculateAll()"></div>
@@ -76,8 +86,8 @@
             <div class="form-group">
                 <label>Số Tủ Điều Khiển:</label>
                 <select id="mc_tudk" onchange="refreshTables()">
-                    <option value="1">1 Tủ (Chung 3 Pha)</option>
-                    <option value="3" selected>3 hoặc 6 Tủ (Độc lập từng Pha)</option>
+                    <option value="1" selected>1 Tủ (Chung 3 Pha)</option>
+                    <option value="3">3 hoặc 6 Tủ (Độc lập từng Pha)</option>
                 </select>
             </div>
             <div class="form-group">
@@ -91,12 +101,13 @@
             <div class="form-group">
                 <label>Số Tiếp điểm / 1 Pha:</label>
                 <select id="mc_tiepdiem" onchange="refreshTables()">
-                    <option value="1">1 Tiếp điểm</option>
-                    <option value="2" selected>2 Tiếp điểm</option>
+                    <option value="1" selected>1 Tiếp điểm</option>
+                    <option value="2">2 Tiếp điểm</option>
                     <option value="3">3 Tiếp điểm</option>
                     <option value="4">4 Tiếp điểm</option>
                 </select>
             </div>
+            <div class="form-group" style="grid-column: 1 / -1;"><label>Ghi Chú:</label><input type="text" id="mc_ghichu" placeholder="Nhập thông tin ghi chú bổ sung..."></div>
         </div>
     </div>
 
@@ -104,9 +115,7 @@
     <div class="card">
         <div class="card-title">
             <span>1. R Cách Điện Mạch Điều Khiển [MΩ]</span>
-            <div>
-                <button class="btn-view-old" onclick="loadOldDataSection()">👁️ Kq cũ</button>
-            </div>
+            <div><button class="btn-view-old" onclick="loadOldDataSection()">👁️ Kq cũ</button></div>
         </div>
         <div class="grid">
             <div class="form-group">
@@ -121,9 +130,9 @@
     <div class="card">
         <div class="card-title">
             <span>2. Cuộn Dây & Động Cơ Tích Năng</span>
-            <label class="chk-disable"><input type="checkbox" id="chk_sec2" onchange="toggleSection('body_sec2', this)"> KTH</label>
+            <label class="chk-disable"><input type="checkbox" id="chk_sec2" onchange="toggleSection('body_sec2', this)"> ✏️ Nhập</label>
         </div>
-        <div id="body_sec2" class="table-responsive">
+        <div id="body_sec2" class="table-responsive hidden-section">
             <div class="note-text">* Cuộn dây: Tính R_75°C. Động cơ: Đo R_1C, R_CĐ, Dòng k.động, T.gian.</div>
             <div id="table_coils_container"></div>
         </div>
@@ -133,9 +142,9 @@
     <div class="card">
         <div class="card-title">
             <span>3. Tiếp Điểm Chính (Rtx & R_CĐ)</span>
-            <label class="chk-disable"><input type="checkbox" id="chk_sec3" onchange="toggleSection('body_sec3', this)"> KTH</label>
+            <label class="chk-disable"><input type="checkbox" id="chk_sec3" onchange="toggleSection('body_sec3', this)"> ✏️ Nhập</label>
         </div>
-        <div id="body_sec3" class="table-responsive">
+        <div id="body_sec3" class="table-responsive hidden-section">
             <div class="grid" style="margin-bottom:6px;">
                 <div class="form-group"><label>Rtx_NSX Yêu cầu (µΩ):</label><input type="number" id="mc_rtx_nsx" value="50" oninput="calculateAll()"></div>
             </div>
@@ -148,9 +157,9 @@
     <div class="card">
         <div class="card-title">
             <span>4. Thời Gian Hành Trình (Timing) [ms]</span>
-            <label class="chk-disable"><input type="checkbox" id="chk_sec4" onchange="toggleSection('body_sec4', this)"> KTH</label>
+            <label class="chk-disable"><input type="checkbox" id="chk_sec4" onchange="toggleSection('body_sec4', this)"> ✏️ Nhập</label>
         </div>
-        <div id="body_sec4" class="table-responsive">
+        <div id="body_sec4" class="table-responsive hidden-section">
             <div class="note-text">* Hệ thống TỰ TÍNH MAX, MIN và độ lệch (Δ). Tự báo Đỏ nếu vi phạm (Đóng: 3.3/5ms | Cắt: 2.5/3.3ms).</div>
             <div id="table_timing_container"></div>
         </div>
@@ -167,7 +176,6 @@
     </div>
 </div>
 
-<!-- GIAO DIỆN POPUP LỊCH SỬ -->
 <div id="historyModal" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-title">⏱ LỊCH SỬ THÍ NGHIỆM THIẾT BỊ</div>
@@ -178,7 +186,7 @@
 </div>
 
 <script>
-    const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx91kxV-_KHL4GJVtzdQXl5Yfy9Hm-dOvE5AQ1my7xwjSXjG0pxWVXIUr2iyS4yM8ob/exec"; // Link GAS của anh
+    const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx91kxV-_KHL4GJVtzdQXl5Yfy9Hm-dOvE5AQ1my7xwjSXjG0pxWVXIUr2iyS4yM8ob/exec";
     const MODULE_PREFIX = "mc_"; 
     let globalHistoryData = [];
 
@@ -187,6 +195,7 @@
         if (savedSession) {
             const data = JSON.parse(savedSession);
             document.getElementById('info_tram').value = `${data.tram || ''} - ${data.nganLo || ''}`;
+            document.getElementById('info_ngay').value = data.ngayDo || new Date().toISOString().split('T')[0];
         }
         refreshTables();
     };
@@ -199,10 +208,9 @@
     }
 
     function toggleSection(sectionId, chk) {
-        document.getElementById(sectionId).classList.toggle('hidden-section', chk.checked);
+        document.getElementById(sectionId).classList.toggle('hidden-section', !chk.checked);
     }
 
-    // --- 1. RENDER CUỘN DÂY & ĐỘNG CƠ ---
     function renderCoilTable() {
         const tuDK = parseInt(document.getElementById('mc_tudk').value);
         const cdType = document.getElementById('mc_cuonday').value;
@@ -230,7 +238,6 @@
             html += `</tr>`;
         });
 
-        // Động cơ
         html += `<tr><td style="background:#f1f3f4;"><b>Động Cơ</b><br><span class="note-text">R1C / R_CĐ<br>I_kđ / T_tích</span></td>`;
         phases.forEach(p => {
             let px = tuDK === 1 ? 'Chung' : p;
@@ -245,25 +252,17 @@
         document.getElementById('table_coils_container').innerHTML = html;
     }
 
-    // --- 2. RENDER TIẾP ĐIỂM CHÍNH ---
     function renderContactTable() {
         const numTd = parseInt(document.getElementById('mc_tiepdiem').value);
         let html = `<table><thead><tr><th>Pha</th><th>Tiếp điểm</th><th>R Tiếp Xúc (µΩ)</th><th>R_CĐ Giữa TĐ (MΩ)</th><th>R_CĐ Đất (MΩ)</th></tr></thead><tbody>`;
-        
         ['A', 'B', 'C'].forEach(p => {
             for(let i=1; i<=numTd; i++) {
                 html += `<tr>
                     ${i===1 ? `<td rowspan="${numTd}"><b>${p}</b></td>` : ''}
                     <td><b>TĐ ${i}</b></td>
-                    <td>
-                        <input type="number" id="mc_rtx_${p}_${i}" oninput="calculateAll()">
-                        <span class="sub-val" id="mc_eval_rtx_${p}_${i}"></span>
-                    </td>
+                    <td><input type="number" id="mc_rtx_${p}_${i}" oninput="calculateAll()"><span class="sub-val" id="mc_eval_rtx_${p}_${i}"></span></td>
                     <td><input type="number" id="mc_rcd_giua_${p}_${i}"></td>
-                    ${i===1 ? `<td rowspan="${numTd}">
-                        <input type="number" id="mc_rcd_dat_${p}" oninput="calculateAll()">
-                        <span class="sub-val" id="mc_eval_rcddat_${p}"></span>
-                    </td>` : ''}
+                    ${i===1 ? `<td rowspan="${numTd}"><input type="number" id="mc_rcd_dat_${p}" oninput="calculateAll()"><span class="sub-val" id="mc_eval_rcddat_${p}"></span></td>` : ''}
                 </tr>`;
             }
         });
@@ -271,13 +270,14 @@
         document.getElementById('table_contacts_container').innerHTML = html;
     }
 
-    // --- 3. RENDER HÀNH TRÌNH TIMING ---
     function renderTimingTable() {
         const numTd = parseInt(document.getElementById('mc_tiepdiem').value);
         const cdType = document.getElementById('mc_cuonday').value;
         let actions = [];
-        if(cdType === '1C2O' || cdType === '2C2O') actions = [{id:'C', name:'ĐÓNG (C)'}, {id:'O1', name:'CẮT 1 (O1)'}, {id:'O2', name:'CẮT 2 (O2)'}];
-        else actions = [{id:'C', name:'ĐÓNG (C)'}, {id:'O', name:'CẮT (O)'}];
+        
+        if(cdType === '1C2O') actions = [{id:'C', name:'ĐÓNG (C)'}, {id:'O1', name:'CẮT 1 (O1)'}, {id:'O2', name:'CẮT 2 (O2)'}];
+        else if(cdType === '1C1O') actions = [{id:'C', name:'ĐÓNG (C)'}, {id:'O', name:'CẮT (O)'}];
+        else if(cdType === '2C2O') actions = [{id:'C1', name:'ĐÓNG 1 (C1)'}, {id:'C2', name:'ĐÓNG 2 (C2)'}, {id:'O1', name:'CẮT 1 (O1)'}, {id:'O2', name:'CẮT 2 (O2)'}];
 
         let html = ``;
         actions.forEach(act => {
@@ -288,9 +288,7 @@
             
             ['A', 'B', 'C'].forEach(p => {
                 html += `<tr><td><b>${p}</b></td>`;
-                for(let i=1; i<=numTd; i++) {
-                    html += `<td><input type="number" step="0.1" id="mc_t_${act.id}_${p}_${i}" oninput="calculateAll()"></td>`;
-                }
+                for(let i=1; i<=numTd; i++) { html += `<td><input type="number" step="0.1" id="mc_t_${act.id}_${p}_${i}" oninput="calculateAll()"></td>`; }
                 html += `<td><div class="err-box" id="mc_err_td_${act.id}_${p}">-</div></td></tr>`;
             });
             html += `<tr><td colspan="${numTd + 1}" style="text-align:right;"><b>Độ lệch giữa 3 Pha (Δ Pha MAX):</b></td>`;
@@ -300,21 +298,15 @@
         document.getElementById('table_timing_container').innerHTML = html;
     }
 
-    // --- 4. CALCULATE LOGIC (TÍNH TOÁN & ĐÁNH GIÁ) ---
     function calculateAll() {
         const temp = parseFloat(document.getElementById('mc_temp').value) || 25;
         
-        // 4.1 Mạch điều khiển
         const mdk = parseFloat(document.getElementById('mc_rcd_mdk').value);
         const elMdk = document.getElementById('mc_eval_mdk');
-        if(mdk) {
-            elMdk.innerText = mdk >= 2 ? "✔ ĐẠT" : "✘ LỖI";
-            elMdk.className = mdk >= 2 ? "sub-val pass" : "sub-val fail";
-        }
+        if(mdk) { elMdk.innerText = mdk >= 2 ? "✔ ĐẠT" : "✘ LỖI"; elMdk.className = mdk >= 2 ? "sub-val pass" : "sub-val fail"; }
 
-        // 4.2 Cuộn dây (Quy 75)
         document.querySelectorAll('input[id*="_r1c_"]').forEach(el => {
-            if(el.id.includes("mot")) return; // Bỏ qua động cơ
+            if(el.id.includes("mot")) return; 
             const v = parseFloat(el.value);
             const r75Id = el.id.replace('_r1c_', '_r75_');
             const elR75 = document.getElementById(r75Id);
@@ -324,37 +316,31 @@
             } else if (elR75) elR75.innerText = `75°C: -`;
         });
 
-        // 4.3 Rtx và Rcd đất
         const rtxNsx = parseFloat(document.getElementById('mc_rtx_nsx').value) || 50;
         const rtxMax = rtxNsx * 1.2;
         ['A', 'B', 'C'].forEach(p => {
-            // R đất
             const rdat = parseFloat(document.getElementById(`mc_rcd_dat_${p}`)?.value);
             const elDat = document.getElementById(`mc_eval_rcddat_${p}`);
-            if(elDat && !isNaN(rdat)) {
-                elDat.innerText = rdat >= 100 ? "✔ ĐẠT" : "✘ LỖI";
-                elDat.className = rdat >= 100 ? "sub-val pass" : "sub-val fail";
-            }
-            // Rtx
+            if(elDat && !isNaN(rdat)) { elDat.innerText = rdat >= 100 ? "✔ ĐẠT" : "✘ LỖI"; elDat.className = rdat >= 100 ? "sub-val pass" : "sub-val fail"; }
+            
             for(let i=1; i<=4; i++) {
                 const rtx = parseFloat(document.getElementById(`mc_rtx_${p}_${i}`)?.value);
                 const elRtx = document.getElementById(`mc_eval_rtx_${p}_${i}`);
-                if(elRtx && !isNaN(rtx)) {
-                    elRtx.innerText = rtx <= rtxMax ? "✔ ĐẠT" : "✘ LỖI";
-                    elRtx.className = rtx <= rtxMax ? "sub-val pass" : "sub-val fail";
-                }
+                if(elRtx && !isNaN(rtx)) { elRtx.innerText = rtx <= rtxMax ? "✔ ĐẠT" : "✘ LỖI"; elRtx.className = rtx <= rtxMax ? "sub-val pass" : "sub-val fail"; }
             }
         });
 
-        // 4.4 THỜI GIAN HÀNH TRÌNH (Tự tính Lệch)
         const numTd = parseInt(document.getElementById('mc_tiepdiem').value);
         const cdType = document.getElementById('mc_cuonday').value;
-        const actions = (cdType.includes('2O')) ? ['C', 'O1', 'O2'] : ['C', 'O'];
+        
+        let actions = [];
+        if(cdType === '1C2O') actions = ['C', 'O1', 'O2'];
+        else if(cdType === '1C1O') actions = ['C', 'O'];
+        else if(cdType === '2C2O') actions = ['C1', 'C2', 'O1', 'O2'];
 
         actions.forEach(act => {
-            let limitTd = act === 'C' ? 3.3 : 2.5; // Lệch TĐ: Đóng 3.3ms, Cắt 2.5ms
-            let limitPha = act === 'C' ? 5.0 : 3.3; // Lệch Pha: Đóng 5ms, Cắt 3.3ms
-            
+            let limitTd = act.includes('C') ? 3.3 : 2.5; 
+            let limitPha = act.includes('C') ? 5.0 : 3.3; 
             let allPhaseTimes = [];
 
             ['A', 'B', 'C'].forEach(p => {
@@ -363,25 +349,18 @@
                     const t = parseFloat(document.getElementById(`mc_t_${act}_${p}_${i}`)?.value);
                     if(!isNaN(t)) { phaseTimes.push(t); allPhaseTimes.push(t); }
                 }
-
-                // Chênh lệch trong 1 pha (Δ TĐ)
                 const errBox = document.getElementById(`mc_err_td_${act}_${p}`);
                 if(errBox && phaseTimes.length > 1) {
-                    const maxT = Math.max(...phaseTimes);
-                    const minT = Math.min(...phaseTimes);
-                    const diff = maxT - minT;
+                    const diff = Math.max(...phaseTimes) - Math.min(...phaseTimes);
                     errBox.innerText = diff.toFixed(1);
                     errBox.style.color = diff <= limitTd ? "#2e7d32" : "#c62828";
                     errBox.style.background = diff <= limitTd ? "transparent" : "#ffebee";
                 }
             });
 
-            // Chênh lệch giữa 3 pha (Δ Pha)
             const errPhaBox = document.getElementById(`mc_err_pha_${act}`);
             if(errPhaBox && allPhaseTimes.length > 0) {
-                const maxGlobal = Math.max(...allPhaseTimes);
-                const minGlobal = Math.min(...allPhaseTimes);
-                const diffGlobal = maxGlobal - minGlobal;
+                const diffGlobal = Math.max(...allPhaseTimes) - Math.min(...allPhaseTimes);
                 errPhaBox.innerText = diffGlobal.toFixed(1) + " ms";
                 errPhaBox.style.color = diffGlobal <= limitPha ? "#2e7d32" : "#c62828";
                 errPhaBox.style.background = diffGlobal <= limitPha ? "transparent" : "#ffebee";
@@ -389,7 +368,6 @@
         });
     }
 
-    // --- 5. LỊCH SỬ KẾT QUẢ CŨ (DO GET) ---
     function loadOldDataSection() {
         const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
         const nganLo = encodeURIComponent(sessionData.nganLo || '');
@@ -428,12 +406,24 @@
         const data = globalHistoryData[index];
         let warnCount = 0;
 
+        // 1. Điền thông số Cấu hình trước để vẽ form
+        ['mc_tudk', 'mc_cuonday', 'mc_tiepdiem', 'mc_temp', 'mc_nsx', 'mc_kieu', 'mc_mode', 'mc_ghichu'].forEach(id => {
+            if(data[id] !== undefined) {
+                const el = document.getElementById(id);
+                if(el) el.value = data[id];
+            }
+        });
+
+        // 2. Load lại khung bảng Form theo cấu hình vừa nhận
+        refreshTables();
+
+        // 3. Đổ dữ liệu thật vào đúng ô (dùng Value để có thể xuất Word và Lưu ngay)
         for (let key in data) {
             const el = document.getElementById(key);
             if (el && data[key] !== undefined && data[key] !== '') {
-                if (el.tagName === 'INPUT') {
-                    el.placeholder = data[key]; 
-                    // Cảnh báo suy giảm Cách điện Rcd (Giảm > 30% báo vàng)
+                if (el.tagName === 'INPUT' && !['mc_temp', 'mc_nsx', 'mc_kieu', 'mc_ghichu'].includes(key)) {
+                    el.value = data[key]; 
+                    
                     if (el.value !== "" && (key.includes("rcd") || key.includes("mdk"))) {
                         const oldVal = parseFloat(String(data[key]).replace(',', '.'));
                         const newVal = parseFloat(el.value);
@@ -443,27 +433,31 @@
                                 el.classList.add("bg-warning");
                                 el.title = `Cũ: ${data[key]}. Đã giảm ${(suyGiam*100).toFixed(1)}%!`;
                                 warnCount++;
-                            } else {
-                                el.classList.remove("bg-warning"); el.title = "";
                             }
                         }
                     }
                 } else if (el.tagName === 'SELECT') { el.value = data[key]; }
             }
         }
-        refreshTables();
-        let msg = `⚡ Đã tải xong kết quả ngày ${data.ngayTN || ''}!`;
+
+        // Tự động mở (Tick) các form ra để anh em xem dữ liệu vừa load
+        ['chk_sec2', 'chk_sec3', 'chk_sec4'].forEach(id => {
+            document.getElementById(id).checked = true;
+            toggleSection(id.replace('chk', 'body'), document.getElementById(id));
+        });
+
+        calculateAll();
+        let msg = `⚡ Đã tải xong kết quả ngày ${data.ngayTN || ''}! (Dữ liệu đã tự động điền thật vào ô để anh có thể Xuất Word ngay lập tức).`;
         if (warnCount > 0) msg += `\n⚠️ Có ${warnCount} vị trí Cách điện giảm > 30% (Bôi Vàng)!`;
         alert(msg);
     }
 
-    // --- 6. XUẤT WORD & ĐỒNG BỘ ---
     function syncOneDrive() {
         const sessionObj = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
         const payload = {
             module_name: "MC", maPhien: 'MC_' + Date.now(),
             timestamp: new Date().toLocaleString('vi-VN'),
-            ngayTN: sessionObj.ngayDo || new Date().toISOString().split('T')[0],
+            ngayTN: document.getElementById('info_ngay').value || new Date().toISOString().split('T')[0],
             tram: sessionObj.tram || "", nganLo: sessionObj.nganLo || ""
         };
 
@@ -492,7 +486,8 @@
             const payload = {};
             const sessionObj = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
             payload["mc_tram"] = sessionObj.tram || ""; payload["mc_nganlo"] = sessionObj.nganLo || "";
-            payload["ngayTN"] = sessionObj.ngayDo || ""; payload["nguoiTN"] = sessionObj.nguoido || "";
+            payload["ngayTN"] = document.getElementById('info_ngay').value || ""; 
+            payload["nguoiTN"] = sessionObj.nguoido || "";
             
             document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], div[id^="${MODULE_PREFIX}"]`).forEach(el => {
                 let val = (el.tagName === "INPUT" || el.tagName === "SELECT") ? el.value : el.innerText;
