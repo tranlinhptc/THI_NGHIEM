@@ -126,7 +126,7 @@
     <h1>HỆ THỐNG QUẢN LÝ THÍ NGHIỆM NHẤT THỨ</h1>
     <p>Cơ Sở Dữ Liệu & Biên Bản Thí Nghiệm Hiện Trường</p>
 </header>
-
+<!-- 
 <div class="container">
     <!-- 1. CHỌN TRẠM & NGẮN LỘ -->
     <div class="info-card">
@@ -167,7 +167,7 @@
                 <input type="text" id="input-nguoido" placeholder="VD: Nguyễn Văn A">
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- 2. DANH MỤC THIẾT BỊ -->
     <div class="section-title">⚡ CHỌN HẠNG MỤC THIẾT BỊ THÍ NGHIỆM</div>
@@ -244,37 +244,37 @@
     </div>
 </div> -->
 
-<script>
+<!-- <script> -->
     // Mặc định cài đặt ngày đo hôm nay khi mở trang
-    window.onload = function() {
-        document.getElementById('input-ngaydo').valueAsDate = new Date();
+    // window.onload = function() {
+    //     document.getElementById('input-ngaydo').valueAsDate = new Date();
     };
 
-    // Kiểm tra thông tin BẮT BUỘC trước khi mở Module
-    function openModule(fileName) {
-        const tram = document.getElementById('select-tram').value.trim();
-        const nganLo = document.getElementById('input-nganlo').value.trim();
+    // // Kiểm tra thông tin BẮT BUỘC trước khi mở Module
+    // function openModule(fileName) {
+    //     const tram = document.getElementById('select-tram').value.trim();
+    //     const nganLo = document.getElementById('input-nganlo').value.trim();
 
-        if (!tram) {
-            alert("⚠️ VUI LÒNG CHỌN TRẠM BIẾN ÁP HOẶC KHO TRƯỚC!");
-            document.getElementById('select-tram').focus();
-            return;
-        }
+    //     if (!tram) {
+    //         alert("⚠️ VUI LÒNG CHỌN TRẠM BIẾN ÁP HOẶC KHO TRƯỚC!");
+    //         document.getElementById('select-tram').focus();
+    //         return;
+    //     }
 
-        if (!nganLo) {
-            alert("⚠️ VUI LÒNG NHẬP VỊ TRÍ / NGĂN LỘ / THIẾT BỊ TRƯỚC!");
-            document.getElementById('input-nganlo').focus();
-            return;
-        }
+    //     if (!nganLo) {
+    //         alert("⚠️ VUI LÒNG NHẬP VỊ TRÍ / NGĂN LỘ / THIẾT BỊ TRƯỚC!");
+    //         document.getElementById('input-nganlo').focus();
+    //         return;
+    //     }
 
-        // Lưu thông tin vào bộ nhớ tạm trình duyệt
-        const sessionData = {
-            tram: tram,
-            nganLo: nganLo,
-            ngayDo: document.getElementById('input-ngaydo').value,
-            nguoido: document.getElementById('input-nguoido').value
-        };
-        localStorage.setItem('CURRENT_SESSION', JSON.stringify(sessionData));
+    //     // Lưu thông tin vào bộ nhớ tạm trình duyệt
+    //     const sessionData = {
+    //         tram: tram,
+    //         nganLo: nganLo,
+    //         ngayDo: document.getElementById('input-ngaydo').value,
+    //         nguoido: document.getElementById('input-nguoido').value
+    //     };
+    //     localStorage.setItem('CURRENT_SESSION', JSON.stringify(sessionData));
 
         // Mở file module thiết bị
         window.location.href = `modules/${fileName}`;
