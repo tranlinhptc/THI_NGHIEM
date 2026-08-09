@@ -99,7 +99,7 @@
             <div class="form-group">
                 <label>Trạm (Lấy từ hệ thống): <span style="color:red">*</span></label>
                 <select id="info_tram" onchange="checkUnlockForm()">
-                    <option value="" disabled selected>Đang tải danh sách trạm...</option>
+                    <option value="" disabled selected>Đang tải ...</option>
                 </select>
             </div>
             <div class="form-group">
@@ -534,7 +534,7 @@
         
         if (!nganLo || !tram) { alert("⚠️ Chưa chọn Trạm và Ngăn Lộ!"); return; }
 
-        showLoading("Đang tải dữ liệu lịch sử từ Google Sheet...");
+        showLoading("Đang tải dữ liệu ...");
         const modName = MODULE_PREFIX.replace('_', '').toUpperCase();
         const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&tram=${tram}&module_name=${modName}`;
 
@@ -624,7 +624,7 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
     }
 
     function syncOneDrive() {
-        showLoading("Đang đẩy dữ liệu phẳng lên Google Sheet...");
+        showLoading("Đang up dữ liệu ...");
         const nguoiDo = prompt("Nhập tên người thực hiện (để trống nếu không cần):", "");
 
         const payload = {
@@ -657,7 +657,7 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
             return;
         }
 
-        showLoading("Đang kết nối Drive tải File Word Mẫu & Trộn dữ liệu...");
+        showLoading("Đang soạn file...");
         try {
             const res = await fetch(`${GOOGLE_WEB_APP_URL}?action=getTemplate&fileId=${TEMPLATE_DRIVE_ID}`);
             const data = await res.json();
