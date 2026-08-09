@@ -552,7 +552,12 @@
         dataArray.forEach((row, index) => {
             const div = document.createElement('div');
             div.className = 'history-item';
-            div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div><div class="history-person">👤 Nhập: ${row.nguoiTN || '?'}</div>`;
+            // div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div><div class="history-person">👤 Nhập: ${row.nguoiTN || '?'}</div>`;
+            // Dịch mã value lưu trên sheet sang Tiếng Việt hiển thị cho đẹp
+const modeMap = { "new": "Mới", "1yr": "Sau 1 năm", "3yr": "Sau 3 năm", "6yr": "Sau 6 năm", "boost": "Tăng cường" };
+const modeText = modeMap[row.mc_mode] || row.mc_mode || 'Không ghi nhận';
+
+div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div><div class="history-person" style="color: #0288d1; font-weight: bold;">⚙️ Chế độ: ${modeText}</div>`;
             div.onclick = () => applyHistoryData(index);
             listDiv.appendChild(div);
         });
