@@ -215,6 +215,43 @@
             </div>
         </div>
 
+<!-- TRƯỜNG HỢP 1: TỪNG PHA -->
+        <div class="card">
+            <div class="card-title">
+                <span>5. Kiểm tra khí SF6</span>
+                <label class="chk-disable"><input type="checkbox" id="chk_sec5" onchange="toggleSection('body_sec5_1', this)"> ✏️ Nhập</label>
+            </div>
+            <div id="body_sec5_1" class="table-responsive hidden-section">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pha</th>
+  				<th>A</th>
+                            	<th>B</th>
+                            	<th>C</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>Áp suất (bar)</b></td>
+                            <td><input type="number" id="mc_as_a"></td>
+                            <td><input type="number" id="mc_as_b"></td>
+                            <td><input type="number" id="mc_as_c"></td>
+
+                        </tr>
+                        <tr>
+                            <td><b>Độ ẩm</b></td>
+                            <td><input type="number" id="mc_da_a"></td>
+                            <td><input type="number" id="mc_da_b"></td>
+                            <td><input type="number" id="mc_da_c"></td>
+
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>        
+
         <!-- NÚT CHỨC NĂNG TÍCH HỢP -->
         <div class="card">
             <button class="btn-action btn-draft" onclick="saveDraftManually()">💾 Tạm Lưu (Nháp)</button>
@@ -544,7 +581,7 @@
             }
         }
         
-        ['chk_sec2', 'chk_sec3', 'chk_sec4'].forEach(id => {
+        ['chk_sec2', 'chk_sec3', 'chk_sec4', 'chk_sec5'].forEach(id => {
             document.getElementById(id).checked = true;
             toggleSection(id.replace('chk', 'body'), document.getElementById(id));
         });
