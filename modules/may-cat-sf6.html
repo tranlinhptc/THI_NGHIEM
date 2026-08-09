@@ -674,6 +674,23 @@
                 payload[el.id] = val ? val.trim().replace("75°C:", "").trim() : "";
             });
 
+            // --- BỘ CÔNG TẮC ĐIỀU KIỆN ẨN/HIỆN FORM WORD ---
+            const tuDK = document.getElementById('mc_tudk').value;
+            payload["is_1tu"] = (tuDK === "1"); // Bằng true nếu là 1 tủ
+            payload["is_3tu"] = (tuDK === "3"); // Bằng true nếu là 3 tủ
+            
+            const cuonDay = document.getElementById('mc_cuonday').value;
+            payload["is_1C2O"] = (cuonDay === "1C2O");
+            payload["is_2C1O"] = (cuonDay === "2C1O");
+            payload["is_2C2O"] = (cuonDay === "2C2O");
+
+            const tiepDiem = document.getElementById('mc_tiepdiem').value;
+            payload["is_1TD"] = (tiepDiem === "1");
+            payload["is_2TD"] = (tiepDiem === "2");
+            payload["is_3TD"] = (tiepDiem === "3");
+            payload["is_4TD"] = (tiepDiem === "4");
+            // ------------------------------------------------
+            
             const zip = new PizZip(bytes.buffer);
             const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
             doc.render(payload);
