@@ -646,7 +646,7 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
         fetch(GOOGLE_WEB_APP_URL, { method: 'POST', body: formData })
         .then(res => res.text()).then(text => {
             hideLoading();
-            if(text === "OK") alert("🚀 ĐÃ LƯU & GOM DỮ LIỆU THÀNH CÔNG LÊN SHEET!");
+            if(text === "OK") alert("🚀 ĐÃ LƯU!");
             else alert("⚠️ Lỗi Server: " + text);
         }).catch(err => { hideLoading(); alert("❌ Lỗi gửi: " + err); });
     }
