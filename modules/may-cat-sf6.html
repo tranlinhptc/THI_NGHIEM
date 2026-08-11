@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -858,16 +859,21 @@ const sec6 = document.getElementById('chk_sec6').checked; if (sec6) {payload["is
 
 
 
-
+if (payload["ngayTN"]) {
+    const m = payload["ngayTN"].match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (m) {
+        payload["ngayTN"] = `${m[3]}/${m[2]}/${m[1]}`;
+    }
+}
             
             const zip = new PizZip(bytes.buffer);
             const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
             doc.render(payload);
             const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
             
-            const dateStr = payload["ngayTN"] ? payload["ngayTN"].replace(/\//g, '-') : "New";
-            const nganLoStr = payload["mc_nganlo"] ? payload["mc_nganlo"].replace(/[\/\\]/g, '-') : "NL";
-            saveAs(out, `BienBan_MC_${nganLoStr}_${dateStr}.docx`);
+	const dateStr = payload["ngayTN"]? payload["ngayTN"].replace(/\//g, '-') : "New";const tramStr = payload["mc_tram"] ? payload["mc_tram"].replace(/[\/\\]/g, '-'):"Tram";
+	const nganLoStr = payload["mc_nganlo"]? payload["mc_nganlo"].replace(/[\/\\]/g, '-'): "NL";
+	saveAs(out, `Bien ban thi nghiem MC_${nganLoStr}_${tramStr}_${dateStr}.docx`);
             
             hideLoading();
         } catch (e) {
