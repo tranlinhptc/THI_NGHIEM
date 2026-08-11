@@ -180,7 +180,7 @@
         <div class="card">
             <div class="card-title">
                 <span>1. R Cách Điện Mạch Điều Khiển [MΩ]</span>
-                    <label class="chk-disable"><input type="checkbox" id="chk_sec1" onchange="toggleSection('body_sec7', this)"> ✏️ Nhập</label>
+                    <label class="chk-disable"><input type="checkbox" id="chk_sec1" onchange="toggleSection('body_sec1', this)"> ✏️ Nhập</label>
             </div>
             <div class="grid">
             <div id="body_sec1" class="table-responsive hidden-section">
@@ -692,7 +692,7 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
             });
 
             // --- BỘ CÔNG TẮC ĐIỀU KIỆN ẨN/HIỆN FORM WORD ---
-            // const sec5 = document.getElementById('chk_sec5').checked; {payload["is_sec5"] = true;} else {delete payload["is_sec5"]};
+           const sec1 = document.getElementById('chk_sec1').checked; {payload["is_sec1"] = true;} else {delete payload["is_sec1"];}
            const tuDK = document.getElementById('mc_tudk').value;
             if (tuDK === "1") payload["is_1tu"] = true;
             else if (tuDK === "3") payload["is_3tu"] = true;
