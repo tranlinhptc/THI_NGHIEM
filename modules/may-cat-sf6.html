@@ -692,20 +692,11 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
             });
 
             // --- BỘ CÔNG TẮC ĐIỀU KIỆN ẨN/HIỆN FORM WORD ---
-           
-for (let i = 1; i <= 5; i++) {
-    const checked = document.getElementById(`chk_sec${i}`).checked;
-
-    if (checked) {
-        payload[`is_sec${i}`] = true;
-    } else {
-        delete payload[`is_sec${i}`];
-    }
-}
-
-const tuDK = document.getElementById('mc_tudk').value;
-if (tuDK === "1") payload["is_1tu"] = true;
-else if (tuDK === "3") payload["is_3tu"] = true;
+           const sec1 = document.getElementById('chk_sec1').checked; {payload["is_sec1"] = true;} else {delete payload["is_sec1"];}
+           const tuDK = document.getElementById('mc_tudk').value;
+            if (tuDK === "1") payload["is_1tu"] = true;
+            else if (tuDK === "3") payload["is_3tu"] = true;
+        
 
 
 
