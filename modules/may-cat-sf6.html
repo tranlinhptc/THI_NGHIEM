@@ -638,7 +638,10 @@
             ['A', 'B', 'C'].forEach(p => {
                 let phaseTimes = [];
                 for(let i=1; i<=numTd; i++) {
-                    const t = parseFloat(document.getElementById(`mc_t_${act}_${p}_${i}`)?.value);
+                    // const t = parseFloat(document.getElementById(`mc_t_${act}_${p}_${i}`)?.value); sua loi phay (,)va cham(.)
+					const raw = document.getElementById(`mc_t_${act}_${p}_${i}`)?.value || "";
+					const t = parseFloat(raw.replace(',', '.'));
+					
                     if(!isNaN(t)) { phaseTimes.push(t); allPhaseTimes.push(t); }
                 }
                 const errBox = document.getElementById(`mc_err_td_${act}_${p}`);
