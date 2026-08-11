@@ -708,7 +708,7 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
             }
         }
         
-        ['chk_sec2', 'chk_sec3', 'chk_sec4', 'chk_sec5', 'chk_sec6'].forEach(id => {
+        ['chk_sec1','chk_sec2', 'chk_sec3', 'chk_sec4', 'chk_sec5', 'chk_sec6'].forEach(id => {
             document.getElementById(id).checked = true;
             toggleSection(id.replace('chk', 'body'), document.getElementById(id));
         });
