@@ -871,7 +871,8 @@ if (payload["ngayTN"]) {
             const zip = new PizZip(bytes.buffer);
             const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
             doc.render(payload);
-            const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+            // const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }); Toi uu hoa dung luong file word bang doan duoi
+			const out = doc.getZip().generate({type: "blob",    mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",    compression: "DEFLATE"});
             
 	const dateStr = payload["ngayTN"]? payload["ngayTN"].replace(/\//g, '-') : "New";const tramStr = payload["mc_tram"] ? payload["mc_tram"].replace(/[\/\\]/g, '-'):"Tram";
 	const nganLoStr = payload["mc_nganlo"]? payload["mc_nganlo"].replace(/[\/\\]/g, '-'): "NL";
