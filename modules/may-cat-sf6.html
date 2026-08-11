@@ -731,7 +731,7 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
             const data = JSON.parse(str);
             if (data['info_tram']) document.getElementById('info_tram').value = data['info_tram'];
             if (data['info_nganlo']) document.getElementById('info_nganlo').value = data['info_nganlo'];
-            if (data['info_ngay']) document.getElementById('info_ngay').value = data['info_ngay'];
+            // if (data['info_ngay']) document.getElementById('info_ngay').value = data['info_ngay'];
 
             ['mc_tudk', 'mc_cuonday', 'mc_tiepdiem'].forEach(id => { if(data[id]) document.getElementById(id).value = data[id]; });
             refreshTables();
