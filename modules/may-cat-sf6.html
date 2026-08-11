@@ -180,13 +180,16 @@
         <div class="card">
             <div class="card-title">
                 <span>1. R Cách Điện Mạch Điều Khiển [MΩ]</span>
+                    <label class="chk-disable"><input type="checkbox" id="chk_sec7" onchange="toggleSection('body_sec7', this)"> ✏️ Nhập</label>
             </div>
             <div class="grid">
+            <div id="body_sec7" class="table-responsive hidden-section">
                 <div class="form-group">
                     <label>R_CĐ Mạch ĐK (TC: ≥ 2 MΩ):</label>
                     <input type="number" id="mc_rcd_mdk" oninput="calculateAll()" placeholder="Nhập MΩ">
                     <span class="sub-val" id="mc_eval_mdk"></span>
                 </div>
+            </div>
             </div>
         </div>
 
