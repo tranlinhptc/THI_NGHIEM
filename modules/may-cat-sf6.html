@@ -759,8 +759,14 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
 
         const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], div[id^="${MODULE_PREFIX}"]`);
         elements.forEach(el => {
-            let value = (el.tagName === "INPUT" || el.tagName === "SELECT") ? el.value : el.innerText;
+            //---=======DONG NAY DA BI THAY = DONG DUOI let value = (el.tagName === "INPUT" || el.tagName === "SELECT") ? el.value : el.innerText;
+let value = ""; if (el.tagName === "INPUT") {    value = el.value.trim() || el.placeholder.trim();} else if (el.tagName === "SELECT") {    value = el.value;} else {    value = el.innerText; }
             value = value ? value.trim().replace("75°C:", "").replace("ms", "").trim() : "";
+
+
+
+
+
             if (value && value !== '-' && value !== 'NaN' && value !== '0') payload[el.id] = value;
         });
 
@@ -796,10 +802,23 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
             payload["ngayTN"] = document.getElementById('info_ngay').value || ""; 
             payload["nguoiTN"] = ""; 
             
-            document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], div[id^="${MODULE_PREFIX}"]`).forEach(el => {
-                let val = (el.tagName === "INPUT" || el.tagName === "SELECT") ? el.value : el.innerText;
-                payload[el.id] = val ? val.trim().replace("75°C:", "").trim() : "";
-            });
+document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], div[id^="${MODULE_PREFIX}"]`).forEach(el => {
+    let val = "";
+
+    if (el.tagName === "INPUT") {
+        // Có số mới -> lấy số mới
+        // Không có số mới -> lấy số cũ đang nằm trong placeholder
+        val = el.value.trim() || el.placeholder.trim();
+    } 
+    else if (el.tagName === "SELECT") {
+        val = el.value;
+    } 
+    else {
+        val = el.innerText;
+    }
+
+    payload[el.id] = val ? val.replace("75°C:", "").replace("ms", "").trim() : "";
+});
 
             // --- BỘ CÔNG TẮC ĐIỀU KIỆN ẨN/HIỆN FORM WORD ---
 const sec1 = document.getElementById('chk_sec1').checked; if (sec1) {payload["is_sec1"] = true;} else {    delete payload["is_sec1"];}
