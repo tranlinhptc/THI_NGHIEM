@@ -206,7 +206,7 @@
             <div class="grid">
                 <div class="form-group">
                     <label>R_CĐ Mạch ĐK (TC: ≥ 2 MΩ):</label>
-                    <input type="number" id="mc_rcd_mdk" oninput="calculateAll()" placeholder="Nhập MΩ">
+                    <input type="number" id="mc_rcd_mdk" oninput="calculateAll()" placeholder="">
                     <span class="sub-val" id="mc_eval_mdk"></span>
                 </div>
             </div>
@@ -507,9 +507,9 @@
             phases.forEach(p => {
                 let px = tuDK === 1 ? 'Chung' : p;
                 html += `<td>
-                    <input type="number" id="mc_coil_${c.id}_r1c_${px}" placeholder="R đo (Ω)" oninput="calculateAll()" style="margin-bottom:2px;">
+                    <input type="number" id="mc_coil_${c.id}_r1c_${px}" placeholder="" oninput="calculateAll()" style="margin-bottom:2px;">
                     <span class="sub-val" id="mc_coil_${c.id}_r75_${px}">R75: -</span>
-                    <input type="number" id="mc_coil_${c.id}_rcd_${px}" placeholder="R_CĐ (MΩ)">
+                    <input type="number" id="mc_coil_${c.id}_rcd_${px}" placeholder="">
                 </td>`;
             });
             html += `</tr>`;
@@ -519,8 +519,8 @@
         phases.forEach(p => {
             let px = tuDK === 1 ? 'Chung' : p;
             html += `<td>
-                <input type="number" id="mc_mot_r1c_${px}" placeholder="R đo (Ω)" style="margin-bottom:2px;">
-                <input type="number" id="mc_mot_rcd_${px}" placeholder="R_CĐ (MΩ)" style="margin-bottom:2px;">
+                <input type="number" id="mc_mot_r1c_${px}" placeholder="" style="margin-bottom:2px;">
+                <input type="number" id="mc_mot_rcd_${px}" placeholder="" style="margin-bottom:2px;">
                 <input type="number" id="mc_mot_ikd_${px}" placeholder="Dòng (A)" style="margin-bottom:2px;">
                 <input type="number" id="mc_mot_time_${px}" placeholder="Thời gian (s)">
             </td>`;
