@@ -62,6 +62,11 @@
         .bg-warning { background-color: #fff9c4 !important; border-color: #fbc02d !important; color: #c62828 !important; font-weight: bold; }
         .err-box { background: #ffebee; border: 1px solid #ef5350; border-radius: 4px; padding: 2px; margin-top: 2px;}
 
+	.old-data {    color: #d32f2f !important;    opacity: 1 !important;    font-weight: bold !important;    font-style: normal !important;}
+
+
+
+
         /* CSS KHÓA FORM */
         .form-locked {
             opacity: 0.4;
@@ -180,7 +185,9 @@
         <div class="card">
             <div class="card-title">
                 <span>1. R Cách Điện Mạch Điều Khiển [MΩ]</span>
+                <label class="chk-disable"><input type="checkbox" id="chk_sec1" onchange="toggleSection('body_sec1', this)"> ✏️ Nhập</label>
             </div>
+            <div id="body_sec1" class="table-responsive hidden-section">
             <div class="grid">
                 <div class="form-group">
                     <label>R_CĐ Mạch ĐK (TC: ≥ 2 MΩ):</label>
@@ -188,6 +195,7 @@
                     <span class="sub-val" id="mc_eval_mdk"></span>
                 </div>
             </div>
+</div>
         </div>
 
         <div class="card">
@@ -208,7 +216,7 @@
             </div>
             <div id="body_sec3" class="table-responsive hidden-section">
                 <div class="grid" style="margin-bottom:6px;"><div class="form-group"><label>Rtx_NSX Yêu cầu (µΩ):</label><input type="number" id="mc_rtx_nsx" value="50" oninput="calculateAll()"></div></div>
-                <div class="note-text">* Rtx Đạt nếu ≤ 120% Rtx_NSX. R_CĐ Đất ≥ 100 MΩ.</div>
+                <div class="note-text">* Rtx Đạt nếu ≤ 120% Rtx_NSX. R_CĐ Đất ≥ 1000 MΩ.</div>
                 <div id="table_contacts_container"></div>
             </div>
         </div>
@@ -228,9 +236,9 @@
         <div class="card">
             <div class="card-title">
                 <span>5. Kiểm tra khí SF6</span>
-                <label class="chk-disable"><input type="checkbox" id="chk_sec5" onchange="toggleSection('body_sec5_1', this)"> ✏️ Nhập</label>
+                <label class="chk-disable"><input type="checkbox" id="chk_sec5" onchange="toggleSection('body_sec5', this)"> ✏️ Nhập</label>
             </div>
-            <div id="body_sec5_1" class="table-responsive hidden-section">
+            <div id="body_sec5" class="table-responsive hidden-section">
                 <table>
                     <thead>
                         <tr>
@@ -260,6 +268,109 @@
                 </table>
             </div>
         </div>        
+
+
+<!--TIEP DIEM PHU--!>
+  <div class="card">
+            <div class="card-title">
+                <span>6. Đo điện trở tiếp xúc tiếp điểm phụ </span>
+                <label class="chk-disable"><input type="checkbox" id="chk_sec6" onchange="toggleSection('body_sec6', this)"> ✏️ Nhập</label>
+            </div>
+            <div id="body_sec6" class="table-responsive hidden-section">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No tiếp điểm</th>
+  				<th>Hàng kẹp</th>
+                            	<th>Tiếp điểm</th>
+                            	<th>Điện trở (Ω)</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>1</b></td>
+                            <td><input type="text" id="mc_hkep_1a"></td>
+                            <td><input type="text" id="mc_hkep_1b"></td>
+                            <td><input type="text" id="mc_hkep_1c"></td>
+
+                        </tr>
+                        <tr>
+                            <td><b>2</b></td>
+                            <td><input type="text" id="mc_hkep_2a"></td>
+                            <td><input type="text" id="mc_hkep_2b"></td>
+                            <td><input type="text" id="mc_hkep_2c"></td>
+                        </tr>
+                        <tr>
+                            <td><b>3</b></td>
+                            <td><input type="text" id="mc_hkep_3a"></td>
+                            <td><input type="text" id="mc_hkep_3b"></td>
+                            <td><input type="text" id="mc_hkep_3c"></td>
+                        </tr>
+                        <tr>
+                            <td><b>4</b></td>
+                            <td><input type="text" id="mc_hkep_4a"></td>
+                            <td><input type="text" id="mc_hkep_4b"></td>
+                            <td><input type="text" id="mc_hkep_4c"></td>
+                        </tr>
+                        <tr>
+                            <td><b>5</b></td>
+                            <td><input type="text" id="mc_hkep_5a"></td>
+                            <td><input type="text" id="mc_hkep_5b"></td>
+                            <td><input type="text" id="mc_hkep_5c"></td>
+                        </tr>
+                        <tr>
+                            <td><b>6</b></td>
+                            <td><input type="text" id="mc_hkep_6a"></td>
+                            <td><input type="text" id="mc_hkep_6b"></td>
+                            <td><input type="text" id="mc_hkep_6c"></td>
+                        </tr>
+                        <tr>
+                            <td><b>7</b></td>
+                            <td><input type="text" id="mc_hkep_7a"></td>
+                            <td><input type="text" id="mc_hkep_7b"></td>
+                            <td><input type="text" id="mc_hkep_7c"></td>
+                        </tr>
+                        <tr>
+                            <td><b>8</b></td>
+                            <td><input type="text" id="mc_hkep_8a"></td>
+                            <td><input type="text" id="mc_hkep_8b"></td>
+                            <td><input type="text" id="mc_hkep_8c"></td>
+                        </tr>
+                        <tr>
+                            <td><b>9</b></td>
+                            <td><input type="text" id="mc_hkep_9a"></td>
+                            <td><input type="text" id="mc_hkep_9b"></td>
+                            <td><input type="text" id="mc_hkep_9c"></td>
+                        </tr>
+                        <tr>
+                            <td><b>10</b></td>
+                            <td><input type="text" id="mc_hkep_10a"></td>
+                            <td><input type="text" id="mc_hkep_10b"></td>
+                            <td><input type="text" id="mc_hkep_10c"></td>
+                        </tr>
+                        <tr>
+                            <td><b>11</b></td>
+                            <td><input type="text" id="mc_hkep_11a"></td>
+                            <td><input type="text" id="mc_hkep_11b"></td>
+                            <td><input type="text" id="mc_hkep_11c"></td>
+                        </tr>
+                        <tr>
+                            <td><b>12</b></td>
+                            <td><input type="text" id="mc_hkep_12a"></td>
+                            <td><input type="text" id="mc_hkep_12b"></td>
+                            <td><input type="text" id="mc_hkep_12c"></td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+
+            </div>
+        </div>    
+
+
+
+
 
         <!-- NÚT CHỨC NĂNG TÍCH HỢP -->
         <div class="card">
@@ -487,7 +598,7 @@
         ['A', 'B', 'C'].forEach(p => {
             const rdat = parseFloat(document.getElementById(`mc_rcd_dat_${p}`)?.value);
             const elDat = document.getElementById(`mc_eval_rcddat_${p}`);
-            if(elDat && !isNaN(rdat)) { elDat.innerText = rdat >= 100 ? "✔ ĐẠT" : "✘ LỖI"; elDat.className = rdat >= 100 ? "sub-val pass" : "sub-val fail"; }
+            if(elDat && !isNaN(rdat)) { elDat.innerText = rdat >= 1000 ? "✔ ĐẠT" : "✘ LỖI"; elDat.className = rdat >= 1000 ? "sub-val pass" : "sub-val fail"; }
             
             for(let i=1; i<=4; i++) {
                 const rtx = parseFloat(document.getElementById(`mc_rtx_${p}_${i}`)?.value);
@@ -589,13 +700,15 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
             if (el && data[key] !== undefined && data[key] !== '') {
                 if (el.tagName === 'INPUT' && !['mc_temp', 'mc_nsx', 'mc_kieu', 'mc_ghichu', 'info_ngay', 'info_tram', 'info_nganlo'].includes(key)) {
                     el.value = ""; 
-                    el.placeholder = data[key]; 
+                  el.placeholder = data[key];
+			el.classList.add('old-data');
+
                     el.dataset.oldval = data[key]; 
                 } else if (el.tagName === 'SELECT' && key !== 'info_tram') { el.value = data[key]; }
             }
         }
         
-        ['chk_sec2', 'chk_sec3', 'chk_sec4', 'chk_sec5'].forEach(id => {
+        ['chk_sec2', 'chk_sec3', 'chk_sec4', 'chk_sec5', 'chk_sec6'].forEach(id => {
             document.getElementById(id).checked = true;
             toggleSection(id.replace('chk', 'body'), document.getElementById(id));
         });
@@ -689,14 +802,25 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
             });
 
             // --- BỘ CÔNG TẮC ĐIỀU KIỆN ẨN/HIỆN FORM WORD ---
-           
+const sec1 = document.getElementById('chk_sec1').checked; if (sec1) {payload["is_sec1"] = true;} else {    delete payload["is_sec1"];}
+const sec5 = document.getElementById('chk_sec5').checked; if (sec5) {payload["is_sec5"] = true;} else {    delete payload["is_sec5"];}
+const sec6 = document.getElementById('chk_sec6').checked; if (sec6) {payload["is_sec6"] = true;} else {    delete payload["is_sec6"];}
 
-delete payload["is_1tu"];
-delete payload["is_3tu"];
+		const tuDK = document.getElementById('mc_tudk').value;
+            payload["is_1tu"] = (tuDK === "1"); // Bằng true nếu là 1 tủ
+            payload["is_3tu"] = (tuDK === "3"); // Bằng true nếu là 3 tủ
+            
+            const cuonDay = document.getElementById('mc_cuonday').value;
+            payload["is_1C2O"] = (cuonDay === "1C2O");
+            payload["is_2C1O"] = (cuonDay === "2C1O");
+            payload["is_2C2O"] = (cuonDay === "2C2O");
 
-const tuDK = document.getElementById('mc_tudk').value;
-if (tuDK === "1") payload["is_1tu"] = true;
-else if (tuDK === "3") payload["is_3tu"] = true;
+            const tiepDiem = document.getElementById('mc_tiepdiem').value;
+            payload["is_1TD"] = (tiepDiem === "1");
+            payload["is_2TD"] = (tiepDiem === "2");
+            payload["is_3TD"] = (tiepDiem === "3");
+            payload["is_4TD"] = (tiepDiem === "4");
+            // ------------------------------------------------
 
 
 
