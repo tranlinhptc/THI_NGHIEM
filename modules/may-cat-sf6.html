@@ -449,29 +449,49 @@
     //             document.getElementById('info_tram').innerHTML = '<option value="">Lỗi tải dữ liệu!</option>';
     //         });
     // }
-	function fetchSubstations() {
-    const cachedTrams = localStorage.getItem('CACHE_TRAMS');
-    const select = document.getElementById('info_tram');
-    
-    // Nếu đã có cache, load ngay lập tức cho người dùng chọn
-    if (cachedTrams) {
-        populateSelect(JSON.parse(cachedTrams));
-    } else {
-        select.innerHTML = '<option value="" disabled selected>Đang tải ...</option>';
+// Load danh sách Trạm từ Sheet (Có Cache & Bắt Lỗi)
+    function fetchSubstations() {
+        const cachedTrams = localStorage.getItem('CACHE_TRAMS');
+        const select = document.getElementById('info_tram');
+        
+        // Nếu đã có cache, load ngay lập tức
+        if (cachedTrams) {
+            populateSelect(JSON.parse(cachedTrams));
+        } else {
+            select.innerHTML = '<option value="" disabled selected>Đang tải danh sách trạm...</option>';
+        }
+
+        // Gọi ngầm API để lấy dữ liệu mới
+        fetch(GOOGLE_WEB_APP_URL + "?action=getSubstations")
+            .then(res => res.json())
+            .then(data => {
+                // NẾU GAS BÁO LỖI (Ví dụ sai tên sheet)
+                if(data.error) {
+                    if (!cachedTrams) select.innerHTML = `<option value="">⚠️ Lỗi: ${data.error}</option>`;
+                    console.error("Lỗi từ GAS:", data.error);
+                    return;
+                }
+                
+                // NẾU THÀNH CÔNG: Lưu Cache và cập nhật UI
+                localStorage.setItem('CACHE_TRAMS', JSON.stringify(data));
+                if (!cachedTrams) populateSelect(data);
+            })
+            .catch(err => {
+                if (!cachedTrams) select.innerHTML = '<option value="">❌ Lỗi kết nối mạng hoặc sai link GAS!</option>';
+                console.error("Lỗi Fetch:", err);
+            });
     }
 
-    // Vẫn gọi ngầm API để kiểm tra xem có trạm nào mới được thêm vào Sheet không
-    fetch(GOOGLE_WEB_APP_URL + "?action=getSubstations")
-        .then(res => res.json())
-        .then(data => {
-            if(!data.error) {
-                // Cập nhật lại cache nếu có dữ liệu mới
-                localStorage.setItem('CACHE_TRAMS', JSON.stringify(data));
-                // Nếu trước đó chưa có cache, thì giờ mới vẽ giao diện
-                if (!cachedTrams) populateSelect(data);
-            }
+    // Hàm phụ trợ vẽ các thẻ option
+    function populateSelect(data) {
+        const select = document.getElementById('info_tram');
+        select.innerHTML = '<option value="" disabled selected>-- Chọn Trạm --</option>';
+        data.forEach(tram => {
+            let option = document.createElement("option");
+            option.value = tram; option.text = tram;
+            select.appendChild(option);
         });
-}
+    }
 
 
     // KIỂM TRA MỞ KHÓA FORM
