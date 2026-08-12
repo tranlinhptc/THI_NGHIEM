@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MÁY CẮT (MC)</title>
+    <title>MÁY CẮT (TI)</title>
     <!-- Cụm thư viện xuất Word chuẩn gốc -->
     <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
@@ -108,7 +108,7 @@
 
 <div class="container">
     <div class="header-bar">
-        <h2>⚡ THỬ NGHIỆM MÁY CẮT (MC)</h2>
+        <h2>⚡ THỬ NGHIỆM MÁY CẮT (TI)</h2>
         <a href="../index.html" class="btn-back">← Trang Chủ</a>
     </div>
 
@@ -146,7 +146,7 @@
             <div class="grid">
                 <div class="form-group">
                     <label>Chế Độ Thí Nghiệm:</label>
-                    <select id="mc_mode">
+                    <select id="ti_mode">
                         <option value="new" selected>Mới / Sau lắp đặt</option>
                         <option value="1yr">Sau 1 năm vận hành</option>
                         <option value="3yr">Sau 3 năm vận hành</option>
@@ -154,27 +154,27 @@
                         <option value="boost">Thí nghiệm tăng cường</option>
                     </select>
                 </div>
-                <div class="form-group"><label>Hiệu:</label><input type="text" id="mc_nsx" placeholder="ABB, Siemens..."></div>
-                <div class="form-group"><label>No:</label><input type="text" id="mc_no" placeholder="12345..."></div>
-                <div class="form-group"><label>Năm SX:</label><input type="number" id="mc_namsx" placeholder="2020?."></div>
-                <div class="form-group"><label>U định mức:</label><input type="number" id="mc_udm" placeholder="220kV"></div>
-                <div class="form-group"><label>I định mức:</label><input type="number" id="mc_idm" placeholder="1.250A."></div>
-                <div class="form-group"><label>I ngắn mạch:</label><input type="number" id="mc_inm" placeholder="5.000A"></div>
-                <div class="form-group"><label>Truyền động:</label><input type="text" id="mc_truyendong" placeholder="3APG1?."></div>
-                <div class="form-group"><label>Kiểu (Type):</label><input type="text" id="mc_kieu" placeholder="LTB 145..."></div>
-                <div class="form-group"><label>Nhiệt độ MT (°C):</label><input type="number" id="mc_temp" value="25" oninput="calculateAll()"></div>
-                <div class="form-group"><label>Độ ẩm(%):</label><input type="number" id="mc_doam" value="75%" oninput="calculateAll()"></div>
+                <div class="form-group"><label>Hiệu:</label><input type="text" id="ti_nsx" placeholder="ABB, Siemens..."></div>
+                <div class="form-group"><label>No:</label><input type="text" id="ti_no" placeholder="12345..."></div>
+                <div class="form-group"><label>Năm SX:</label><input type="number" id="ti_namsx" placeholder="2020?."></div>
+                <div class="form-group"><label>U định mức:</label><input type="number" id="ti_udm" placeholder="220kV"></div>
+                <div class="form-group"><label>I định mức:</label><input type="number" id="ti_idm" placeholder="1.250A."></div>
+                <div class="form-group"><label>I ngắn mạch:</label><input type="number" id="ti_inm" placeholder="5.000A"></div>
+                <div class="form-group"><label>Truyền động:</label><input type="text" id="ti_truyendong" placeholder="3APG1?."></div>
+                <div class="form-group"><label>Kiểu (Type):</label><input type="text" id="ti_kieu" placeholder="LTB 145..."></div>
+                <div class="form-group"><label>Nhiệt độ MT (°C):</label><input type="number" id="ti_temp" value="25" oninput="calculateAll()"></div>
+                <div class="form-group"><label>Độ ẩm(%):</label><input type="number" id="ti_doam" value="75%" oninput="calculateAll()"></div>
                 
                 <div class="form-group">
                     <label>Số Tủ Điều Khiển:</label>
-                    <select id="mc_tudk" onchange="refreshTables()">
+                    <select id="ti_tudk" onchange="refreshTables()">
                         <option value="1" selected>1 Tủ (Chung 3 Pha)</option>
                         <option value="3">3 hoặc 6 Tủ (Độc lập từng Pha)</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Cấu hình Cuộn dây:</label>
-                    <select id="mc_cuonday" onchange="refreshTables()">
+                    <select id="ti_cuonday" onchange="refreshTables()">
                         <option value="1C2O" selected>1 Đóng (C) - 2 Cắt (O1, O2)</option>
                         <option value="2C1O">2 Đóng (C1, C2) - 1 Cắt (O)</option>
                         <option value="2C2O">2 Đóng (C1, C2) - 2 Cắt (O1, O2)</option>
@@ -182,14 +182,14 @@
                 </div>
                 <div class="form-group">
                     <label>Số Tiếp điểm / 1 Pha:</label>
-                    <select id="mc_tiepdiem" onchange="refreshTables()">
+                    <select id="ti_tiepdiem" onchange="refreshTables()">
                         <option value="1" selected>1 Tiếp điểm</option>
                         <option value="2">2 Tiếp điểm</option>
                         <option value="3">3 Tiếp điểm</option>
                         <option value="4">4 Tiếp điểm</option>
                     </select>
                 </div>
-                <div class="form-group" style="grid-column: 1 / -1;"><label>Ghi Chú:</label><input type="text" id="mc_ghichu" placeholder="Nhập thông tin ghi chú bổ sung..."></div>
+                <div class="form-group" style="grid-column: 1 / -1;"><label>Ghi Chú:</label><input type="text" id="ti_ghichu" placeholder="Nhập thông tin ghi chú bổ sung..."></div>
             </div>
         </div>
 
@@ -206,8 +206,8 @@
             <div class="grid">
                 <div class="form-group">
                     <label>R_CĐ Mạch ĐK (TC: ≥ 2 MΩ):</label>
-                    <input type="number" id="mc_rcd_mdk" oninput="calculateAll()" placeholder="">
-                    <span class="sub-val" id="mc_eval_mdk"></span>
+                    <input type="number" id="ti_rcd_mdk" oninput="calculateAll()" placeholder="">
+                    <span class="sub-val" id="ti_eval_mdk"></span>
                 </div>
             </div>
 </div>
@@ -230,7 +230,7 @@
                 <label class="chk-disable"><input type="checkbox" id="chk_sec3" onchange="toggleSection('body_sec3', this)"> ✏️ Nhập</label>
             </div>
             <div id="body_sec3" class="table-responsive hidden-section">
-                <div class="grid" style="margin-bottom:6px;"><div class="form-group"><label>Rtx_NSX Yêu cầu (µΩ):</label><input type="number" id="mc_rtx_nsx" value="50" oninput="calculateAll()"></div></div>
+                <div class="grid" style="margin-bottom:6px;"><div class="form-group"><label>Rtx_NSX Yêu cầu (µΩ):</label><input type="number" id="ti_rtx_nsx" value="50" oninput="calculateAll()"></div></div>
                 <div class="note-text">* Rtx Đạt nếu ≤ 120% Rtx_NSX. R_CĐ Đất ≥ 1000 MΩ.</div>
                 <div id="table_contacts_container"></div>
             </div>
@@ -266,16 +266,16 @@
                     <tbody>
                         <tr>
                             <td><b>Áp suất (bar)</b></td>
-                            <td><input type="number" id="mc_as_a"></td>
-                            <td><input type="number" id="mc_as_b"></td>
-                            <td><input type="number" id="mc_as_c"></td>
+                            <td><input type="number" id="ti_as_a"></td>
+                            <td><input type="number" id="ti_as_b"></td>
+                            <td><input type="number" id="ti_as_c"></td>
 
                         </tr>
                         <tr>
                             <td><b>Độ ẩm</b></td>
-                            <td><input type="number" id="mc_da_a"></td>
-                            <td><input type="number" id="mc_da_b"></td>
-                            <td><input type="number" id="mc_da_c"></td>
+                            <td><input type="number" id="ti_da_a"></td>
+                            <td><input type="number" id="ti_da_b"></td>
+                            <td><input type="number" id="ti_da_c"></td>
 
                         </tr>
                         
@@ -305,76 +305,76 @@
                     <tbody>
                         <tr>
                             <td><b>1</b></td>
-                            <td><input type="text" id="mc_hkep_1a"></td>
-                            <td><input type="text" id="mc_hkep_1b"></td>
-                            <td><input type="text" id="mc_hkep_1c"></td>
+                            <td><input type="text" id="ti_hkep_1a"></td>
+                            <td><input type="text" id="ti_hkep_1b"></td>
+                            <td><input type="text" id="ti_hkep_1c"></td>
 
                         </tr>
                         <tr>
                             <td><b>2</b></td>
-                            <td><input type="text" id="mc_hkep_2a"></td>
-                            <td><input type="text" id="mc_hkep_2b"></td>
-                            <td><input type="text" id="mc_hkep_2c"></td>
+                            <td><input type="text" id="ti_hkep_2a"></td>
+                            <td><input type="text" id="ti_hkep_2b"></td>
+                            <td><input type="text" id="ti_hkep_2c"></td>
                         </tr>
                         <tr>
                             <td><b>3</b></td>
-                            <td><input type="text" id="mc_hkep_3a"></td>
-                            <td><input type="text" id="mc_hkep_3b"></td>
-                            <td><input type="text" id="mc_hkep_3c"></td>
+                            <td><input type="text" id="ti_hkep_3a"></td>
+                            <td><input type="text" id="ti_hkep_3b"></td>
+                            <td><input type="text" id="ti_hkep_3c"></td>
                         </tr>
                         <tr>
                             <td><b>4</b></td>
-                            <td><input type="text" id="mc_hkep_4a"></td>
-                            <td><input type="text" id="mc_hkep_4b"></td>
-                            <td><input type="text" id="mc_hkep_4c"></td>
+                            <td><input type="text" id="ti_hkep_4a"></td>
+                            <td><input type="text" id="ti_hkep_4b"></td>
+                            <td><input type="text" id="ti_hkep_4c"></td>
                         </tr>
                         <tr>
                             <td><b>5</b></td>
-                            <td><input type="text" id="mc_hkep_5a"></td>
-                            <td><input type="text" id="mc_hkep_5b"></td>
-                            <td><input type="text" id="mc_hkep_5c"></td>
+                            <td><input type="text" id="ti_hkep_5a"></td>
+                            <td><input type="text" id="ti_hkep_5b"></td>
+                            <td><input type="text" id="ti_hkep_5c"></td>
                         </tr>
                         <tr>
                             <td><b>6</b></td>
-                            <td><input type="text" id="mc_hkep_6a"></td>
-                            <td><input type="text" id="mc_hkep_6b"></td>
-                            <td><input type="text" id="mc_hkep_6c"></td>
+                            <td><input type="text" id="ti_hkep_6a"></td>
+                            <td><input type="text" id="ti_hkep_6b"></td>
+                            <td><input type="text" id="ti_hkep_6c"></td>
                         </tr>
                         <tr>
                             <td><b>7</b></td>
-                            <td><input type="text" id="mc_hkep_7a"></td>
-                            <td><input type="text" id="mc_hkep_7b"></td>
-                            <td><input type="text" id="mc_hkep_7c"></td>
+                            <td><input type="text" id="ti_hkep_7a"></td>
+                            <td><input type="text" id="ti_hkep_7b"></td>
+                            <td><input type="text" id="ti_hkep_7c"></td>
                         </tr>
                         <tr>
                             <td><b>8</b></td>
-                            <td><input type="text" id="mc_hkep_8a"></td>
-                            <td><input type="text" id="mc_hkep_8b"></td>
-                            <td><input type="text" id="mc_hkep_8c"></td>
+                            <td><input type="text" id="ti_hkep_8a"></td>
+                            <td><input type="text" id="ti_hkep_8b"></td>
+                            <td><input type="text" id="ti_hkep_8c"></td>
                         </tr>
                         <tr>
                             <td><b>9</b></td>
-                            <td><input type="text" id="mc_hkep_9a"></td>
-                            <td><input type="text" id="mc_hkep_9b"></td>
-                            <td><input type="text" id="mc_hkep_9c"></td>
+                            <td><input type="text" id="ti_hkep_9a"></td>
+                            <td><input type="text" id="ti_hkep_9b"></td>
+                            <td><input type="text" id="ti_hkep_9c"></td>
                         </tr>
                         <tr>
                             <td><b>10</b></td>
-                            <td><input type="text" id="mc_hkep_10a"></td>
-                            <td><input type="text" id="mc_hkep_10b"></td>
-                            <td><input type="text" id="mc_hkep_10c"></td>
+                            <td><input type="text" id="ti_hkep_10a"></td>
+                            <td><input type="text" id="ti_hkep_10b"></td>
+                            <td><input type="text" id="ti_hkep_10c"></td>
                         </tr>
                         <tr>
                             <td><b>11</b></td>
-                            <td><input type="text" id="mc_hkep_11a"></td>
-                            <td><input type="text" id="mc_hkep_11b"></td>
-                            <td><input type="text" id="mc_hkep_11c"></td>
+                            <td><input type="text" id="ti_hkep_11a"></td>
+                            <td><input type="text" id="ti_hkep_11b"></td>
+                            <td><input type="text" id="ti_hkep_11c"></td>
                         </tr>
                         <tr>
                             <td><b>12</b></td>
-                            <td><input type="text" id="mc_hkep_12a"></td>
-                            <td><input type="text" id="mc_hkep_12b"></td>
-                            <td><input type="text" id="mc_hkep_12c"></td>
+                            <td><input type="text" id="ti_hkep_12a"></td>
+                            <td><input type="text" id="ti_hkep_12b"></td>
+                            <td><input type="text" id="ti_hkep_12c"></td>
                         </tr>
                         
                     </tbody>
@@ -411,7 +411,7 @@
     // 🔴 BƯỚC QUAN TRỌNG: ANH PASTE ID CỦA FILE WORD TRÊN GOOGLE DRIVE VÀO ĐÂY
     const TEMPLATE_DRIVE_ID = "1-VQ8Femmz7jaOoys3UvTeJyV1kAYRFjH"; 
     const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyQHrmflRBAOgsPtr6kzyRZLAveQbmnRO927UDThae72U81DynZnrJo9xAMfNgxYqCf/exec";
-    const MODULE_PREFIX = "mc_"; 
+    const MODULE_PREFIX = "ti_"; 
     let globalHistoryData = [];
 
     // Tự động thiết lập Ngày hôm nay cho ô Ngày
@@ -489,8 +489,8 @@
     function toggleSection(sectionId, chk) { document.getElementById(sectionId).classList.toggle('hidden-section', !chk.checked); }
 
     function renderCoilTable() {
-        const tuDK = parseInt(document.getElementById('mc_tudk').value);
-        const cdType = document.getElementById('mc_cuonday').value;
+        const tuDK = parseInt(document.getElementById('ti_tudk').value);
+        const cdType = document.getElementById('ti_cuonday').value;
         const phases = tuDK === 1 ? ['Chung'] : ['A', 'B', 'C'];
         
         let coils = [];
@@ -507,9 +507,9 @@
             phases.forEach(p => {
                 let px = tuDK === 1 ? 'Chung' : p;
                 html += `<td>
-                    <input type="number" id="mc_coil_${c.id}_r1c_${px}" placeholder="" oninput="calculateAll()" style="margin-bottom:2px;">
-                    <span class="sub-val" id="mc_coil_${c.id}_r75_${px}">R75: -</span>
-                    <input type="number" id="mc_coil_${c.id}_rcd_${px}" placeholder="">
+                    <input type="number" id="ti_coil_${c.id}_r1c_${px}" placeholder="" oninput="calculateAll()" style="margin-bottom:2px;">
+                    <span class="sub-val" id="ti_coil_${c.id}_r75_${px}">R75: -</span>
+                    <input type="number" id="ti_coil_${c.id}_rcd_${px}" placeholder="">
                 </td>`;
             });
             html += `</tr>`;
@@ -519,10 +519,10 @@
         phases.forEach(p => {
             let px = tuDK === 1 ? 'Chung' : p;
             html += `<td>
-                <input type="number" id="mc_mot_r1c_${px}" placeholder="" style="margin-bottom:2px;">
-                <input type="number" id="mc_mot_rcd_${px}" placeholder="" style="margin-bottom:2px;">
-                <input type="number" id="mc_mot_ikd_${px}" placeholder="" style="margin-bottom:2px;">
-                <input type="number" id="mc_mot_time_${px}" placeholder="">
+                <input type="number" id="ti_mot_r1c_${px}" placeholder="" style="margin-bottom:2px;">
+                <input type="number" id="ti_mot_rcd_${px}" placeholder="" style="margin-bottom:2px;">
+                <input type="number" id="ti_mot_ikd_${px}" placeholder="" style="margin-bottom:2px;">
+                <input type="number" id="ti_mot_time_${px}" placeholder="">
             </td>`;
         });
         html += `</tr></tbody></table>`;
@@ -530,16 +530,16 @@
     }
 
     function renderContactTable() {
-        const numTd = parseInt(document.getElementById('mc_tiepdiem').value);
+        const numTd = parseInt(document.getElementById('ti_tiepdiem').value);
         let html = `<table><thead><tr><th>Pha</th><th>Tiếp điểm</th><th>R Tiếp Xúc (µΩ)</th><th>R_CĐ Giữa TĐ (MΩ)</th><th>R_CĐ Đất (MΩ)</th></tr></thead><tbody>`;
         ['A', 'B', 'C'].forEach(p => {
             for(let i=1; i<=numTd; i++) {
                 html += `<tr>
                     ${i===1 ? `<td rowspan="${numTd}"><b>${p}</b></td>` : ''}
                     <td><b>TĐ ${i}</b></td>
-                    <td><input type="number" id="mc_rtx_${p}_${i}" oninput="calculateAll()"><span class="sub-val" id="mc_eval_rtx_${p}_${i}"></span></td>
-                    <td><input type="number" id="mc_rcd_giua_${p}_${i}"></td>
-                    ${i===1 ? `<td rowspan="${numTd}"><input type="number" id="mc_rcd_dat_${p}" oninput="calculateAll()"><span class="sub-val" id="mc_eval_rcddat_${p}"></span></td>` : ''}
+                    <td><input type="number" id="ti_rtx_${p}_${i}" oninput="calculateAll()"><span class="sub-val" id="ti_eval_rtx_${p}_${i}"></span></td>
+                    <td><input type="number" id="ti_rcd_giua_${p}_${i}"></td>
+                    ${i===1 ? `<td rowspan="${numTd}"><input type="number" id="ti_rcd_dat_${p}" oninput="calculateAll()"><span class="sub-val" id="ti_eval_rcddat_${p}"></span></td>` : ''}
                 </tr>`;
             }
         });
@@ -548,8 +548,8 @@
     }
 
     function renderTimingTable() {
-        const numTd = parseInt(document.getElementById('mc_tiepdiem').value);
-        const cdType = document.getElementById('mc_cuonday').value;
+        const numTd = parseInt(document.getElementById('ti_tiepdiem').value);
+        const cdType = document.getElementById('ti_cuonday').value;
         let actions = [];
         
         if(cdType === '1C2O') actions = [{id:'C', name:'ĐÓNG (C)'}, {id:'O1', name:'CẮT 1 (O1)'}, {id:'O2', name:'CẮT 2 (O2)'}];
@@ -568,21 +568,21 @@
             html += `<th>Δ TĐ / Pha</th></tr></thead><tbody>`;
             ['A', 'B', 'C'].forEach(p => {
                 html += `<tr><td><b>${p}</b></td>`;
-                for(let i=1; i<=numTd; i++) { html += `<td><input type="text" step="0.1" id="mc_t_${act.id}_${p}_${i}" oninput="calculateAll()"></td>`; }
-                html += `<td><div class="err-box" id="mc_err_td_${act.id}_${p}">-</div></td></tr>`;
+                for(let i=1; i<=numTd; i++) { html += `<td><input type="text" step="0.1" id="ti_t_${act.id}_${p}_${i}" oninput="calculateAll()"></td>`; }
+                html += `<td><div class="err-box" id="ti_err_td_${act.id}_${p}">-</div></td></tr>`;
             });
             html += `<tr><td colspan="${numTd + 1}" style="text-align:right;"><b>Độ lệch giữa 3 Pha (Δ Pha MAX):</b></td>`;
-            html += `<td><div class="err-box" style="font-weight:bold;" id="mc_err_pha_${act.id}">-</div></td></tr>`;
+            html += `<td><div class="err-box" style="font-weight:bold;" id="ti_err_pha_${act.id}">-</div></td></tr>`;
             html += `</tbody></table>`;
         });
         document.getElementById('table_timing_container').innerHTML = html;
     }
 
     function calculateAll() {
-        const temp = parseFloat(document.getElementById('mc_temp').value) || 25;
+        const temp = parseFloat(document.getElementById('ti_temp').value) || 25;
         
-        const mdk = parseFloat(document.getElementById('mc_rcd_mdk').value);
-        const elMdk = document.getElementById('mc_eval_mdk');
+        const mdk = parseFloat(document.getElementById('ti_rcd_mdk').value);
+        const elMdk = document.getElementById('ti_eval_mdk');
         if(mdk) { elMdk.innerText = mdk >= 2 ? "✔ ĐẠT" : "✘ LỖI"; elMdk.className = mdk >= 2 ? "sub-val pass" : "sub-val fail"; }
 
         document.querySelectorAll('input').forEach(el => {
@@ -608,22 +608,22 @@
             } else if (el.value === "") { el.classList.remove("bg-warning"); el.title = ""; }
         });
 
-        const rtxNsx = parseFloat(document.getElementById('mc_rtx_nsx').value) || 50;
+        const rtxNsx = parseFloat(document.getElementById('ti_rtx_nsx').value) || 50;
         const rtxMax = rtxNsx * 1.2;
         ['A', 'B', 'C'].forEach(p => {
-            const rdat = parseFloat(document.getElementById(`mc_rcd_dat_${p}`)?.value);
-            const elDat = document.getElementById(`mc_eval_rcddat_${p}`);
+            const rdat = parseFloat(document.getElementById(`ti_rcd_dat_${p}`)?.value);
+            const elDat = document.getElementById(`ti_eval_rcddat_${p}`);
             if(elDat && !isNaN(rdat)) { elDat.innerText = rdat >= 1000 ? "✔ ĐẠT" : "✘ LỖI"; elDat.className = rdat >= 1000 ? "sub-val pass" : "sub-val fail"; }
             
             for(let i=1; i<=4; i++) {
-                const rtx = parseFloat(document.getElementById(`mc_rtx_${p}_${i}`)?.value);
-                const elRtx = document.getElementById(`mc_eval_rtx_${p}_${i}`);
+                const rtx = parseFloat(document.getElementById(`ti_rtx_${p}_${i}`)?.value);
+                const elRtx = document.getElementById(`ti_eval_rtx_${p}_${i}`);
                 if(elRtx && !isNaN(rtx)) { elRtx.innerText = rtx <= rtxMax ? "✔ ĐẠT" : "✘ LỖI"; elRtx.className = rtx <= rtxMax ? "sub-val pass" : "sub-val fail"; }
             }
         });
 
-        const numTd = parseInt(document.getElementById('mc_tiepdiem').value);
-        const cdType = document.getElementById('mc_cuonday').value;
+        const numTd = parseInt(document.getElementById('ti_tiepdiem').value);
+        const cdType = document.getElementById('ti_cuonday').value;
         let actions = [];
         if(cdType === '1C2O') actions = ['C', 'O1', 'O2'];
         else if(cdType === '2C1O') actions = ['C1', 'C2', 'O'];
@@ -641,13 +641,13 @@
             ['A', 'B', 'C'].forEach(p => {
                 let phaseTimes = [];
                 for(let i=1; i<=numTd; i++) {
-                    // const t = parseFloat(document.getElementById(`mc_t_${act}_${p}_${i}`)?.value); sua loi phay (,)va cham(.)
-					const raw = document.getElementById(`mc_t_${act}_${p}_${i}`)?.value || "";
+                    // const t = parseFloat(document.getElementById(`ti_t_${act}_${p}_${i}`)?.value); sua loi phay (,)va cham(.)
+					const raw = document.getElementById(`ti_t_${act}_${p}_${i}`)?.value || "";
 					const t = parseFloat(raw.replace(',', '.'));
 					
                     if(!isNaN(t)) { phaseTimes.push(t); allPhaseTimes.push(t); }
                 }
-                const errBox = document.getElementById(`mc_err_td_${act}_${p}`);
+                const errBox = document.getElementById(`ti_err_td_${act}_${p}`);
                 if(errBox && phaseTimes.length > 1) {
                     const diff = Math.max(...phaseTimes) - Math.min(...phaseTimes);
                     errBox.innerText = diff.toFixed(1);
@@ -656,7 +656,7 @@
                 }
             });
 
-            const errPhaBox = document.getElementById(`mc_err_pha_${act}`);
+            const errPhaBox = document.getElementById(`ti_err_pha_${act}`);
             if(errPhaBox && allPhaseTimes.length > 0) {
                 const diffGlobal = Math.max(...allPhaseTimes) - Math.min(...allPhaseTimes);
                 errPhaBox.innerText = diffGlobal.toFixed(1) + " ms";
@@ -693,7 +693,7 @@
             // div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div><div class="history-person">👤 Nhập: ${row.nguoiTN || '?'}</div>`;
             // Dịch mã value lưu trên sheet sang Tiếng Việt hiển thị cho đẹp
 const modeMap = { "new": "Mới", "1yr": "Sau 1 năm", "3yr": "Sau 3 năm", "6yr": "Sau 6 năm", "boost": "Tăng cường" };
-const modeText = modeMap[row.mc_mode] || row.mc_mode || 'Không ghi nhận';
+const modeText = modeMap[row.ti_mode] || row.ti_mode || 'Không ghi nhận';
 
 div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div><div class="history-person" style="color: #0288d1; font-weight: bold;">⚙️ Chế độ: ${modeText}</div>`;
             div.onclick = () => applyHistoryData(index);
@@ -708,7 +708,7 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
         closeHistoryModal();
         const data = globalHistoryData[index];
 
-        ['mc_tudk', 'mc_cuonday', 'mc_tiepdiem'].forEach(id => {
+        ['ti_tudk', 'ti_cuonday', 'ti_tiepdiem'].forEach(id => {
             if(data[id] !== undefined) { const el = document.getElementById(id); if(el) el.value = data[id]; }
         });
         refreshTables();
@@ -716,7 +716,7 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
         for (let key in data) {
             const el = document.getElementById(key);
             if (el && data[key] !== undefined && data[key] !== '') {
-                if (el.tagName === 'INPUT' && !['mc_temp', 'mc_nsx', 'mc_kieu', 'mc_ghichu', 'info_ngay', 'info_tram', 'info_nganlo'].includes(key)) {
+                if (el.tagName === 'INPUT' && !['ti_temp', 'ti_nsx', 'ti_kieu', 'ti_ghichu', 'info_ngay', 'info_tram', 'info_nganlo'].includes(key)) {
                     el.value = ""; 
                   el.placeholder = data[key];
 			el.classList.add('old-data');
@@ -751,7 +751,7 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
             if (data['info_nganlo']) document.getElementById('info_nganlo').value = data['info_nganlo'];
             // if (data['info_ngay']) document.getElementById('info_ngay').value = data['info_ngay'];
 
-            ['mc_tudk', 'mc_cuonday', 'mc_tiepdiem'].forEach(id => { if(data[id]) document.getElementById(id).value = data[id]; });
+            ['ti_tudk', 'ti_cuonday', 'ti_tiepdiem'].forEach(id => { if(data[id]) document.getElementById(id).value = data[id]; });
             refreshTables();
             for(let key in data) { const el = document.getElementById(key); if(el) el.value = data[key]; }
             calculateAll();
@@ -768,7 +768,7 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
         const nguoiDo = prompt("Nhập tên người thực hiện (để trống nếu không cần):", "");
 
         const payload = {
-            module_name: "MC", maPhien: 'MC_' + Date.now(), timestamp: new Date().toLocaleString('vi-VN'),
+            module_name: "TI", maPhien: 'TI_' + Date.now(), timestamp: new Date().toLocaleString('vi-VN'),
             ngayTN: document.getElementById('info_ngay').value, 
             tram: document.getElementById('info_tram').value || "", 
             nganLo: document.getElementById('info_nganlo').value || "", 
@@ -815,8 +815,8 @@ let value = ""; if (el.tagName === "INPUT") {    value = el.value.trim() || el.p
             for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
             
             const payload = {};
-            payload["mc_tram"] = document.getElementById('info_tram').value || ""; 
-            payload["mc_nganlo"] = document.getElementById('info_nganlo').value || "";
+            payload["ti_tram"] = document.getElementById('info_tram').value || ""; 
+            payload["ti_nganlo"] = document.getElementById('info_nganlo').value || "";
             payload["ngayTN"] = document.getElementById('info_ngay').value || ""; 
             payload["nguoiTN"] = ""; 
             
@@ -843,16 +843,16 @@ const sec1 = document.getElementById('chk_sec1').checked; if (sec1) {payload["is
 const sec5 = document.getElementById('chk_sec5').checked; if (sec5) {payload["is_sec5"] = true;} else {    delete payload["is_sec5"];}
 const sec6 = document.getElementById('chk_sec6').checked; if (sec6) {payload["is_sec6"] = true;} else {    delete payload["is_sec6"];}
 
-		const tuDK = document.getElementById('mc_tudk').value;
+		const tuDK = document.getElementById('ti_tudk').value;
             payload["is_1tu"] = (tuDK === "1"); // Bằng true nếu là 1 tủ
             payload["is_3tu"] = (tuDK === "3"); // Bằng true nếu là 3 tủ
             
-            const cuonDay = document.getElementById('mc_cuonday').value;
+            const cuonDay = document.getElementById('ti_cuonday').value;
             payload["is_1C2O"] = (cuonDay === "1C2O");
             payload["is_2C1O"] = (cuonDay === "2C1O");
             payload["is_2C2O"] = (cuonDay === "2C2O");
 
-            const tiepDiem = document.getElementById('mc_tiepdiem').value;
+            const tiepDiem = document.getElementById('ti_tiepdiem').value;
             payload["is_1TD"] = (tiepDiem === "1");
             payload["is_2TD"] = (tiepDiem === "2");
             payload["is_3TD"] = (tiepDiem === "3");
@@ -873,9 +873,9 @@ if (payload["ngayTN"]) {
             doc.render(payload);
             const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
             
-	const dateStr = payload["ngayTN"]? payload["ngayTN"].replace(/\//g, '-') : "New";const tramStr = payload["mc_tram"] ? payload["mc_tram"].replace(/[\/\\]/g, '-'):"Tram";
-	const nganLoStr = payload["mc_nganlo"]? payload["mc_nganlo"].replace(/[\/\\]/g, '-'): "NL";
-	saveAs(out, `Bien ban thi nghiem MC_${nganLoStr}_${tramStr}_${dateStr}.docx`);
+	const dateStr = payload["ngayTN"]? payload["ngayTN"].replace(/\//g, '-') : "New";const tramStr = payload["ti_tram"] ? payload["ti_tram"].replace(/[\/\\]/g, '-'):"Tram";
+	const nganLoStr = payload["ti_nganlo"]? payload["ti_nganlo"].replace(/[\/\\]/g, '-'): "NL";
+	saveAs(out, `Bien ban thi nghiem TI_${nganLoStr}_${tramStr}_${dateStr}.docx`);
             
             hideLoading();
         } catch (e) {
