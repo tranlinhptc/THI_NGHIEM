@@ -428,27 +428,51 @@
     }
 
     // Load danh sách Trạm từ Sheet
-    function fetchSubstations() {
-        fetch(GOOGLE_WEB_APP_URL + "?action=getSubstations")
-            .then(res => res.json())
-            .then(data => {
-                const select = document.getElementById('info_tram');
-                select.innerHTML = '<option value="" disabled selected>-- Chọn Trạm --</option>';
-                if(data.error) {
-                    alert("Lỗi lấy danh sách trạm: " + data.error);
-                    return;
-                }
-                data.forEach(tram => {
-                    let option = document.createElement("option");
-                    option.value = tram;
-                    option.text = tram;
-                    select.appendChild(option);
-                });
-            })
-            .catch(err => {
-                document.getElementById('info_tram').innerHTML = '<option value="">Lỗi tải dữ liệu!</option>';
-            });
+    // function fetchSubstations() {
+    //     fetch(GOOGLE_WEB_APP_URL + "?action=getSubstations")
+    //         .then(res => res.json())
+    //         .then(data => {
+    //             const select = document.getElementById('info_tram');
+    //             select.innerHTML = '<option value="" disabled selected>-- Chọn Trạm --</option>';
+    //             if(data.error) {
+    //                 alert("Lỗi lấy danh sách trạm: " + data.error);
+    //                 return;
+    //             }
+    //             data.forEach(tram => {
+    //                 let option = document.createElement("option");
+    //                 option.value = tram;
+    //                 option.text = tram;
+    //                 select.appendChild(option);
+    //             });
+    //         })
+    //         .catch(err => {
+    //             document.getElementById('info_tram').innerHTML = '<option value="">Lỗi tải dữ liệu!</option>';
+    //         });
+    // }
+	function fetchSubstations() {
+    const cachedTrams = localStorage.getItem('CACHE_TRAMS');
+    const select = document.getElementById('info_tram');
+    
+    // Nếu đã có cache, load ngay lập tức cho người dùng chọn
+    if (cachedTrams) {
+        populateSelect(JSON.parse(cachedTrams));
+    } else {
+        select.innerHTML = '<option value="" disabled selected>Đang tải ...</option>';
     }
+
+    // Vẫn gọi ngầm API để kiểm tra xem có trạm nào mới được thêm vào Sheet không
+    fetch(GOOGLE_WEB_APP_URL + "?action=getSubstations")
+        .then(res => res.json())
+        .then(data => {
+            if(!data.error) {
+                // Cập nhật lại cache nếu có dữ liệu mới
+                localStorage.setItem('CACHE_TRAMS', JSON.stringify(data));
+                // Nếu trước đó chưa có cache, thì giờ mới vẽ giao diện
+                if (!cachedTrams) populateSelect(data);
+            }
+        });
+}
+
 
     // KIỂM TRA MỞ KHÓA FORM
     function checkUnlockForm() {
