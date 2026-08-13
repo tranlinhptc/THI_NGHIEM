@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -137,7 +138,8 @@
         <!-- 0. CẤU HÌNH ĐỘNG -->
         <div class="card">
             <div class="card-title">
-                <span>CẤU HÌNH THIẾT BỊ</span>
+                <span>CẤU HÌNH THIẾT BỊ</span>	
+		<button class="btn-view-old" style="background:#f57c00; margin-right: 5px;" onclick="loadLatestData()">⚡ Dữ liệu gần nhất</button>
                 <button class="btn-view-old" onclick="loadOldDataSection()">👁️ Lịch sử</button>
             </div>
             <div class="grid">
@@ -725,6 +727,71 @@
         }).catch(err => { hideLoading(); alert("❌ Lỗi tải Cloud: " + err); });
     }
 
+
+
+// HÀM MỚI: Tải ngay lập tức dữ liệu mới nhất từ sheet LATEST
+    function loadLatestData() {
+        const nganLo = encodeURIComponent(document.getElementById('info_nganlo').value.trim());
+        const tram = encodeURIComponent(document.getElementById('info_tram').value);
+        
+        if (!nganLo || !tram) { alert("⚠️ Chưa chọn Trạm và Ngăn Lộ!"); return; }
+
+        showLoading("Đang tải thông số gần nhất...");
+        const modName = MODULE_PREFIX.replace('_', '').toUpperCase();
+        
+        // Gọi lên GAS với action=getLatest
+        const fetchUrl = `${GOOGLE_WEB_APP_URL}?action=getLatest&nganLo=${nganLo}&tram=${tram}&module_name=${modName}`;
+
+        fetch(fetchUrl).then(res => res.json()).then(data => {
+            hideLoading();
+            if (!data || Object.keys(data).length === 0 || data.error) { 
+                alert("ℹ️ Không tìm thấy dữ liệu cũ của thiết bị này trên hệ thống!"); 
+                return; 
+            }
+            applyLatestData(data);
+        }).catch(err => { hideLoading(); alert("❌ Lỗi mạng: " + err); });
+    }
+
+    // HÀM MỚI: Rải dữ liệu mờ (Placeholder) vào form (Bỏ qua bước chọn Popup)
+    function applyLatestData(data) {
+        // Áp dụng cấu hình
+        ['mc_tudk', 'mc_cuonday', 'mc_tiepdiem'].forEach(id => {
+            if(data[id] !== undefined) { const el = document.getElementById(id); if(el) el.value = data[id]; }
+        });
+        refreshTables();
+
+        // Rải dữ liệu vào placeholder
+        for (let key in data) {
+            const el = document.getElementById(key);
+            if (el && data[key] !== undefined && data[key] !== '') {
+                if (el.tagName === 'INPUT' && !['mc_temp', 'mc_nsx', 'mc_no', 'mc_namsx', 'mc_udm', 'mc_idm', 'mc_inm', 'mc_truyendong', 'mc_kieu', 'mc_ghichu', 'info_ngay', 'info_tram', 'info_nganlo'].includes(key)) {
+                    el.value = ""; 
+                    el.placeholder = data[key];
+                    el.classList.add('old-data');
+                    el.dataset.oldval = data[key]; 
+                } else if (el.tagName === 'SELECT' && key !== 'info_tram') { 
+                    el.value = data[key]; 
+                } else if (['mc_nsx', 'mc_no', 'mc_namsx', 'mc_udm', 'mc_idm', 'mc_inm', 'mc_truyendong', 'mc_kieu', 'mc_ghichu'].includes(key)) {
+                    // Mấy ô thông tin thiết bị tĩnh thì rải thẳng vào value luôn cho khỏe
+                    el.value = data[key];
+                }
+            }
+        }
+        
+        // Tự động bung các bảng nhập liệu ra
+        ['chk_sec1', 'chk_sec2', 'chk_sec3', 'chk_sec4', 'chk_sec5', 'chk_sec6'].forEach(id => {
+            const chk = document.getElementById(id);
+            if(chk) {
+                chk.checked = true;
+                toggleSection(id.replace('chk', 'body'), chk);
+            }
+        });
+
+        alert(`⚡ Đã nhập các số liệu mới nhất của các lần thí nghiệm trước!`);
+    }
+
+
+
     function showHistoryModal(dataArray) {
         const listDiv = document.getElementById('historyList');
         listDiv.innerHTML = '';
@@ -784,6 +851,8 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
         localStorage.setItem(MODULE_PREFIX + 'DRAFT', JSON.stringify(captureInputs()));
         alert("💾 Đã lưu nháp xuống thiết bị!");
     }
+
+
     function loadDraftData() {
         const str = localStorage.getItem(MODULE_PREFIX + 'DRAFT');
         if (str) {
@@ -798,11 +867,14 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
             calculateAll();
         }
     }
+
+
     function clearDraft() {
         if(confirm("⚠️ Anh có chắc muốn xóa sạch bản nháp để làm mới?")) {
             localStorage.removeItem(MODULE_PREFIX + 'DRAFT'); location.reload();
         }
     }
+
 
     function syncOneDrive() {
         showLoading("Đang up dữ liệu ...");
@@ -875,15 +947,13 @@ document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_P
 
     if (el.tagName === "INPUT") {
         // Có số mới -> lấy số mới
-        // Không có số mới -> lấy số cũ đang nằm trong placeholder
-        val = el.value.trim() || el.placeholder.trim();
-    } 
-    else if (el.tagName === "SELECT") {
-        val = el.value;
-    } 
-    else {
-        val = el.innerText;
-    }
+        // DÒNG DƯỚI LẤY LUÔN SỐ CŨ
+        val = el.value.trim() || el.placeholder.trim();}else if (el.tagName === "SELECT") {val = el.value;}else {val=el.innerText;}
+
+        // DÒNG DƯỚI CHỈ LẤY SỐ MỚI
+	// val = el.value.trim() || el.placeholder.trim();}else if (el.tagName === "SELECT") {val = el.value;}else {val=el.value;}
+
+
 
     payload[el.id] = val ? val.replace("75°C:", "").replace("ms", "").trim() : "";
 });
