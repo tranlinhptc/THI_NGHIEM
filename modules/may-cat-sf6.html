@@ -899,15 +899,13 @@ const maPhienGop = tram + "_" + nganLo;
 
         const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], div[id^="${MODULE_PREFIX}"]`);
         elements.forEach(el => {
-            //---=======DONG NAY DA BI THAY = DONG DUOI let value = (el.tagName === "INPUT" || el.tagName === "SELECT") ? el.value : el.innerText;
-let value = ""; if (el.tagName === "INPUT") {    value = el.value.trim() || el.placeholder.trim();} else if (el.tagName === "SELECT") {    value = el.value;} else {    value = el.innerText; }
+            //---=======DONG NAY DA BI THAY = DONG DUOI 
+			// let value = (el.tagName === "INPUT" || el.tagName === "SELECT") ? el.value : el.innerText;
+			let value = ""; if (el.tagName === "INPUT") {    value = el.value.trim() || el.placeholder.trim();} else if (el.tagName === "SELECT") {    value = el.value;} else {    value = el.innerText; }
             value = value ? value.trim().replace("75°C:", "").replace("ms", "").trim() : "";
 
-
-
-
-
-            if (value && value !== '-' && value !== 'NaN' && value !== '0') payload[el.id] = value;
+			
+			if (value && value !== '-' && value !== 'NaN' && value !== '0') payload[el.id] = value;
         });
 
         const formData = new FormData(); formData.append('payload', JSON.stringify(payload));
