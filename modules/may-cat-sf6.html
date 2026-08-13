@@ -808,8 +808,17 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
         showLoading("Đang up dữ liệu ...");
         const nguoiDo = prompt("Nhập tên người thực hiện (để trống nếu không cần):", "");
 
+
+const tram = document.getElementById('info_tram').value || "";
+const nganLo = document.getElementById('info_nganlo').value || "";
+// Tạo mã phiên gộp theo ý anh:
+const maPhienGop = tram + "_" + nganLo;
+
+
+
         const payload = {
-            module_name: "MC", maPhien: 'MC_' + Date.now(), timestamp: new Date().toLocaleString('vi-VN'),
+            module_name: "MC",  timestamp: new Date().toLocaleString('vi-VN'),
+	    maPhien: maPhienGop,
             ngayTN: document.getElementById('info_ngay').value, 
             tram: document.getElementById('info_tram').value || "", 
             nganLo: document.getElementById('info_nganlo').value || "", 
