@@ -139,7 +139,7 @@
         <div class="card">
             <div class="card-title">
                 <span>CẤU HÌNH THIẾT BỊ</span>	
-		<button class="btn-view-old" style="background:#f57c00; margin-right: 5px;" onclick="loadLatestData()">⚡ Dữ liệu gần nhất</button>
+		<button class="btn-view-old" style="background:#f57c00; margin-right: 5px;" onclick="loadLatestData()">⚡Tất cả kết quả mới nhất</button>
                 <button class="btn-view-old" onclick="loadOldDataSection()">👁️ Lịch sử</button>
             </div>
             <div class="grid">
@@ -916,19 +916,17 @@ value = value ? value.trim().replace("75°C:", "").replace("ms", "").trim() : ""
             payload["ngayTN"] = document.getElementById('info_ngay').value || ""; 
             payload["nguoiTN"] = ""; 
             
-document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], div[id^="${MODULE_PREFIX}"]`).forEach(el => {
-    let val = "";
-
-    if (el.tagName === "INPUT") {
+// CŨ OK 919-926: document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], div[id^="${MODULE_PREFIX}"]`).forEach(el => {
+// let val = "";
+    // if (el.tagName === "INPUT") {
         // Có số mới -> lấy số mới
         // DÒNG 1 LẤY LUÔN SỐ CŨ
+		// val = el.value.trim() || el.placeholder.trim();}else if (el.tagName === "SELECT") {val = el.value;}else {val=el.innerText;}
 		// DÒNG 2 CHỈ LẤY SỐ MỚI
-
-       // val = el.value.trim() || el.placeholder.trim();}else if (el.tagName === "SELECT") {val = el.value;}else {val=el.innerText;}
-
-    
-	      val = el.value.trim() || el.value.trim();}else if (el.tagName === "SELECT") {val = el.value;}else {val=el.value;}
-
+       	// val = el.value.trim() || el.value.trim();}else if (el.tagName === "SELECT") {val = el.value;}else {val=el.value;}
+// MỚI 927-929
+		document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"]`).forEach(el => {
+		let val = getVal(el.id);	
 
 
     payload[el.id] = val ? val.replace("75°C:", "").replace("ms", "").trim() : "";
@@ -980,6 +978,35 @@ if (payload["ngayTN"]) {
             alert("❌ Lỗi xuất Word: " + e.message);
         }
     }
+
+/**
+ * Hàm lấy giá trị:
+ * - Đối với các ô Cấu hình cố định (NSX, Số chế tạo, Thông số định mức...): Ưu tiên lấy value cũ nếu ô mới bỏ trống.
+ * - Đối với Nhiệt độ, Độ ẩm và các ô kết quả đo: Chỉ lấy giá trị mới nhập, bỏ qua placeholder.
+ */
+function getVal(id) {
+    const el = document.getElementById(id);
+    if (!el) return "";
+
+	// NẾU LÀ SPAN HOẶC DIV, TRẢ VỀ INNERTEXT
+    if (el.tagName === "SPAN" || el.tagName === "DIV") return el.innerText.trim();
+
+    // Danh sách các ID thuộc phần cấu hình cố định cần GIỮ LẠI TRỊ SỐ CŨ (value thật)
+    const fixedConfigIds = [
+        'mc_nsx', 'mc_no', 'mc_namsx', 'mc_udm', 'mc_idm', 'mc_inm', 
+        'mc_truyendong', 'mc_kieu', 'mc_tiepdiem'
+        // Anh có thể thêm các ID cấu hình khác vào đây nếu muốn
+    ];
+
+    // Nếu là ô cấu hình cố định VÀ ô nhập đang trống -> Lấy placeholder (dữ liệu cũ làm giá trị thật)
+    if (fixedConfigIds.includes(id)) {
+        return (el.value && el.value.trim() !== "") ? el.value : (el.placeholder || "");
+    }
+
+    // Riêng Nhiệt độ, độ ẩm hoặc các kết quả đo thông thường: Chỉ lấy giá trị mới nhập
+    return el.value || "";
+}
+	
 </script>
 </body>
 </html>
