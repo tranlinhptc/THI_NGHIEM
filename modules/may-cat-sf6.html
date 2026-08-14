@@ -933,11 +933,14 @@ value = value ? value.trim().replace("75°C:", "").replace("ms", "").trim() : ""
 });
 
             // --- BỘ CÔNG TẮC ĐIỀU KIỆN ẨN/HIỆN FORM WORD ---
-const sec1 = document.getElementById('chk_sec1').checked; if (sec1) {payload["is_sec1"] = true;} else {    delete payload["is_sec1"];}
-const sec5 = document.getElementById('chk_sec5').checked; if (sec5) {payload["is_sec5"] = true;} else {    delete payload["is_sec5"];}
-const sec6 = document.getElementById('chk_sec6').checked; if (sec6) {payload["is_sec6"] = true;} else {    delete payload["is_sec6"];}
+			const sec1 = document.getElementById('chk_sec1').checked; if (sec1) {payload["is_sec1"] = true;} else {    delete payload["is_sec1"];}
+			const sec2 = document.getElementById('chk_sec2').checked; if (sec2) {payload["is_sec2"] = true;} else {    delete payload["is_sec2"];}
+			const sec3 = document.getElementById('chk_sec3').checked; if (sec3) {payload["is_sec3"] = true;} else {    delete payload["is_sec3"];}
+			const sec4 = document.getElementById('chk_sec4').checked; if (sec4) {payload["is_sec4"] = true;} else {    delete payload["is_sec4"];}
+			const sec5 = document.getElementById('chk_sec5').checked; if (sec5) {payload["is_sec5"] = true;} else {    delete payload["is_sec5"];}
+			const sec6 = document.getElementById('chk_sec6').checked; if (sec6) {payload["is_sec6"] = true;} else {    delete payload["is_sec6"];}
 
-		const tuDK = document.getElementById('mc_tudk').value;
+			const tuDK = document.getElementById('mc_tudk').value;
             payload["is_1tu"] = (tuDK === "1"); // Bằng true nếu là 1 tủ
             payload["is_3tu"] = (tuDK === "3"); // Bằng true nếu là 3 tủ
             
