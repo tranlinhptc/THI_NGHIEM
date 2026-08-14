@@ -295,10 +295,9 @@
                     <thead>
                         <tr>
                             <th>No tiếp điểm</th>
-  				<th>Hàng kẹp</th>
+  								<th>Hàng kẹp</th>
                             	<th>Tiếp điểm</th>
                             	<th>Điện trở (Ω)</th>
-
                         </tr>
                     </thead>
                     <tbody>
@@ -382,10 +381,6 @@
             </div>
         </div>    
 
-
-
-
-
         <!-- NÚT CHỨC NĂNG TÍCH HỢP -->
         <div class="card">
             <button class="btn-action btn-draft" onclick="saveDraftManually()">💾 Tạm Lưu (Nháp)</button>
@@ -426,28 +421,6 @@
         document.getElementById('info_ngay').value = yyyy + '-' + mm + '-' + dd;
     }
 
-    // Load danh sách Trạm từ Sheet
-    // function fetchSubstations() {
-    //     fetch(GOOGLE_WEB_APP_URL + "?action=getSubstations")
-    //         .then(res => res.json())
-    //         .then(data => {
-    //             const select = document.getElementById('info_tram');
-    //             select.innerHTML = '<option value="" disabled selected>-- Chọn Trạm --</option>';
-    //             if(data.error) {
-    //                 alert("Lỗi lấy danh sách trạm: " + data.error);
-    //                 return;
-    //             }
-    //             data.forEach(tram => {
-    //                 let option = document.createElement("option");
-    //                 option.value = tram;
-    //                 option.text = tram;
-    //                 select.appendChild(option);
-    //             });
-    //         })
-    //         .catch(err => {
-    //             document.getElementById('info_tram').innerHTML = '<option value="">Lỗi tải dữ liệu!</option>';
-    //         });
-    // }
 // Load danh sách Trạm từ Sheet (Có Cache & Bắt Lỗi)
     function fetchSubstations() {
         const cachedTrams = localStorage.getItem('CACHE_TRAMS');
@@ -899,14 +872,17 @@ const maPhienGop = tram + "_" + nganLo;
 
         const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], div[id^="${MODULE_PREFIX}"]`);
         elements.forEach(el => {
-            //---=======DONG NAY DA BI THAY = DONG DUOI 
+        // DÒNG 2 POST LUÔN SỐ CŨ
+		// DÒNG 3 CHỈ POST SỐ MỚI
 			// let value = (el.tagName === "INPUT" || el.tagName === "SELECT") ? el.value : el.innerText;
-			let value = ""; if (el.tagName === "INPUT") {    value = el.value.trim() || el.placeholder.trim();} else if (el.tagName === "SELECT") {    value = el.value;} else {    value = el.innerText; }
-            value = value ? value.trim().replace("75°C:", "").replace("ms", "").trim() : "";
+			let value = ""; if (el.tagName === "INPUT") {value = el.value.trim() || el.placeholder.trim();} else if (el.tagName === "SELECT") {value = el.value;} else {value = el.innerText; }
+			//let value = ""; if (el.tagName === "INPUT") {value = el.value.trim() || el.value.trim();} else if (el.tagName === "SELECT") {value = el.value;} else {value = el.value; }
+		
+value = value ? value.trim().replace("75°C:", "").replace("ms", "").trim() : "";
 
 			
 			if (value && value !== '-' && value !== 'NaN' && value !== '0') payload[el.id] = value;
-        });
+      });
 
         const formData = new FormData(); formData.append('payload', JSON.stringify(payload));
         fetch(GOOGLE_WEB_APP_URL, { method: 'POST', body: formData })
