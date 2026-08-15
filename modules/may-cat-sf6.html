@@ -899,7 +899,7 @@ value = value ? value.trim().replace("75°C:", "").replace("ms", "").trim() : ""
             return;
         }
 
-        // showLoading("Đang soạn file...");
+        showLoading("Đang tạo file...");
         try {
             const res = await fetch(`${GOOGLE_WEB_APP_URL}?action=getTemplate&fileId=${TEMPLATE_DRIVE_ID}`);
             const data = await res.json();
