@@ -899,7 +899,7 @@ value = value ? value.trim().replace("75°C:", "").replace("ms", "").trim() : ""
             return;
         }
 
-        showLoading("Đang soạn file...");
+        // showLoading("Đang soạn file...");
         try {
             const res = await fetch(`${GOOGLE_WEB_APP_URL}?action=getTemplate&fileId=${TEMPLATE_DRIVE_ID}`);
             const data = await res.json();
@@ -975,7 +975,7 @@ if (payload["ngayTN"]) {
 	const nganLoStr = payload["mc_nganlo"]? payload["mc_nganlo"].replace(/[\/\\]/g, '-'): "NL";
 	saveAs(out, `Bien ban thi nghiem MC_${nganLoStr}_${tramStr}_${dateStr}.docx`);
 
-            // hideLoading();
+            hideLoading();
         } catch (e) {
             hideLoading();
             alert("❌ Lỗi xuất Word: " + e.message);
