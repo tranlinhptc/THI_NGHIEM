@@ -973,8 +973,26 @@ if (payload["ngayTN"]) {
             
 	const dateStr = payload["ngayTN"]? payload["ngayTN"].replace(/\//g, '-') : "New";const tramStr = payload["mc_tram"] ? payload["mc_tram"].replace(/[\/\\]/g, '-'):"Tram";
 	const nganLoStr = payload["mc_nganlo"]? payload["mc_nganlo"].replace(/[\/\\]/g, '-'): "NL";
-	saveAs(out, `Bien ban thi nghiem MC_${nganLoStr}_${tramStr}_${dateStr}.docx`);
-            
+	// saveAs(out, `Bien ban thi nghiem MC_${nganLoStr}_${tramStr}_${dateStr}.docx`);
+const fileName = `Bien ban thi nghiem MC_${nganLoStr}_${tramStr}_${dateStr}.docx`;
+
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+if (isIOS) {
+    // Safari iPhone/iPad
+    const url = URL.createObjectURL(out);
+    window.open(url, "_blank");
+
+    setTimeout(() => {
+        URL.revokeObjectURL(url);
+    }, 60000);
+
+} else {
+    // PC / Android / trình duyệt thông thường
+    saveAs(out, fileName);
+}
+			// ============================================
             hideLoading();
         } catch (e) {
             hideLoading();
