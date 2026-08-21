@@ -145,7 +145,8 @@
         </div>
         <div id="unlock_message">⚠️ Vui lòng chọn Trạm và gõ Ngăn lộ để mở khóa Form nhập liệu!</div>
     </div>
-
+   <!-- KHU VỰC BỊ KHÓA (SẼ MỞ KHI ĐỦ ĐIỀU KIỆN) -->
+    <div id="locked_zone" class="form-locked">
   <!-- 0. CẤU HÌNH ĐỘNG -->
     <div class="card">
         <div class="card-title"><span> CẤU HÌNH THIẾT BỊ</span>
@@ -252,8 +253,7 @@
             </div>
         </div>
     </div>
-   <!-- KHU VỰC BỊ KHÓA (SẼ MỞ KHI ĐỦ ĐIỀU KIỆN) -->
-    <div id="locked_zone" class="form-locked">
+
 
 		
     <!-- 1. KIỂM TRA BÊN NGOÀI -->
@@ -1029,8 +1029,8 @@ value = value ? value.trim().replace("75°C:", "").replace("ms", "").trim() : ""
             for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
             
             const payload = {};
-            payload["mc_tram"] = document.getElementById('info_tram').value || ""; 
-            payload["mc_nganlo"] = document.getElementById('info_nganlo').value || "";
+            payload["tu_tram"] = document.getElementById('info_tram').value || ""; 
+            payload["tu_nganlo"] = document.getElementById('info_nganlo').value || "";
             payload["ngayTN"] = document.getElementById('info_ngay').value || ""; 
             payload["nguoiTN"] = ""; 
             
@@ -1081,7 +1081,7 @@ if (payload["ngayTN"]) {
             // const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }); Toi uu hoa dung luong file word bang doan duoi
 			const out = doc.getZip().generate({type: "blob",    mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",    compression: "DEFLATE"});
             
-	const dateStr = payload["ngayTN"]? payload["ngayTN"].replace(/\//g, '-') : "New";const tramStr = payload["mc_tram"] ? payload["mc_tram"].replace(/[\/\\]/g, '-'):"Tram";
+	const dateStr = payload["ngayTN"]? payload["ngayTN"].replace(/\//g, '-') : "New";const tramStr = payload["tu_tram"] ? payload["tu_tram"].replace(/[\/\\]/g, '-'):"Tram";
 	const nganLoStr = payload["tu_nganlo"]? payload["tu_nganlo"].replace(/[\/\\]/g, '-'): "NL";
 	saveAs(out, `Bien ban thi nghiem TU_${nganLoStr}_${tramStr}_${dateStr}.docx`);
             
@@ -1106,8 +1106,7 @@ function getVal(id) {
 
     // Danh sách các ID thuộc phần cấu hình cố định cần GIỮ LẠI TRỊ SỐ CŨ (value thật)
     const fixedConfigIds = [
-        'mc_nsx', 'mc_no', 'mc_namsx', 'mc_udm', 'mc_idm', 'mc_inm', 
-        'mc_truyendong', 'mc_kieu', 'mc_tiepdiem'
+        'tu_nsx', 'tu_no', 'tu_namsx', 'tu_udm', 'tu_kieu'
         // Anh có thể thêm các ID cấu hình khác vào đây nếu muốn
     ];
 
