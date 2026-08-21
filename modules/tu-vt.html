@@ -101,14 +101,18 @@
 
 <!-- Giao diện Popup (Được ẩn đi bằng display:none trong CSS) -->
 
+
 <div id="historyModal" class="modal-overlay">
     <div class="modal-content">
-        <div class="modal-title">⏱ LỊCH SỬ THÍ NGHIỆM THIẾT BỊ</div>
-        <div style="font-size: 12px; color: #666; margin-bottom: 10px; text-align:center;">Vui lòng chọn 1 ngày để tải số liệu đối chiếu</div>
+        <div class="modal-title">⏱ LỊCH SỬ THÍ NGHIỆM</div>
+        <div style="font-size: 12px; color: #666; margin-bottom: 10px; text-align:center;">Chọn để điền mờ (Placeholder) số liệu cũ đối chiếu</div>
         <div id="historyList"></div>
-        <button type="button" class="btn-close-modal" onclick="closeHistoryModal()">Đóng</button>
+        <button class="btn-close-modal" onclick="closeHistoryModal()">Đóng</button>
     </div>
 </div>
+
+
+
 <!-- them tu mc--!>
 
 <div id="loadingOverlay" class="modal-overlay" style="z-index: 2000; flex-direction: column;">
@@ -238,7 +242,7 @@
 			
 			<!--div class="form-group">
                 <label>Uđm (kV):</label>
-                <select id="tu_u1_dm" onchange="calculateAll()">
+                <select id="tu_udm" onchange="calculateAll()">
                     <option value="550/1.73205">550</option>
                     <option value="220/1.73205" selected>220</option>
                     <option value="110/1.73205">110</option>
@@ -366,14 +370,7 @@
 </div> <!-- HẾT KHU VỰC KHÓA -->
 </div>
 
-<div id="historyModal" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-title">⏱ LỊCH SỬ THÍ NGHIỆM</div>
-        <div style="font-size: 12px; color: #666; margin-bottom: 10px; text-align:center;">Chọn để điền mờ (Placeholder) số liệu cũ đối chiếu</div>
-        <div id="historyList"></div>
-        <button class="btn-close-modal" onclick="closeHistoryModal()">Đóng</button>
-    </div>
-</div>
+
 
 <script>
     // 🔴 BƯỚC QUAN TRỌNG: ANH PASTE ID CỦA FILE WORD TRÊN GOOGLE DRIVE VÀO ĐÂY
@@ -737,7 +734,7 @@ function renderRdcTable() {
         const num = parseInt(document.getElementById('tu_num_windings').value);
         let html = `<table><thead><tr><th>Phép Đo</th><th>Tiêu Chuẩn</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
         html += `<tr>
-            <td><b>Sơ cấp All</b></td>
+            <td><b>Sơ cấp - ∑</b></td>
             <td id="tu_std_rcd_pri">-</td>
             <td><input type="number" id="tu_rcd_pri_a" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_a"></span></td>
             <td><input type="number" id="tu_rcd_pri_b" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_b"></span></td>
@@ -746,7 +743,7 @@ function renderRdcTable() {
         
         for(let i=1; i<=num; i++) {
             html += `<tr>
-                <td>Cuộn ${i} - All</td>
+                <td>Cuộn ${i} - ∑</td>
                 <td id="tu_std_rcd_sec${i}">-</td>
                 <td><input type="number" id="tu_rcd_sec${i}_a" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_a"></span></td>
                 <td><input type="number" id="tu_rcd_sec${i}_b" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_b"></span></td>
@@ -835,7 +832,7 @@ function renderRdcTable() {
 
     function calculateAll() {
         const temp = parseFloat(document.getElementById('tu_temp').value) || 23;
-        const u1_dm_str = document.getElementById('tu_u1_dm').value;
+        const u1_dm_str = document.getElementById('tu_udm').value;
         const mfg = document.getElementById('tu_mfg').value;
         const num = parseInt(document.getElementById('tu_num_windings').value);
 
@@ -896,7 +893,7 @@ function renderRdcTable() {
             });
         }
 
-        const u1_dm_val = eval(document.getElementById('tu_u1_dm').value) * 1000;
+        const u1_dm_val = eval(document.getElementById('tu_udm').value) * 1000;
         const u1_tn_val = parseFloat(document.getElementById('tu_u1_tn').value) * 1000;
 
         if(u1_dm_val && u1_tn_val) {
@@ -944,21 +941,15 @@ function renderRdcTable() {
 
     function saveDraftManually() {
         const draftData = captureCurrentInputValues();
-        localStorage.setItem('TU_DRAFT_DATA', JSON.stringify(draftData));
+        localStorage.setItem('TU_DRAFT', JSON.stringify(draftData));
         alert("💾 Đã tạm lưu bản nháp thành công vào thiết bị!");
     }
 
-    function loadDraftData() {
-        const savedDraft = localStorage.getItem('TU_DRAFT_DATA');
-        if (savedDraft) {
-            const draftValues = JSON.parse(savedDraft);
-            restoreInputValues(draftValues);
-        }
-    }
+
 
     function clearDraft() {
         if (confirm("⚠️ Anh có chắc muốn xóa toàn bộ dữ liệu tạm lưu để làm mới không?")) {
-            localStorage.removeItem('TU_DRAFT_DATA');
+            localStorage.removeItem('TU_DRAFT');
             location.reload();
         }
     }
