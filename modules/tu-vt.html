@@ -181,33 +181,34 @@
                     <option value="Other" selected>Hãng khác (R_CĐ nhị thứ > 200 MΩ)</option>
                 </select>
             </div>
-
-                <div class="form-group"><label>No:</label><input type="text" id="tu_no" 			placeholder="Serial:"></div>
-                <div class="form-group"><label>Năm SX:</label><input type="number" 	id="tu_namsx" placeholder="2020"></div>
 			<div class="form-group"><label>Kiểu (Type):</label><input type="text" 	id="tu_kieu" placeholder="LTB145"></div>
+
 			<div class="form-group"><label>Cấp chính xác:</label><input type="text" 	id="tu_ccx" placeholder="0.3/0.5"></div>
 
-                <div class="form-group"><label>Công suất:</label><input type="text" 	id="tu_csuat" 	placeholder="50/50"></div>
+			<div class="form-group"><label>Năm SX:</label><input type="number" 	id="tu_namsx" placeholder="2020"></div>
 
-                <div class="form-group"><label>U định mức (kV):</label><input type="number" 	id="tu_udm" placeholder="245"></div>
-
-                <div class="form-group"><label>Điện dung (pF) (Type):</label><input 		type="number" id="tu_ddung" placeholder="4400"></div>
-
-<div class="form-group">
-                <label>Tỉ số biến (kV/kV):</label>
+            <div class="form-group"><label>Uđm (kV):</label><input type="number" 	id="tu_udm" placeholder="245"></div>
+			
+			<div class="form-group"><label>No:</label><input type="text" id="tu_no" 			placeholder="Serial:"></div>
+			
+			<div class="form-group"><label>Công suất:</label><input type="text" 	id="tu_csuat" 	placeholder="50/50"></div>
+			
+			<div class="form-group"><label>Điện dung (pF) (Type):</label><input 		type="number" id="tu_ddung" placeholder="4400"></div>
+			
+			<div class="form-group">
+                <label>Tỉ số biến:</label>
                 <select id="tu_tsbien" >
-                    <option value="550/1.73205">550:√3/0,1/√3/</option>
-                    <option value="220/1.73205" selected>220:√3/0,1/√3</option>
-                    <option value="110/1.73205">110:√3/0,1/√3</option>
-                    <option value="35/1.73205">35:√3/0,1/√3</option>
-                    <option value="22/1.73205">22:√3/0,1/√3</option>
-                    <option value="15/1.73205">15:√3/0,1/√3</option>
-                    <option value="6.6/1.73205">6,6:√3/0,1/√3</option>
+                    <option value="550:√3/0,1/√3">550:√3/110/√3</option>
+                    <option value="220:√3/0,1/√3" selected>220:√3/110/√3</option>
+                    <option value="110:√3/0,1/√3">110:√3/110/√3</option>
+                    <option value="35:√3/0,1/√3">35:√3/110/√3</option>
+                    <option value="22:√3/0,1/√3">22:√3/110/√3</option>
+                    <option value="15:√3/0,1/√3">15:√3/110/√3</option>
                 </select>
             </div>
-
-<div class="form-group">
-                <label>Vật Liệu Cách Điện (Tgδ):</label>
+			
+			<div class="form-group">
+                <label>Vật Liệu Cách Điện:</label>
                 <select id="tu_insulation" onchange="calculateAll()">
                     <option value="paper" selected>Loại Giấy (Mới ≤0.5%, Cũ ≤0.8%)</option>
                     <option value="paper_film_paper">Giấy-Film-Giấy (Mới ≤0.2%, Cũ ≤0.3%)</option>
@@ -215,31 +216,27 @@
                     <option value="film">Loại Film (Mới ≤0.1%, Cũ ≤0.15%)</option>
                 </select>
             </div>
-
-<div class="form-group">
-                <label>Số Cuộn Nhị Thứ:</label>
+			
+			<div class="form-group">
+                <label>Stt Cuộn:</label>
                 <select id="tu_num_windings" onchange="changeWindingCount()">
                     <option value="2">2 Cuộn nhị thứ</option>
                     <option value="3" selected>3 Cuộn nhị thứ</option>
                     <option value="4">4 Cuộn nhị thứ</option>
                 </select>
             </div>
-
-
-
-
-            <div class="form-group">
+			
+			<div class="form-group">
                 <label>Nhiệt độ MT (°C):</label>
                 <input type="number" id="tu_temp" value="" oninput="calculateAll()">
             </div>
-
-
-
-            <div class="form-group">
+			
+			<div class="form-group">
                 <label>Độ ẩm (%):</label>
                 <input type="number" id="tu_humidity" value="" oninput="calculateAll()">
             </div>
-            <div class="form-group">
+			
+			<!--div class="form-group">
                 <label>Uđm (kV):</label>
                 <select id="tu_u1_dm" onchange="calculateAll()">
                     <option value="550/1.73205">550</option>
@@ -250,9 +247,11 @@
                     <option value="15/1.73205">15</option>
                     <option value="6.6/1.73205">6.6</option>
                 </select>
-            </div>
-        </div>
-    </div>
+            </div>-->
+        
+		</div>
+	
+	</div>
 
 
 		
@@ -271,11 +270,11 @@
     <!-- 2. ĐIỆN TRỞ MỘT CHIỀU NHỊ THỨ -->
     <div class="card">
         <div class="card-title">
-            <span>2. R Một Chiều[mΩ]</span>
+            <span>2. R Một Chiều[Ω]</span>
                 <label class="chk-disable"><input type="checkbox" id="chk_sec2" onchange="toggleSection('body_sec2', this)"> ✏️ Nhập</label>
         </div>
             	<div id="body_sec2" class="table-responsive hidden-section">
-            <div class="note-text">* Tự động quy đổi 75°C và đánh giá NGAY KHI NHẬP TỪNG PHA.</div>
+            <!--<div class="note-text">* Tự động quy đổi 75°C và đánh giá NGAY KHI NHẬ.</div>-->
             <div class="table-responsive" id="table_rdc_container"></div>
         </div>
         </div>
@@ -291,7 +290,7 @@
                 <label class="chk-disable"><input type="checkbox" id="chk_sec3" onchange="toggleSection('body_sec3', this)"> ✏️ Nhập</label>
         </div>
             	<div id="body_sec3" class="table-responsive hidden-section">
-		<div class="note-text" id="rcd_std_note">* R_CĐ Sơ cấp NỘI SUY CHUẨN THEO BẢNG NHIỆT ĐỘ DẦU TU.</div>
+		<div class="note-text" id="rcd_std_note">* R_CĐ NỘI SUY NHIỆT ĐỘ.</div>
 		<div class="table-responsive" id="table_rcd_container"></div>
 	</div>
 	</div>
@@ -321,7 +320,7 @@
             	<div id="body_sec4" class="table-responsive hidden-section">
 <div class="grid" style="margin-bottom:8px;">
                 <div class="form-group">
-                    <label>U1_tn Thử Nghiệm Sơ Cấp (kV):</label>
+                    <label>U_Thử Nghiệm(kV):</label>
                     <input type="number" id="tu_u1_tn" value="10" oninput="calculateAll()">
                 </div>
             </div>
@@ -424,7 +423,7 @@
                 if (!cachedTrams) populateSelect(data);
             })
             .catch(err => {
-                if (!cachedTrams) select.innerHTML = '<option value="">❌ Lỗi kết nối mạng hoặc sai link GAS!</option>';
+                if (!cachedTrams) select.innerHTML = '<option value="">❌ Lỗi kết nối!</option>';
                 console.error("Lỗi Fetch:", err);
             });
     }
@@ -632,7 +631,7 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
 
     function saveDraftManually() {
         localStorage.setItem(MODULE_PREFIX + 'DRAFT', JSON.stringify(captureInputs()));
-        alert("💾 Đã lưu nháp xuống thiết bị!");
+        alert("💾 Đã lưu nháp!");
     }
 
 
@@ -708,7 +707,7 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
 
 function renderRdcTable() {
         const num = parseInt(document.getElementById('tu_num_windings').value);
-        let html = `<table><thead><tr><th>Cuộn Dây Nhị Thứ</th><th>Số cũ (75°C) </th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
+        let html = `<table><thead><tr><th>Stt Cuộn</th><th>Số cũ (75°C) </th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td><b>Cuộn ${i}</b></td>
@@ -736,9 +735,9 @@ function renderRdcTable() {
 
     function renderRcdTable() {
         const num = parseInt(document.getElementById('tu_num_windings').value);
-        let html = `<table><thead><tr><th>Hạng Mục Đo</th><th>Tiêu Chuẩn</th><th>Pha A (MΩ)</th><th>Pha B (MΩ)</th><th>Pha C (MΩ)</th></tr></thead><tbody>`;
+        let html = `<table><thead><tr><th>Phép Đo</th><th>Tiêu Chuẩn</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
         html += `<tr>
-            <td><b>Sơ cấp - Thứ cấp + Vỏ</b></td>
+            <td><b>Sơ cấp All</b></td>
             <td id="tu_std_rcd_pri">-</td>
             <td><input type="number" id="tu_rcd_pri_a" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_a"></span></td>
             <td><input type="number" id="tu_rcd_pri_b" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_b"></span></td>
@@ -747,7 +746,7 @@ function renderRdcTable() {
         
         for(let i=1; i<=num; i++) {
             html += `<tr>
-                <td>Cuộn ${i} - Các cuộn + Vỏ</td>
+                <td>Cuộn ${i} - All</td>
                 <td id="tu_std_rcd_sec${i}">-</td>
                 <td><input type="number" id="tu_rcd_sec${i}_a" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_a"></span></td>
                 <td><input type="number" id="tu_rcd_sec${i}_b" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_b"></span></td>
