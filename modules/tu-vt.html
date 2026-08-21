@@ -187,12 +187,9 @@
             </div>
 
                 <div class="form-group"><label>No:</label><input type="text" id="tu_no" 			placeholder="Serial:"></div>
-
                 <div class="form-group"><label>Năm SX:</label><input type="number" 	id="tu_namsx" placeholder="2020"></div>
-
-                <div class="form-group"><label>Kiểu (Type):</label><input type="text" 	id="tu_kieu" placeholder="LTB145"></div>
-
-                <div class="form-group"><label>Cấp chính xác:</label><input type="text" 	id="tu_ccx" placeholder="0.3/0.5"></div>
+			<div class="form-group"><label>Kiểu (Type):</label><input type="text" 	id="tu_kieu" placeholder="LTB145"></div>
+			<div class="form-group"><label>Cấp chính xác:</label><input type="text" 	id="tu_ccx" placeholder="0.3/0.5"></div>
 
                 <div class="form-group"><label>Công suất:</label><input type="text" 	id="tu_csuat" 	placeholder="50/50"></div>
 
@@ -200,7 +197,7 @@
 
                 <div class="form-group"><label>Điện dung (pF) (Type):</label><input 		type="number" id="tu_ddung" placeholder="4400"></div>
 
-        <div class="form-group">
+<div class="form-group">
                 <label>Tỉ số biến (kV/kV):</label>
                 <select id="tu_tsbien" >
                     <option value="550/1.73205">550:√3/0,1/√3/</option>
@@ -213,16 +210,7 @@
                 </select>
             </div>
 
-
-
-
-
-
-
-
-
-
-            <div class="form-group">
+<div class="form-group">
                 <label>Vật Liệu Cách Điện (Tgδ):</label>
                 <select id="tu_insulation" onchange="calculateAll()">
                     <option value="paper" selected>Loại Giấy (Mới ≤0.5%, Cũ ≤0.8%)</option>
@@ -232,11 +220,7 @@
                 </select>
             </div>
 
-
-
-
-
-            <div class="form-group">
+<div class="form-group">
                 <label>Số Cuộn Nhị Thứ:</label>
                 <select id="tu_num_windings" onchange="changeWindingCount()">
                     <option value="2">2 Cuộn nhị thứ</option>
@@ -491,13 +475,8 @@
 
     function showLoading(text) { document.getElementById('loadingText').innerText = text; document.getElementById('loadingOverlay').style.display = 'flex'; }
     function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
-
-
-    function refreshTables() {
-        renderRatioTable(); renderTgTable(); calculateAll();
-    }
-
-    function toggleSection(sectionId, chk) { document.getElementById(sectionId).classList.toggle('hidden-section', !chk.checked); }
+	function refreshTables() {renderRatioTable(); renderTgTable(); calculateAll();}
+	function toggleSection(sectionId, chk) { document.getElementById(sectionId).classList.toggle('hidden-section', !chk.checked); }
 
 
         function loadOldDataSection() {
@@ -515,7 +494,7 @@
             if (!data || data.length === 0 || data.error) { alert("ℹ️ Không tìm thấy dữ liệu cũ!"); return; }
             globalHistoryData = data; 
             showHistoryModal(data);
-        }).catch(err => { hideLoading(); alert("❌ Lỗi tải Cloud: " + err); });
+        }).catch(err => { hideLoading(); alert("❌ Lỗi tải data: " + err); });
     }
 
 
@@ -541,14 +520,10 @@
             applyLatestData(data);
         }).catch(err => { hideLoading(); alert("❌ Lỗi mạng: " + err); });
     }
-
-
-
-
-    // HÀM MỚI: Rải dữ liệu mờ (Placeholder) vào form (Bỏ qua bước chọn Popup)
+// HÀM MỚI: Rải dữ liệu mờ (Placeholder) vào form (Bỏ qua bước chọn Popup)
     function applyLatestData(data) {
         // Áp dụng cấu hình
-        ['mc_tudk', 'mc_cuonday', 'mc_tiepdiem'].forEach(id => {
+        ['tu_num_windings'].forEach(id => {
             if(data[id] !== undefined) { const el = document.getElementById(id); if(el) el.value = data[id]; }
         });
         refreshTables();
@@ -557,14 +532,14 @@
         for (let key in data) {
             const el = document.getElementById(key);
             if (el && data[key] !== undefined && data[key] !== '') {
-                if (el.tagName === 'INPUT' && !['mc_temp', 'mc_nsx', 'mc_no', 'mc_namsx', 'mc_udm', 'mc_idm', 'mc_inm', 'mc_truyendong', 'mc_kieu', 'mc_ghichu', 'info_ngay', 'info_tram', 'info_nganlo'].includes(key)) {
+                if (el.tagName === 'INPUT' && !['tu_temp', 'tu_nsx', 'tu_no', 'tu_namsx', 'tu_udm', 'tu_idm', 'tu_inm', 'tu_kieu', 'tu_ghichu', 'info_ngay', 'info_tram', 'info_nganlo'].includes(key)) {
                     el.value = ""; 
                     el.placeholder = data[key];
                     el.classList.add('old-data');
                     el.dataset.oldval = data[key]; 
                 } else if (el.tagName === 'SELECT' && key !== 'info_tram') { 
                     el.value = data[key]; 
-                } else if (['mc_nsx', 'mc_no', 'mc_namsx', 'mc_udm', 'mc_idm', 'mc_inm', 'mc_truyendong', 'mc_kieu', 'mc_ghichu'].includes(key)) {
+                } else if (['tu_temp', 'tu_nsx', 'tu_no', 'tu_namsx', 'tu_udm', 'tu_idm', 'tu_inm', 'tu_kieu', 'tu_ghichu'].includes(key)) {
                     // Mấy ô thông tin thiết bị tĩnh thì rải thẳng vào value luôn cho khỏe
                     el.value = data[key];
                 }
@@ -597,7 +572,7 @@
             // div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div><div class="history-person">👤 Nhập: ${row.nguoiTN || '?'}</div>`;
             // Dịch mã value lưu trên sheet sang Tiếng Việt hiển thị cho đẹp
 const modeMap = { "new": "Mới", "1yr": "Sau 1 năm", "3yr": "Sau 3 năm", "6yr": "Sau 6 năm", "boost": "Tăng cường" };
-const modeText = modeMap[row.mc_mode] || row.mc_mode || 'Không ghi nhận';
+const modeText = modeMap[row.tu_mode] || row.tu_mode || 'Không ghi nhận';
 
 div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div><div class="history-person" style="color: #0288d1; font-weight: bold;">⚙️ Chế độ: ${modeText}</div>`;
             div.onclick = () => applyHistoryData(index);
@@ -672,7 +647,7 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
             if (data['info_nganlo']) document.getElementById('info_nganlo').value = data['info_nganlo'];
             // if (data['info_ngay']) document.getElementById('info_ngay').value = data['info_ngay'];
 
-            ['mc_tudk', 'mc_cuonday', 'mc_tiepdiem'].forEach(id => { if(data[id]) document.getElementById(id).value = data[id]; });
+            ['tu_num_windings'].forEach(id => { if(data[id]) document.getElementById(id).value = data[id]; });
             refreshTables();
             for(let key in data) { const el = document.getElementById(key); if(el) el.value = data[key]; }
             calculateAll();
@@ -785,7 +760,7 @@ function renderRdcTable() {
     }
 
 
-    function renderPolTable() {
+   function renderPolTable() {
         const num = parseInt(document.getElementById('tu_num_windings').value);
         let html = `<table><thead><tr><th>Cuộn Nhị Thứ</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
         for(let i=1; i<=num; i++) {
@@ -798,7 +773,7 @@ function renderRdcTable() {
         }
         html += `</tbody></table>`;
         document.getElementById('table_pol_container').innerHTML = html;
-    }
+   }
 
     function renderRatioTable() {
         const num = parseInt(document.getElementById('tu_num_windings').value);
@@ -806,15 +781,13 @@ function renderRdcTable() {
         for(let i=1; i<=num; i++) {
             html += `<th colspan="2">Cuộn ${i}<br>
                 <select id="tu_u2_dm_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
-                    <option value="110/1.73205" selected>110/√3 V (63.51V)</option>
-                    <option value="110/3">110/3 V (36.67V)</option>
-                    <option value="110">110 V (Pha-Pha)</option>
+                    <option value="110/1.73205" selected>110/√3V</option>
+                    <option value="110/3">110/3V</option>
+                    <option value="110">110V</option>
                 </select><br>
                 <select id="tu_acc_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
-                    <option value="0.2" selected>CCX 0.2 (±0.2%)</option>
-                    <option value="0.5">CCX 0.5 (±0.5%)</option>
-                    <option value="1.0">CCX 1.0 (±1.0%)</option>
-                    <option value="3.0">CCX 3.0 (±3.0%)</option>
+                    <option value="0.2" selected>CCX 0.2</option>
+                    <option value="0.5">CCX 0.5</option>
                     <option value="3P">Cấp 3P (±3.0%)</option>
                     <option value="6P">Cấp 6P (±6.0%)</option>
                 </select>
@@ -877,7 +850,7 @@ function renderRdcTable() {
             const el = document.getElementById(`tu_rcd_eval_pri_${p}`);
             if(val > 0 && el) {
                 const pass = val >= stdPriRcd;
-                el.innerText = pass ? "✔ ĐẠT" : "✘ KHÔNG ĐẠT";
+                el.innerText = pass ? "✔ ĐẠT" : "✘ LỖI";
                 el.className = pass ? "sub-val pass" : "sub-val fail";
             }
         });
@@ -897,7 +870,7 @@ function renderRdcTable() {
                 const el = document.getElementById(`tu_rcd_eval_sec${i}_${p}`);
                 if(val > 0 && el) {
                     const pass = val >= stdSecRcd;
-                    el.innerText = pass ? "✔ ĐẠT" : "✘ KHÔNG ĐẠT";
+                    el.innerText = pass ? "✔ ĐẠT" : "✘ LỖi";
                     el.className = pass ? "sub-val pass" : "sub-val fail";
                 }
             });
@@ -995,17 +968,14 @@ function renderRdcTable() {
     function syncOneDrive() {
         showLoading("Đang up dữ liệu ...");
         const nguoiDo = prompt("Nhập tên người thực hiện (để trống nếu không cần):", "");
-
-
-const tram = document.getElementById('info_tram').value || "";
-const nganLo = document.getElementById('info_nganlo').value || "";
-// Tạo mã phiên gộp theo ý anh:
-const maPhienGop = tram + "_" + nganLo;
-
-
-
-        const payload = {
-            module_name: "MC",  timestamp: new Date().toLocaleString('vi-VN'),
+		const tram = document.getElementById('info_tram').value || "";
+		const nganLo = document.getElementById('info_nganlo').value || "";
+		// Tạo mã phiên gộp theo ý anh:
+		
+		
+		const maPhienGop = tram + "_" + nganLo;
+		const payload = {
+            module_name: "TU",  timestamp: new Date().toLocaleString('vi-VN'),
 	    maPhien: maPhienGop,
             ngayTN: document.getElementById('info_ngay').value, 
             tram: document.getElementById('info_tram').value || "", 
@@ -1087,23 +1057,15 @@ value = value ? value.trim().replace("75°C:", "").replace("ms", "").trim() : ""
 			const sec3 = document.getElementById('chk_sec3').checked; if (sec3) {payload["is_sec3"] = true;} else {    delete payload["is_sec3"];}
 			const sec4 = document.getElementById('chk_sec4').checked; if (sec4) {payload["is_sec4"] = true;} else {    delete payload["is_sec4"];}
 			const sec5 = document.getElementById('chk_sec5').checked; if (sec5) {payload["is_sec5"] = true;} else {    delete payload["is_sec5"];}
-			const sec6 = document.getElementById('chk_sec6').checked; if (sec6) {payload["is_sec6"] = true;} else {    delete payload["is_sec6"];}
+			//const sec6 = document.getElementById('chk_sec6').checked; if (sec6) {payload["is_sec6"] = true;} else {    delete payload["is_sec6"];}
 
-			const tuDK = document.getElementById('mc_tudk').value;
-            payload["is_1tu"] = (tuDK === "1"); // Bằng true nếu là 1 tủ
-            payload["is_3tu"] = (tuDK === "3"); // Bằng true nếu là 3 tủ
-            
-            const cuonDay = document.getElementById('mc_cuonday').value;
-            payload["is_1C2O"] = (cuonDay === "1C2O");
-            payload["is_2C1O"] = (cuonDay === "2C1O");
-            payload["is_2C2O"] = (cuonDay === "2C2O");
-
-            const tiepDiem = document.getElementById('mc_tiepdiem').value;
-            payload["is_1TD"] = (tiepDiem === "1");
-            payload["is_2TD"] = (tiepDiem === "2");
-            payload["is_3TD"] = (tiepDiem === "3");
-            payload["is_4TD"] = (tiepDiem === "4");
-            // ------------------------------------------------
+			const num_windings = document.getElementById('tu_num_windings').value;
+            payload["is_1wind"] = (num_windings === "1");
+			payload["is_2wind"] = (num_windings === "2");
+			payload["is_3wind"] = (num_windings === "3");
+			payload["is_4wind"] = (num_windings === "4");
+			payload["is_5wind"] = (num_windings === "5");
+		// ------------------------------------------------
 
 
 
@@ -1121,8 +1083,8 @@ if (payload["ngayTN"]) {
 			const out = doc.getZip().generate({type: "blob",    mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",    compression: "DEFLATE"});
             
 	const dateStr = payload["ngayTN"]? payload["ngayTN"].replace(/\//g, '-') : "New";const tramStr = payload["mc_tram"] ? payload["mc_tram"].replace(/[\/\\]/g, '-'):"Tram";
-	const nganLoStr = payload["mc_nganlo"]? payload["mc_nganlo"].replace(/[\/\\]/g, '-'): "NL";
-	saveAs(out, `Bien ban thi nghiem MC_${nganLoStr}_${tramStr}_${dateStr}.docx`);
+	const nganLoStr = payload["tu_nganlo"]? payload["tu_nganlo"].replace(/[\/\\]/g, '-'): "NL";
+	saveAs(out, `Bien ban thi nghiem TU_${nganLoStr}_${tramStr}_${dateStr}.docx`);
             
             hideLoading();
         } catch (e) {
