@@ -677,6 +677,9 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
         renderTgTable();
         calculateAll();
     }
+	function changeWindingCount() {
+    renderAllTables();
+}
 
     function getInterpolatedPriRcd(temp, u1Str) {
         let points = [];
@@ -771,65 +774,100 @@ function renderRdcTable() {
         document.getElementById('table_pol_container').innerHTML = html;
    }
 
-    function renderRatioTable() {
-        const num = parseInt(document.getElementById('tu_num_windings').value);
-        let html = `<table><thead><tr><th rowspan="2">Pha</th>`;
-        for(let i=1; i<=num; i++) {
-            html += `<th colspan="2">Cuộn ${i}<br>
-                <select id="tu_u2_dm_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
+function renderRatioTable() {
+    const num = parseInt(document.getElementById('tu_num_windings').value);
+
+    let html = `
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="2">Cuộn</th>
+                <th rowspan="2">Thông số</th>
+                <th colspan="2">Pha A</th>
+                <th colspan="2">Pha B</th>
+                <th colspan="2">Pha C</th>
+            </tr>
+            <tr>
+                <th>Uđo</th>
+                <th>Sai số</th>
+                <th>Uđo</th>
+                <th>Sai số</th>
+                <th>Uđo</th>
+                <th>Sai số</th>
+            </tr>
+        </thead>
+        <tbody>
+    `;
+
+    for (let i = 1; i <= num; i++) {
+
+        html += `
+        <tr>
+            <td rowspan="2"><b>Cuộn ${i}</b></td>
+
+            <td>
+                <select id="tu_u2_dm_w${i}"
+                    onchange="calculateAll()"
+                    style="font-size:10px;">
                     <option value="110/1.73205" selected>110/√3V</option>
                     <option value="110/3">110/3V</option>
                     <option value="110">110V</option>
-                </select><br>
-                <select id="tu_acc_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
+                </select>
+
+                <select id="tu_acc_w${i}"
+                    onchange="calculateAll()"
+                    style="font-size:10px; margin-top:3px;">
                     <option value="0.2" selected>CCX 0.2</option>
                     <option value="0.5">CCX 0.5</option>
-                    <option value="3P">Cấp 3P (±3.0%)</option>
-                    <option value="6P">Cấp 6P (±6.0%)</option>
+                    <option value="3P">Cấp 3P</option>
+                    <option value="6P">Cấp 6P</option>
                 </select>
-            </th>`;
-        }
-        html += `</tr><tr>`;
-        for(let i=1; i<=num; i++) { html += `<th>Uđo</th><th>Sai số</th>`; }
-        html += `</tr></thead><tbody>`;
+            </td>
+        `;
 
+        // Hàng Uđo
         ['A', 'B', 'C'].forEach(pha => {
-            html += `<tr><td><b>Pha ${pha}</b></td>`;
-            for(let i=1; i<=num; i++) {
-                html += `
-                    <td>
-                        <input type="number" id="tu_u2_w${i}_${pha}_1" step="any" placeholder="L1 (V)" oninput="calculateAll()" style="margin-bottom:2px;">
-                        <input type="number" id="tu_u2_w${i}_${pha}_2" step="any" placeholder="L2 (V)" oninput="calculateAll()">
-                    </td>
-                    <td>
-                        <span id="tu_err_w${i}_${pha}" style="font-weight:bold;">-</span>
-                        <span class="sub-val" id="tu_kdo_w${i}_${pha}">K_đo: -</span>
-                    </td>
-                `;
-            }
-            html += `</tr>`;
+            html += `
+                <td>
+                    <input type="number"
+                        id="tu_u2_w${i}_${pha}_1"
+                        step="any"
+                        placeholder="L1"
+                        oninput="calculateAll()"
+                        style="margin-bottom:2px;">
+                    <input type="number"
+                        id="tu_u2_w${i}_${pha}_2"
+                        step="any"
+                        placeholder="L2"
+                        oninput="calculateAll()">
+                </td>
+
+                <td rowspan="1">
+                    <span id="tu_err_w${i}_${pha}"
+                        style="font-weight:bold;">-</span>
+                    <span class="sub-val"
+                        id="tu_kdo_w${i}_${pha}">
+                        K_đo: -
+                    </span>
+                </td>
+            `;
         });
-        html += `</tbody></table>`;
-        document.getElementById('table_ratio_container').innerHTML = html;
+
+        html += `</tr>`;
     }
 
-    function renderTgTable() {
-        let html = `<table><thead><tr><th>Pha</th><th>Tụ đo</th><th>Tgδ (%) Đo</th><th>C_NSX (pF)</th><th>C_Đo (pF)</th><th>Sai số %</th></tr></thead><tbody>`;
-        ['A', 'B', 'C'].forEach(pha => {
-            ['C1', 'C2', 'C_Total'].forEach((cap, idx) => {
-                html += `<tr>
-                    ${idx === 0 ? `<td rowspan="3"><b>Pha ${pha}</b></td>` : ''}
-                    <td><b>${cap}</b></td>
-                    <td><input type="number" id="tu_tg_${pha}_${idx}" step="0.001" placeholder="Nhập Tgδ" oninput="calculateAll()"></td>
-                    <td><input type="number" id="tu_cmfg_${pha}_${idx}" placeholder="Nhập C_NSX" oninput="calculateAll()"></td>
-                    <td><input type="number" id="tu_cmeas_${pha}_${idx}" placeholder="Nhập C_đo" oninput="calculateAll()"></td>
-                    <td id="tu_cerr_${pha}_${idx}">-</td>
-                </tr>`;
-            });
-        });
-        html += `</tbody></table>`;
-        document.getElementById('table_tg_container').innerHTML = html;
-    }
+    html += `
+        </tbody>
+    </table>
+    `;
+
+    document.getElementById('table_ratio_container').innerHTML = html;
+}
+
+
+
+
+	
 
     function calculateAll() {
         const temp = parseFloat(document.getElementById('tu_temp').value) || 23;
