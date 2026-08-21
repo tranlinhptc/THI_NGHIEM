@@ -1,34 +1,26 @@
-.<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BIẾN DONG DIEN</title><!-- Cụm thư viện xuất Word chuẩn gốc -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BIẾN ĐIỆN ÁP (TU)</title>
+    <!-- Cụm thư viện xuất Word chuẩn gốc -->
     <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
-        :root { --primary: #0d47a1; --bg: #f4f6f9; --card: rgba(255, 255, 255, 0.94); --border: #dadce0; }
+        :root { --primary: #d84315; --bg: #f4f6f9; --card: rgba(255, 255, 255, 0.96); --border: #dadce0; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        /* HÌNH NỀN CỐ ĐỊNH FULL MÀN HÌNH MOBILE */
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: url('https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1200&q=80') no-repeat center center fixed;
-            background-size: cover;
-            padding: 8px; 
-            color: #212529; 
-            min-height: 100vh;
-        }
-
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
+               background: url('https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?auto=format&fit=crop&w=1200&q=80') no-repeat center center fixed;
+               background-size: cover; padding: 8px; color: #212529; min-height: 100vh; }
         .container { max-width: 100%; margin: 0 auto; backdrop-filter: blur(2px); }
         .header-bar { display: flex; justify-content: space-between; align-items: center; background: var(--primary); color: white; padding: 10px 12px; border-radius: 6px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .header-bar h2 { font-size: 15px; margin: 0; }
         .btn-back { background: rgba(255,255,255,0.2); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; text-decoration: none; }
         
         .card { background: var(--card); border-radius: 8px; padding: 12px; margin-bottom: 12px; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
-        .card-title { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid #e3f2fd; padding-bottom: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-        
+        .card-title { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid #fbe9e7; padding-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
         .form-group { display: flex; flex-direction: column; }
         label { font-size: 11px; font-weight: 600; margin-bottom: 2px; color: #424242; }
@@ -41,38 +33,132 @@
         th { background-color: #f1f3f4; font-weight: 700; color: #3c4043; white-space: nowrap; }
         
         .sub-val { font-size: 10px; color: #1565c0; font-weight: 600; margin-top: 2px; display: block; }
-        .chk-disable { font-size: 11px; font-weight: normal; color: #d32f2f; cursor: pointer; }
-        
-        /* NÚT XEM KẾT QUẢ CŨ GỌN GÀNG */
-        .btn-view-old { background: #0288d1; color: white; border: none; padding: 2px 6px; border-radius: 4px; font-size: 10px; cursor: pointer; margin-right: 8px; font-weight: 600; }
-        
+        .chk-disable { font-size: 12px; font-weight: bold; color: #d84315; cursor: pointer; background: #fbe9e7; padding: 2px 8px; border-radius: 4px; }
+        .btn-view-old { background: #0288d1; color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: 600; }
         .btn-action { background: var(--primary); color: white; border: none; padding: 10px 15px; font-size: 13px; font-weight: 600; border-radius: 6px; cursor: pointer; margin: 4px 0; width: 100%; }
         .btn-cloud { background: #2e7d32; }
+        .btn-draft { background: #0288d1; }
+        .btn-clear { background: #757575; font-size:11px; margin-top:4px; }
         .pass { color: #2e7d32; font-weight: bold; }
         .fail { color: #c62828; font-weight: bold; }
         .note-text { font-size: 10px; color: #666; font-style: italic; margin-top: 3px; }
         .hidden-section { display: none !important; }
+
+        /* Popups & Loading */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 10px; width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .modal-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: var(--primary); border-bottom: 2px solid #fbe9e7; padding-bottom: 8px; text-align: center; }
+        .history-item { padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; background: #fafafa; }
+        .history-item:hover { background: #fbe9e7; border-color: var(--primary); transform: scale(1.02); }
+        .history-date { font-weight: bold; color: #d84315; font-size: 14px; }
+        .history-person { font-size: 12px; color: #666; margin-top: 4px; }
+        .btn-close-modal { background: #d32f2f; color: white; border: none; padding: 10px; border-radius: 6px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .bg-warning { background-color: #fff9c4 !important; border-color: #fbc02d !important; color: #c62828 !important; font-weight: bold; }
+        .err-box { background: #ffebee; border: 1px solid #ef5350; border-radius: 4px; padding: 2px; margin-top: 2px;}
+
+	/* .old-data {    color: #d32f2f !important;    opacity: 1 !important;    font-weight: bold !important;    font-style: normal !important;} */
+		.old-data {
+    color: #d32f2f !important;
+    opacity: 1 !important;
+    font-weight: bold !important;
+    font-style: normal !important;
+}
+
+.old-data::placeholder {
+    color: #2e7d32 !important;
+    opacity: 1 !important;
+    font-weight: bold !important;
+}
+
+
+
+
+        /* CSS KHÓA FORM */
+        .form-locked {
+            opacity: 0.4;
+            pointer-events: none;
+            filter: grayscale(0.8);
+            transition: all 0.3s ease;
+        }
+        
+        #unlock_message {
+            color: #d32f2f;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 8px;
+            font-style: italic;
+        }
     </style>
+
 </head>
+
 <body>
+
+<!-- Giao diện Popup (Được ẩn đi bằng display:none trong CSS) -->
+
+
+<div id="historyModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-title">⏱ LỊCH SỬ THÍ NGHIỆM</div>
+        <div style="font-size: 12px; color: #666; margin-bottom: 10px; text-align:center;">Chọn để điền mờ (Placeholder) số liệu cũ đối chiếu</div>
+        <div id="historyList"></div>
+        <button class="btn-close-modal" onclick="closeHistoryModal()">Đóng</button>
+    </div>
+</div>
+
+<div id="loadingOverlay" class="modal-overlay" style="z-index: 2000; flex-direction: column;">
+	<div class="loader"></div>
+    	<div id="loadingText" style="color: white; margin-top: 15px; font-weight: bold; font-size:14px;">Đang xử lý...	</div>
+</div>
+
 
 <div class="container">
     <div class="header-bar">
-        <h2>⚡ BIẾN DONG (TI/CT)</h2>
+        <h2>⚡ THỬ NGHIỆM BIẾN DÒNG ĐIỆN</h2>
         <a href="../index.html" class="btn-back">← Trang Chủ</a>
     </div>
 
-    <!-- 0. CHẾ ĐỘ THÍ NGHIỆM & CẤU HÌNH -->
-    <div class="card">
-        <div class="card-title"><span>THÔNG TIN CẤU HÌNH THIẾT BỊ</span></div>
+
+    <!-- 0. KHU VỰC BẮT BUỘC (ĐỊNH DANH) -->
+    <div class="card" style="border: 2px solid var(--primary); box-shadow: 0 4px 10px rgba(216, 67, 21, 0.2);">
+        <div class="card-title"><span>THÔNG TIN ĐỊNH DANH (BẮT BUỘC)</span></div>
         <div class="grid">
             <div class="form-group">
-                <label>Trạm / Ngăn Lộ:</label>
-                <input type="text" id="info_tram" readonly style="background:#eee; font-weight:bold;">
+                <label>Trạm (Lấy từ hệ thống): <span style="color:red">*</span></label>
+                <select id="info_tram" onchange="checkUnlockForm()">
+                    <option value="" disabled selected>Đang tải ...</option>
+                </select>
             </div>
             <div class="form-group">
+                <label>Ngăn Lộ / Chỉ danh: <span style="color:red">*</span></label>
+                <input type="text" id="info_nganlo" placeholder="Ví dụ: 271, 131..." oninput="checkUnlockForm()">
+            </div>
+            <div class="form-group">
+                <label>Ngày Thí Nghiệm:</label>
+                <input type="date" id="info_ngay" onchange="checkUnlockForm()">
+            </div>
+        </div>
+        <div id="unlock_message">⚠️ Vui lòng chọn Trạm và gõ Ngăn lộ để mở khóa Form nhập liệu!</div>
+    </div>
+   <!-- KHU VỰC BỊ KHÓA (SẼ MỞ KHI ĐỦ ĐIỀU KIỆN) -->
+    <div id="locked_zone" class="form-locked">
+  <!-- 0. CẤU HÌNH ĐỘNG -->
+    <div class="card">
+        <div class="card-title"><span> CẤU HÌNH THIẾT BỊ</span>
+		<button class="btn-view-old" style="background:#f57c00; margin-right: 5px;" 				onclick="loadLatestData()">⚡Tất cả kết quả mới nhất</button>
+                <button class="btn-view-old" onclick="loadOldDataSection()">👁️ Lịch sử</button>
+
+	</div>
+        <div class="grid">
+
+            <div class="form-group">
                 <label>Chế Độ Thí Nghiệm:</label>
-                <select id="ti_mode" onchange="calculateAll()">
+                <select id="tu_mode" onchange="calculateAll()">
                     <option value="new" selected>Mới / Sau lắp đặt</option>
                     <option value="1yr">Sau 1 năm vận hành</option>
                     <option value="3yr">Sau 3 năm vận hành</option>
@@ -80,9 +166,13 @@
                     <option value="boost">Thí nghiệm tăng cường</option>
                 </select>
             </div>
+
+
+
+
             <div class="form-group">
-                <label>Hãng Sản Xuất (Hỗ trợ R_CĐ):</label>
-                <select id="ti_mfg" onchange="calculateAll()">
+                <label>Hiệu:</label>
+                <select id="tu_mfg" onchange="calculateAll()">
                     <option value="ABB">ABB (R_CĐ nhị thứ ≥ 5 MΩ)</option>
                     <option value="Sieyun">Sieyun TYD (R_CĐ nhị thứ ≥ 1000 MΩ)</option>
                     <option value="Areva">Areva (R_CĐ nhị thứ ≥ 50 MΩ)</option>
@@ -91,219 +181,485 @@
                     <option value="Other" selected>Hãng khác (R_CĐ nhị thứ > 200 MΩ)</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>Vật Liệu Cách Điện (Tgδ):</label>
-                <select id="ti_insulation" onchange="calculateAll()">
+			<div class="form-group"><label>Kiểu (Type):</label><input type="text" 	id="tu_kieu" placeholder="LTB145"></div>
+
+			<div class="form-group"><label>Cấp chính xác:</label><input type="text" 	id="tu_ccx" placeholder="0.3/0.5"></div>
+
+			<div class="form-group"><label>Năm SX:</label><input type="number" 	id="tu_namsx" placeholder="2020"></div>
+
+            <div class="form-group"><label>Uđm(kV):</label><input type="number" 	id="tu_udm" placeholder="245"></div>
+			
+			<div class="form-group"><label>No:</label><input type="text" id="tu_no" 			placeholder="Serial:"></div>
+			
+			<div class="form-group"><label>Công suất:</label><input type="text" 	id="tu_csuat" 	placeholder="50/50"></div>
+			
+			<div class="form-group"><label>Điện dung (pF) (Type):</label><input 		type="number" id="tu_ddung" placeholder="4400"></div>
+			
+			<div class="form-group">
+                <label>Tỉ số biến:</label>
+                <select id="tu_tsbien" >
+                    <option value="200:1"200/1</option>
+                    <option value="220:1" selected>220:√3/110/√3</option>
+                    <option value="400">400/1</option>
+                    <option value="600">600/1</option>
+                    <option value="800">800/1</option>
+                    <option value="1000:1">1000/1</option>
+                </select>
+            </div>
+			
+			<div class="form-group">
+                <label>Vật Liệu Cách Điện:</label>
+                <select id="tu_insulation" onchange="calculateAll()">
                     <option value="paper" selected>Loại Giấy (Mới ≤0.5%, Cũ ≤0.8%)</option>
                     <option value="paper_film_paper">Giấy-Film-Giấy (Mới ≤0.2%, Cũ ≤0.3%)</option>
                     <option value="film_paper_film">Film-Giấy-Film (Mới ≤0.2%, Cũ ≤0.3%)</option>
                     <option value="film">Loại Film (Mới ≤0.1%, Cũ ≤0.15%)</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>Số Cuộn Nhị Thứ:</label>
-                <select id="ti_num_windings" onchange="changeWindingCount()">
-                    <option value="2">2 Cuộn nhị thứ</option>
-                    <option value="3" selected>3 Cuộn nhị thứ</option>
-                    <option value="4">4 Cuộn nhị thứ</option>
-                    <option value="5">5 Cuộn nhị thứ</option>
-                    <option value="6">6 Cuộn nhị thứ</option>
-                    <option value="7">7 Cuộn nhị thứ</option>
-                    <option value="8">8 Cuộn nhị thứ</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Nhiệt độ(°C):</label>
-                <input type="number" id="ti_temp" value="" oninput="calculateAll()">
-            </div>
-            <div class="form-group">
-                <label>Độ Ẩm (%):</label>
-                <input type="number" id="ti_humidity" value="" oninput="calculateAll()">
-            </div>
-            <div class="form-group">
-                <label>Iđm Sơ Cấp (A):</label>
-                <select id="ti_u1_dm" onchange="calculateAll()">
-                    <option value="200/1">200:1</option>
-                    <option value="400/1" >400:1</option>
-                    <option value="600/1">600:1</option>
-                    <option value="800/1">800:1</option>
-                    <option value="1000/1">1.000:1</option>
-                    <option value="1200/1">1.20 0:1</option>
-                    <option value="2000/1">2.000:1</option>
-                    <option value="5000/1">5.000:1</option>
-                </select>
-            </div>
-        </div>
-    </div>
+			
+			<div class="form-group">
+                <label>Số Cuộn:</label>
+                <select id="tu_num_windings" onchange="changeWindingCount()">
+                    <option value="2">2 Cuộn</option>
+                    <option value="3">3 Cuộn</option>
+					<option value="4"selected>4 Cuộn</option>
+					<option value="5">5 Cuộn</option>
+					<option value="6">6 Cuộn</option>
+					<option value="7">7 Cuộn</option>
+					<option value="8">8 Cuộn</option>
 
+                </select>
+            </div>
+			
+			<div class="form-group">
+                <label>Nhiệt độ MT (°C):</label>
+                <input type="number" id="tu_temp" value="" oninput="calculateAll()">
+            </div>
+			
+			<div class="form-group">
+                <label>Độ ẩm (%):</label>
+                <input type="number" id="tu_humidity" value="" oninput="calculateAll()">
+            </div>
+			
+			<!--div class="form-group">
+                <label>Uđm (kV):</label>
+                <select id="tu_udm" onchange="calculateAll()">
+                    <option value="550/1.73205">550</option>
+                    <option value="220/1.73205" selected>220</option>
+                    <option value="110/1.73205">110</option>
+                    <option value="35/1.73205">35</option>
+                    <option value="22/1.73205">22</option>
+                    <option value="15/1.73205">15</option>
+                    <option value="6.6/1.73205">6.6</option>
+                </select>
+            </div>-->
+        
+		</div>
+	
+	</div>
+
+
+		
     <!-- 1. KIỂM TRA BÊN NGOÀI -->
-    <div class="card">
-        <div class="card-title">
-            <span>1. Kiểm Tra Bên Ngoài</span>
-            <label class="chk-disable"><input type="checkbox" id="chk_sec1" onchange="toggleSection('body_sec1', this)"> KTH</label>
-        </div>
-        <div id="body_sec1">
-            <input type="text" id="ti_visual" value="Bình thường, sứ không nứt vỡ, không rò rỉ dầu.">
-        </div>
-    </div>
+	<div class="card">
+     		<div class="card-title">
+            	<span>1. Kiểm Tra Bên Ngoài</span>
+                <label class="chk-disable"><input type="checkbox" id="chk_sec1" onchange="toggleSection('body_sec1', this)"> ✏️ Nhập</label>
+        	</div>
+            	<div id="body_sec1" class="table-responsive hidden-section">
+            <input type="text" id="tu_visual" value="Bình thường, sứ không nứt vỡ, không rò rỉ dầu.">
+       		</div> 
+	</div> 
 
-    <!-- 2. ĐO ĐIỆN TRỞ CÁCH ĐIỆN -->
-    <div class="card">
-        <div class="card-title">
-            <span>2. Điện Trở Cách Điện [MΩ]</span>
-            <div>
-                <button class="btn-view-old" onclick="loadOldDataSection('rcd')">👁️ Kq cũ</button>
-                <label class="chk-disable"><input type="checkbox" id="chk_sec2" onchange="toggleSection('body_sec2', this)"> KTH</label>
-            </div>
-        </div>
-        <div id="body_sec2">
-            <div class="note-text" id="rcd_std_note">* R_CĐ Sơ cấp NỘI SUY CHUẨN THEO BẢNG NHIỆT ĐỘ DẦU TU.</div>
-            <div class="table-responsive" id="table_rcd_container"></div>
-        </div>
-    </div>
 
-    <!-- 3. ĐIỆN TRỞ MỘT CHIỀU NHỊ THỨ -->
+    <!-- 2. ĐIỆN TRỞ MỘT CHIỀU NHỊ THỨ -->
     <div class="card">
         <div class="card-title">
-            <span>3. R dc[mΩ] (Lệch ≤ 5%)</span>
-            <div>
-                <button class="btn-view-old" onclick="loadOldDataSection('rdc')">👁️ Kq cũ</button>
-                <label class="chk-disable"><input type="checkbox" id="chk_sec3" onchange="toggleSection('body_sec3', this)"> KTH</label>
-            </div>
+            <span>2. R Một Chiều[Ω]</span>
+                <label class="chk-disable"><input type="checkbox" id="chk_sec2" onchange="toggleSection('body_sec2', this)"> ✏️ Nhập</label>
         </div>
-        <div id="body_sec3">
-            <div class="note-text">* Tự động quy đổi 75°C và đánh giá NGAY KHI NHẬP TỪNG PHA.</div>
+            	<div id="body_sec2" class="table-responsive hidden-section">
+            <div class="note-text">* Tự động quy đổi 75°C và đánh giá NGAY KHI NHẬ.</div>
             <div class="table-responsive" id="table_rdc_container"></div>
         </div>
-    </div>
+        </div>
 
-    <!-- 4. CỰC TÍNH -->
+
+
+
+
+    <!-- 3. ĐO ĐIỆN TRỞ CÁCH ĐIỆN -->
     <div class="card">
         <div class="card-title">
-            <span>4. Kiểm Tra Cực Tính</span>
+            <span>3. Cách Điện [MΩ]</span>
+                <label class="chk-disable"><input type="checkbox" id="chk_sec3" onchange="toggleSection('body_sec3', this)"> ✏️ Nhập</label>
+        </div>
+            	<div id="body_sec3" class="table-responsive hidden-section">
+		<div class="note-text" id="rcd_std_note">* R_CĐ NỘI SUY THEO NHIỆT ĐỘ.</div>
+		<div class="table-responsive" id="table_rcd_container"></div>
+	</div>
+	</div>
+
+    <!-- 4. CỰC TÍNH
+    <div class="card">
+        <div class="card-title">
+            <span>4. Cực Tính</span>
             <div>
-                <button class="btn-view-old" onclick="loadOldDataSection('pol')">👁️ Kq cũ</button>
-                <label class="chk-disable"><input type="checkbox" id="chk_sec4" onchange="toggleSection('body_sec4', this)"> KTH</label>
+                <button type="button" class="btn-view-old" onclick="loadOldDataSection('pol')">👁️ Kq cũ</button>
+                <label class="chk-disable"><input type="checkbox" id="chk_sec4" onchange="toggleSection('body_sec4', this)"> Không đo</label>
             </div>
         </div>
         <div id="body_sec4">
             <div class="table-responsive" id="table_pol_container"></div>
         </div>
-    </div>
+    </div> -->
 
-    <!-- 5. TỈ SỐ BIẾN -->
+
+
+<!-- 4. TỈ SỐ BIẾN -->
     <div class="card">
         <div class="card-title">
-            <span>5. Tỉ Số Biến</span>
-            <div>
-                <button class="btn-view-old" onclick="loadOldDataSection('ratio')">👁️ Kq cũ</button>
-                <label class="chk-disable"><input type="checkbox" id="chk_sec5" onchange="toggleSection('body_sec5', this)"> KTH</label>
-            </div>
+            <span>4. Tỉ Số Biến</span>
+                <label class="chk-disable"><input type="checkbox" id="chk_sec4" onchange="toggleSection('body_sec4', this)"> ✏️ Nhập</label>
         </div>
-        <div id="body_sec5">
-            <div class="grid" style="margin-bottom:8px;">
+            	<div id="body_sec4" class="table-responsive hidden-section">
+<div class="grid" style="margin-bottom:8px;">
                 <div class="form-group">
-                    <label>Dòng Thử Nghiệm Sơ Cấp (A):</label>
-                    <input type="number" id="ti_u1_tn" value="10" oninput="calculateAll()">
+                    <label>U_Thử Nghiệm(kV):</label>
+                    <input type="number" id="tu_u1_tn" value="10" oninput="calculateAll()">
                 </div>
             </div>
             <div class="table-responsive" id="table_ratio_container"></div>
-        </div>
-    </div>
+	</div>
+    	</div>
+
+
+
+
+
+
 
     <!-- 6. TAN DELTA & ĐIỆN DUNG -->
     <div class="card">
         <div class="card-title">
-            <span>6. Tgδ(%)& Điện Dung (pF)</span>
+            <span>5. Tgδ(%)& Điện Dung (pF)</span>
             <div>
-                <button class="btn-view-old" onclick="loadOldDataSection('tg')">👁️ Kq cũ</button>
-                <label class="chk-disable"><input type="checkbox" id="chk_sec6" onchange="toggleSection('body_sec6', this)"> KTH</label>
+                <label class="chk-disable"><input type="checkbox" id="chk_sec5" onchange="toggleSection('body_sec5', this)"> ✏️ Nhập</label>
             </div>
         </div>
-        <div id="body_sec6">
+            	<div id="body_sec5" class="table-responsive hidden-section">
             <div class="note-text">* C_đo cho phép lệch -5% ÷ +10% so với C_NSX.</div>
             <div class="table-responsive" id="table_tg_container"></div>
         </div>
     </div>
-    <!-- ĐIỀU KHIỂN -->
-    <div class="card">
-        <button class="btn-action" onclick="saveDraftManually()" style="background:#0288d1;">💾 Tạm Lưu (Nháp)</button>
-        
-        <!-- Thêm ô chọn file mẫu Word vào đây -->
-        <div style="margin: 10px 0; padding: 10px; background: #e3f2fd; border-radius: 6px; border: 1px dashed #1976d2;">
-            <label style="font-weight: bold; color: #1976d2;">1. Chọn File Word Mẫu (Template):</label><br>
-            <input type="file" id="template_file" accept=".docx" style="margin-top: 5px;">
-        </div>
 
-        <button class="btn-action" onclick="exportWord()">📝 2. Xuất Biên Bản Word (.docx)</button>
-        
-        <button class="btn-action btn-cloud" onclick="syncOneDrive()">☁️ Lưu & Đồng Bộ OneDrive / Excel</button>
-        <button class="btn-action" onclick="clearDraft()" style="background:#757575; font-size:11px; margin-top:4px;">🗑️ Xóa bản nháp để làm mới hoàn toàn</button>
-    </div>
-    <!-- //ket thuc dieu khien moi -->
-    </div>
+
+
+
+
+
+
+    <!-- ĐIỀU KHIỂN -->
+        <div class="card">
+            <button class="btn-action btn-draft" onclick="saveDraftManually()">💾 Tạm Lưu (Nháp)</button>
+            <button class="btn-action" onclick="exportWordFromDrive()" style="background:#0288d1; margin-top:8px;">📝 Xuất Biên Bản Word (Auto Template)</button>
+            <button class="btn-action btn-cloud" onclick="syncOneDrive()" style="margin-top:8px;">☁️ Lưu & Đồng Bộ Google Sheet</button>
+            <button class="btn-action btn-clear" onclick="clearDraft()">🗑️ Xóa bản nháp làm lại</button>
+        </div>
+	    </div>
+</div>
+</div> <!-- HẾT KHU VỰC KHÓA -->
+</div>
+
+
 
 <script>
-    const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx91kxV-_KHL4GJVtzdQXl5Yfy9Hm-dOvE5AQ1my7xwjSXjG0pxWVXIUr2iyS4yM8ob/exec";
-    const SECRET_PIN = "789"; 
-    const MODULE_PREFIX = "ti_"; // Tiền tố cho module TU
+    // 🔴 BƯỚC QUAN TRỌNG: ANH PASTE ID CỦA FILE WORD TRÊN GOOGLE DRIVE VÀO ĐÂY
+    const TEMPLATE_DRIVE_ID = "1-VQ8Femmz7jaOoys3UvTeJyV1kAYRFjH"; 
+    const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxr-8Y25S607UYytRjKutvw4Zhx69W05XOc3Qs5gsSBQNxAZ8S16mmt7Nj8xUV1nNIn/exec";
+    const MODULE_PREFIX = "tu_"; 
+    let globalHistoryData = [];
 
-    window.onload = function() {
-        const savedSession = localStorage.getItem('CURRENT_SESSION');
-        if (savedSession) {
-            const data = JSON.parse(savedSession);
-            document.getElementById('info_tram').value = `${data.tram || 'Chưa chọn'} - ${data.nganLo || 'Chưa chọn'}`;
+    // Tự động thiết lập Ngày hôm nay cho ô Ngày
+    function setTodayDate() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        let mm = today.getMonth() + 1; // Months start at 0!
+        let dd = today.getDate();
+
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+
+        document.getElementById('info_ngay').value = yyyy + '-' + mm + '-' + dd;
+    }
+
+// Load danh sách Trạm từ Sheet (Có Cache & Bắt Lỗi)
+    function fetchSubstations() {
+        const cachedTrams = localStorage.getItem('CACHE_TRAMS');
+        const select = document.getElementById('info_tram');
+        
+        // Nếu đã có cache, load ngay lập tức
+        if (cachedTrams) {
+            populateSelect(JSON.parse(cachedTrams));
         } else {
-            document.getElementById('info_tram').value = "Chưa kết nối từ Trang chủ";
+            select.innerHTML = '<option value="" disabled selected>Đang tải danh sách trạm...</option>';
         }
 
+        // Gọi ngầm API để lấy dữ liệu mới
+        fetch(GOOGLE_WEB_APP_URL + "?action=getSubstations")
+            .then(res => res.json())
+            .then(data => {
+                // NẾU GAS BÁO LỖI (Ví dụ sai tên sheet)
+                if(data.error) {
+                    if (!cachedTrams) select.innerHTML = `<option value="">⚠️ Lỗi: ${data.error}</option>`;
+                    console.error("Lỗi từ GAS:", data.error);
+                    return;
+                }
+                
+                // NẾU THÀNH CÔNG: Lưu Cache và cập nhật UI
+                localStorage.setItem('CACHE_TRAMS', JSON.stringify(data));
+                if (!cachedTrams) populateSelect(data);
+            })
+            .catch(err => {
+                if (!cachedTrams) select.innerHTML = '<option value="">❌ Lỗi kết nối!</option>';
+                console.error("Lỗi Fetch:", err);
+            });
+    }
+
+    // Hàm phụ trợ vẽ các thẻ option
+    function populateSelect(data) {
+        const select = document.getElementById('info_tram');
+        select.innerHTML = '<option value="" disabled selected>-- Chọn Trạm --</option>';
+        data.forEach(tram => {
+            let option = document.createElement("option");
+            option.value = tram; option.text = tram;
+            select.appendChild(option);
+        });
+    }
+
+
+    // KIỂM TRA MỞ KHÓA FORM
+    function checkUnlockForm() {
+        const tram = document.getElementById('info_tram').value;
+        const nganLo = document.getElementById('info_nganlo').value.trim();
+        const zone = document.getElementById('locked_zone');
+        const msg = document.getElementById('unlock_message');
+
+        if (tram && tram !== "" && nganLo && nganLo !== "") {
+            // Đủ điều kiện -> Mở khóa
+            zone.classList.remove('form-locked');
+            msg.style.display = 'none';
+        } else {
+            // Thiếu điều kiện -> Khóa lại
+            zone.classList.add('form-locked');
+            msg.style.display = 'block';
+        }
+    }
+
+    window.onload = function() {
+        setTodayDate();
+        fetchSubstations();
+        refreshTables();
         renderAllTables();
-        loadDraftData(); 
+        
+        // Load nháp nếu có, nếu có nháp nghĩa là đã có Trạm/Ngăn lộ -> Thử mở khóa luôn
+        if (localStorage.getItem(MODULE_PREFIX + 'DRAFT')) {
+            loadDraftData();
+            checkUnlockForm();
+        }
     };
 
-    function changeWindingCount() {
-        const savedInputs = captureCurrentInputValues();
-        renderAllTables();
-        restoreInputValues(savedInputs);
-    }
+    function showLoading(text) { document.getElementById('loadingText').innerText = text; document.getElementById('loadingOverlay').style.display = 'flex'; }
+    function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+	function refreshTables() {renderRatioTable(); renderTgTable(); calculateAll();}
+	function toggleSection(sectionId, chk) { document.getElementById(sectionId).classList.toggle('hidden-section', !chk.checked); }
 
-    function toggleSection(sectionId, chk) {
-        const sec = document.getElementById(sectionId);
-        if (chk.checked) sec.classList.add('hidden-section');
-        else sec.classList.remove('hidden-section');
-    }
 
-    function loadOldDataSection(sectionType) {
-        // (Giữ nguyên logic của anh)
-        const sessionData = JSON.parse(localStorage.getItem('CURRENT_SESSION') || '{}');
-        const nganLo = encodeURIComponent(sessionData.nganLo || '');
-        if (!nganLo) { alert("⚠️ Chưa chọn Ngăn Lộ từ Trang Chủ!"); return; }
-        // Tự động lấy tiền tố (ví dụ "ti_") biến thành chữ in hoa "TI"
-const modName = MODULE_PREFIX.replace('_', '').toUpperCase(); 
-const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`;
+        function loadOldDataSection() {
+        const nganLo = encodeURIComponent(document.getElementById('info_nganlo').value.trim());
+        const tram = encodeURIComponent(document.getElementById('info_tram').value);
+        
+        if (!nganLo || !tram) { alert("⚠️ Chưa chọn Trạm và Ngăn Lộ!"); return; }
+
+        showLoading("Đang tải dữ liệu ...");
+        const modName = MODULE_PREFIX.replace('_', '').toUpperCase();
+        const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&tram=${tram}&module_name=${modName}`;
 
         fetch(fetchUrl).then(res => res.json()).then(data => {
-            if (!data || Object.keys(data).length === 0) { alert("ℹ️ Chưa có dữ liệu cũ!"); return; }
-            let count = 0;
-            for (let key in data) {
-                const el = document.getElementById(key);
-                if (el && data[key] !== undefined && data[key] !== '') {
-                    if (el.tagName === 'INPUT') { el.placeholder = data[key]; count++; } 
-                    else if (el.tagName === 'SELECT') { el.value = data[key]; count++; }
-                }
-            }
-            calculateAll();
-            if (count > 0) alert("⚡ Đã tải xong kết quả mới nhất cho Ngăn lộ!");
-            else alert("ℹ️ Không tìm thấy dữ liệu ô tương ứng!");
-        }).catch(err => alert("❌ Lỗi tải Cloud: " + err));
+            hideLoading();
+            if (!data || data.length === 0 || data.error) { alert("ℹ️ Không tìm thấy dữ liệu cũ!"); return; }
+            globalHistoryData = data; 
+            showHistoryModal(data);
+        }).catch(err => { hideLoading(); alert("❌ Lỗi tải data: " + err); });
     }
 
-    function captureCurrentInputValues() {
-        const inputs = document.querySelectorAll('input[type="number"], input[type="text"]');
-        const values = {};
-        inputs.forEach(inp => { if(inp.id) values[inp.id] = inp.value; });
-        return values;
+
+// HÀM MỚI: Tải ngay lập tức dữ liệu mới nhất từ sheet LATEST
+    function loadLatestData() {
+        const nganLo = encodeURIComponent(document.getElementById('info_nganlo').value.trim());
+        const tram = encodeURIComponent(document.getElementById('info_tram').value);
+        
+        if (!nganLo || !tram) { alert("⚠️ Chưa chọn Trạm và Ngăn Lộ!"); return; }
+
+        showLoading("Đang tải thông số gần nhất...");
+        const modName = MODULE_PREFIX.replace('_', '').toUpperCase();
+        
+        // Gọi lên GAS với action=getLatest
+        const fetchUrl = `${GOOGLE_WEB_APP_URL}?action=getLatest&nganLo=${nganLo}&tram=${tram}&module_name=${modName}`;
+
+        fetch(fetchUrl).then(res => res.json()).then(data => {
+            hideLoading();
+            if (!data || Object.keys(data).length === 0 || data.error) { 
+                alert("ℹ️ Không tìm thấy dữ liệu cũ của thiết bị này trên hệ thống!"); 
+                return; 
+            }
+            applyLatestData(data);
+        }).catch(err => { hideLoading(); alert("❌ Lỗi mạng: " + err); });
     }
+// HÀM MỚI: Rải dữ liệu mờ (Placeholder) vào form (Bỏ qua bước chọn Popup)
+    function applyLatestData(data) {
+        // Áp dụng cấu hình
+        ['tu_num_windings'].forEach(id => {
+            if(data[id] !== undefined) { const el = document.getElementById(id); if(el) el.value = data[id]; }
+        });
+        refreshTables();
+
+        // Rải dữ liệu vào placeholder
+        for (let key in data) {
+            const el = document.getElementById(key);
+            if (el && data[key] !== undefined && data[key] !== '') {
+                if (el.tagName === 'INPUT' && !['tu_temp', 'tu_nsx', 'tu_no', 'tu_namsx', 'tu_udm', 'tu_idm', 'tu_inm', 'tu_kieu', 'tu_ghichu', 'info_ngay', 'info_tram', 'info_nganlo'].includes(key)) {
+                    el.value = ""; 
+                    el.placeholder = data[key];
+                    el.classList.add('old-data');
+                    el.dataset.oldval = data[key]; 
+                } else if (el.tagName === 'SELECT' && key !== 'info_tram') { 
+                    el.value = data[key]; 
+                } else if (['tu_temp', 'tu_nsx', 'tu_no', 'tu_namsx', 'tu_udm', 'tu_idm', 'tu_inm', 'tu_kieu', 'tu_ghichu'].includes(key)) {
+                    // Mấy ô thông tin thiết bị tĩnh thì rải thẳng vào value luôn cho khỏe
+                    el.value = data[key];
+                }
+            }
+        }
+
+        // Tự động bung các bảng nhập liệu ra
+        ['chk_sec1', 'chk_sec2', 'chk_sec3', 'chk_sec4', 'chk_sec5'].forEach(id => {
+            const chk = document.getElementById(id);
+            if(chk) {
+                chk.checked = true;
+                toggleSection(id.replace('chk', 'body'), chk);
+            }
+        });
+
+        alert(`⚡ Đã nhập các số liệu mới nhất của các lần thí nghiệm trước!`);
+    }
+
+
+
+
+
+
+    function showHistoryModal(dataArray) {
+        const listDiv = document.getElementById('historyList');
+        listDiv.innerHTML = '';
+        dataArray.forEach((row, index) => {
+            const div = document.createElement('div');
+            div.className = 'history-item';
+            // div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div><div class="history-person">👤 Nhập: ${row.nguoiTN || '?'}</div>`;
+            // Dịch mã value lưu trên sheet sang Tiếng Việt hiển thị cho đẹp
+const modeMap = { "new": "Mới", "1yr": "Sau 1 năm", "3yr": "Sau 3 năm", "6yr": "Sau 6 năm", "boost": "Tăng cường" };
+const modeText = modeMap[row.tu_mode] || row.tu_mode || 'Không ghi nhận';
+
+div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div><div class="history-person" style="color: #0288d1; font-weight: bold;">⚙️ Chế độ: ${modeText}</div>`;
+            div.onclick = () => applyHistoryData(index);
+            listDiv.appendChild(div);
+        });
+        document.getElementById('historyModal').style.display = 'flex';
+    }
+
+    function closeHistoryModal() { document.getElementById('historyModal').style.display = 'none'; }
+
+
+
+
+
+    
+    function applyHistoryData(index) {
+        closeHistoryModal();
+        const data = globalHistoryData[index];
+        let warnCount = 0;
+
+        for (let key in data) {
+            const el = document.getElementById(key);
+            if (el && data[key] !== undefined && data[key] !== '') {
+                if (el.tagName === 'INPUT') {
+                    el.placeholder = data[key]; 
+                    
+                    if (el.value !== "" && key.includes("rcd")) {
+                        const oldVal = parseFloat(String(data[key]).replace(',', '.'));
+                        const newVal = parseFloat(el.value);
+                        
+                        if (!isNaN(oldVal) && !isNaN(newVal) && oldVal > 0) {
+                            const suyGiam = (oldVal - newVal) / oldVal;
+                            if (suyGiam >= 0.30) {
+                                el.classList.add("bg-warning");
+                                el.title = `Năm cũ: ${data[key]} MΩ. Đã giảm ${(suyGiam*100).toFixed(1)}%!`;
+                                warnCount++;
+                            } else {
+                                el.classList.remove("bg-warning");
+                                el.title = "";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        calculateAll();
+        let msg = `⚡ Đã tải xong kết quả ngày ${data.ngayTN || ''} để đối chiếu!`;
+        if (warnCount > 0) msg += `\n⚠️ CẢNH BÁO: Phát hiện ${warnCount} vị trí có cách điện suy giảm > 30% (Được bôi Vàng)!`;
+        alert(msg);
+    }
+
+    function captureInputs() {
+        const data = {};
+        document.querySelectorAll('input, select').forEach(el => { if(el.id && el.value) data[el.id] = el.value; });
+        return data;
+    }
+
+
+    function saveDraftManually() {
+        localStorage.setItem(MODULE_PREFIX + 'DRAFT', JSON.stringify(captureInputs()));
+        alert("💾 Đã lưu nháp!");
+    }
+
+
+
+
+    function loadDraftData() {
+        const str = localStorage.getItem(MODULE_PREFIX + 'DRAFT');
+        if (str) {
+            const data = JSON.parse(str);
+            if (data['info_tram']) document.getElementById('info_tram').value = data['info_tram'];
+            if (data['info_nganlo']) document.getElementById('info_nganlo').value = data['info_nganlo'];
+            // if (data['info_ngay']) document.getElementById('info_ngay').value = data['info_ngay'];
+
+            ['tu_num_windings'].forEach(id => { if(data[id]) document.getElementById(id).value = data[id]; });
+            refreshTables();
+            for(let key in data) { const el = document.getElementById(key); if(el) el.value = data[key]; }
+            calculateAll();
+        }
+    }
+
+
+    function clearDraft() {
+        if(confirm("⚠️ Anh có chắc muốn xóa sạch bản nháp để làm mới?")) {
+            localStorage.removeItem(MODULE_PREFIX + 'DRAFT'); location.reload();
+        }
+    }
+
+
+
+
 
     function restoreInputValues(savedValues) {
         for (let id in savedValues) {
@@ -346,52 +702,28 @@ const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`
         return 300;
     }
 
-    /* --- ĐÃ THÊM TIỀN TỐ ti_ VÀO CÁC ID TRONG RENDER --- */
-    function renderRcdTable() {
-        const num = parseInt(document.getElementById('ti_num_windings').value);
-        let html = `<table><thead><tr><th>Hạng Mục Đo</th><th>Tiêu Chuẩn</th><th>Pha A (MΩ)</th><th>Pha B (MΩ)</th><th>Pha C (MΩ)</th></tr></thead><tbody>`;
-        html += `<tr>
-            <td><b>Sơ cấp - Thứ cấp + Vỏ</b></td>
-            <td id="ti_std_rcd_pri">-</td>
-            <td><input type="number" id="ti_rcd_pri_a" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_pri_a"></span></td>
-            <td><input type="number" id="ti_rcd_pri_b" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_pri_b"></span></td>
-            <td><input type="number" id="ti_rcd_pri_c" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_pri_c"></span></td>
-        </tr>`;
-        
-        for(let i=1; i<=num; i++) {
-            html += `<tr>
-                <td>Cuộn ${i} - Các cuộn + Vỏ</td>
-                <td id="ti_std_rcd_sec${i}">-</td>
-                <td><input type="number" id="ti_rcd_sec${i}_a" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_sec${i}_a"></span></td>
-                <td><input type="number" id="ti_rcd_sec${i}_b" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_sec${i}_b"></span></td>
-                <td><input type="number" id="ti_rcd_sec${i}_c" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_sec${i}_c"></span></td>
-            </tr>`;
-        }
-        html += `</tbody></table>`;
-        document.getElementById('table_rcd_container').innerHTML = html;
-    }
 
-    function renderRdcTable() {
-        const num = parseInt(document.getElementById('ti_num_windings').value);
-        let html = `<table><thead><tr><th>Cuộn Dây Nhị Thứ</th><th>Số cũ (75°C)</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
+function renderRdcTable() {
+        const num = parseInt(document.getElementById('tu_num_windings').value);
+        let html = `<table><thead><tr><th>Stt Cuộn</th><th>Số cũ (75°C) </th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td><b>Cuộn ${i}</b></td>
-                <td><input type="number" id="ti_rdc_ref_${i}" value="" oninput="calculateAll()"></td>
+                <td><input type="number" id="tu_rdc_ref_${i}" value="" oninput="calculateAll()"></td>
                 <td>
-                    <input type="number" id="ti_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A">
-                    <span class="sub-val" id="ti_rdc_75_${i}_a">75°C: -</span>
-                    <span class="sub-val" id="ti_rdc_status_${i}_a"></span>
+                    <input type="number" id="tu_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A">
+                    <span class="sub-val" id="tu_rdc_75_${i}_a">75°C: -</span>
+                    <span class="sub-val" id="tu_rdc_status_${i}_a"></span>
                 </td>
                 <td>
-                    <input type="number" id="ti_rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B">
-                    <span class="sub-val" id="ti_rdc_75_${i}_b">75°C: -</span>
-                    <span class="sub-val" id="ti_rdc_status_${i}_b"></span>
+                    <input type="number" id="tu_rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B">
+                    <span class="sub-val" id="tu_rdc_75_${i}_b">75°C: -</span>
+                    <span class="sub-val" id="tu_rdc_status_${i}_b"></span>
                 </td>
                 <td>
-                    <input type="number" id="ti_rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C">
-                    <span class="sub-val" id="ti_rdc_75_${i}_c">75°C: -</span>
-                    <span class="sub-val" id="ti_rdc_status_${i}_c"></span>
+                    <input type="number" id="tu_rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C">
+                    <span class="sub-val" id="tu_rdc_75_${i}_c">75°C: -</span>
+                    <span class="sub-val" id="tu_rdc_status_${i}_c"></span>
                 </td>
             </tr>`;
         }
@@ -399,36 +731,59 @@ const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`
         document.getElementById('table_rdc_container').innerHTML = html;
     }
 
-    function renderPolTable() {
-        const num = parseInt(document.getElementById('ti_num_windings').value);
+    function renderRcdTable() {
+        const num = parseInt(document.getElementById('tu_num_windings').value);
+        let html = `<table><thead><tr><th>Phép Đo</th><th>Tiêu Chuẩn</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
+        html += `<tr>
+            <td><b>Sơ cấp - ∑</b></td>
+            <td id="tu_std_rcd_pri">-</td>
+            <td><input type="number" id="tu_rcd_pri_a" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_a"></span></td>
+            <td><input type="number" id="tu_rcd_pri_b" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_b"></span></td>
+            <td><input type="number" id="tu_rcd_pri_c" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_c"></span></td>
+        </tr>`;
+        
+        for(let i=1; i<=num; i++) {
+            html += `<tr>
+                <td>Cuộn ${i} - ∑</td>
+                <td id="tu_std_rcd_sec${i}">-</td>
+                <td><input type="number" id="tu_rcd_sec${i}_a" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_a"></span></td>
+                <td><input type="number" id="tu_rcd_sec${i}_b" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_b"></span></td>
+                <td><input type="number" id="tu_rcd_sec${i}_c" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_c"></span></td>
+            </tr>`;
+        }
+        html += `</tbody></table>`;
+        document.getElementById('table_rcd_container').innerHTML = html;
+    }
+
+
+   function renderPolTable() {
+        const num = parseInt(document.getElementById('tu_num_windings').value);
         let html = `<table><thead><tr><th>Cuộn Nhị Thứ</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td><b>Cuộn ${i}</b><br><span class="note-text">(Sơ: A-N; Thứ: ${i}a-${i}n)</span></td>
-                <td><select id="ti_pol_eval_${i}_a"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
-                <td><select id="ti_pol_eval_${i}_b"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
-                <td><select id="ti_pol_eval_${i}_c"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
+                <td><select id="tu_pol_eval_${i}_a"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
+                <td><select id="tu_pol_eval_${i}_b"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
+                <td><select id="tu_pol_eval_${i}_c"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
             </tr>`;
         }
         html += `</tbody></table>`;
         document.getElementById('table_pol_container').innerHTML = html;
-    }
+   }
 
     function renderRatioTable() {
-        const num = parseInt(document.getElementById('ti_num_windings').value);
+        const num = parseInt(document.getElementById('tu_num_windings').value);
         let html = `<table><thead><tr><th rowspan="2">Pha</th>`;
         for(let i=1; i<=num; i++) {
             html += `<th colspan="2">Cuộn ${i}<br>
-                <select id="ti_u2_dm_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
-                    <option value="110/1.73205" selected>110/√3 V (63.51V)</option>
-                    <option value="110/3">110/3 V (36.67V)</option>
-                    <option value="110">110 V (Pha-Pha)</option>
+                <select id="tu_u2_dm_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
+                    <option value="110/1.73205" selected>110/√3V</option>
+                    <option value="110/3">110/3V</option>
+                    <option value="110">110V</option>
                 </select><br>
-                <select id="ti_acc_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
-                    <option value="0.2" selected>CCX 0.2 (±0.2%)</option>
-                    <option value="0.5">CCX 0.5 (±0.5%)</option>
-                    <option value="1.0">CCX 1.0 (±1.0%)</option>
-                    <option value="3.0">CCX 3.0 (±3.0%)</option>
+                <select id="tu_acc_w${i}" onchange="calculateAll()" style="font-size:10px; margin-top:2px;">
+                    <option value="0.2" selected>CCX 0.2</option>
+                    <option value="0.5">CCX 0.5</option>
                     <option value="3P">Cấp 3P (±3.0%)</option>
                     <option value="6P">Cấp 6P (±6.0%)</option>
                 </select>
@@ -443,12 +798,12 @@ const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`
             for(let i=1; i<=num; i++) {
                 html += `
                     <td>
-                        <input type="number" id="ti_u2_w${i}_${pha}_1" step="any" placeholder="L1 (V)" oninput="calculateAll()" style="margin-bottom:2px;">
-                        <input type="number" id="ti_u2_w${i}_${pha}_2" step="any" placeholder="L2 (V)" oninput="calculateAll()">
+                        <input type="number" id="tu_u2_w${i}_${pha}_1" step="any" placeholder="L1 (V)" oninput="calculateAll()" style="margin-bottom:2px;">
+                        <input type="number" id="tu_u2_w${i}_${pha}_2" step="any" placeholder="L2 (V)" oninput="calculateAll()">
                     </td>
                     <td>
-                        <span id="ti_err_w${i}_${pha}" style="font-weight:bold;">-</span>
-                        <span class="sub-val" id="ti_kdo_w${i}_${pha}">K_đo: -</span>
+                        <span id="tu_err_w${i}_${pha}" style="font-weight:bold;">-</span>
+                        <span class="sub-val" id="tu_kdo_w${i}_${pha}">K_đo: -</span>
                     </td>
                 `;
             }
@@ -465,10 +820,10 @@ const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`
                 html += `<tr>
                     ${idx === 0 ? `<td rowspan="3"><b>Pha ${pha}</b></td>` : ''}
                     <td><b>${cap}</b></td>
-                    <td><input type="number" id="ti_tg_${pha}_${idx}" step="0.001" placeholder="Nhập Tgδ" oninput="calculateAll()"></td>
-                    <td><input type="number" id="ti_cmfg_${pha}_${idx}" placeholder="Nhập C_NSX" oninput="calculateAll()"></td>
-                    <td><input type="number" id="ti_cmeas_${pha}_${idx}" placeholder="Nhập C_đo" oninput="calculateAll()"></td>
-                    <td id="ti_cerr_${pha}_${idx}">-</td>
+                    <td><input type="number" id="tu_tg_${pha}_${idx}" step="0.001" placeholder="Nhập Tgδ" oninput="calculateAll()"></td>
+                    <td><input type="number" id="tu_cmfg_${pha}_${idx}" placeholder="Nhập C_NSX" oninput="calculateAll()"></td>
+                    <td><input type="number" id="tu_cmeas_${pha}_${idx}" placeholder="Nhập C_đo" oninput="calculateAll()"></td>
+                    <td id="tu_cerr_${pha}_${idx}">-</td>
                 </tr>`;
             });
         });
@@ -476,23 +831,22 @@ const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`
         document.getElementById('table_tg_container').innerHTML = html;
     }
 
-    /* ĐÃ CẬP NHẬT TÊN ID BÊN TRONG HÀM CALCULATEALL THEO ĐÚNG ti_ */
     function calculateAll() {
-        const temp = parseFloat(document.getElementById('ti_temp').value) || 23;
-        const u1_dm_str = document.getElementById('ti_u1_dm').value;
-        const mfg = document.getElementById('ti_mfg').value;
-        const num = parseInt(document.getElementById('ti_num_windings').value);
+        const temp = parseFloat(document.getElementById('tu_temp').value) || 23;
+        const u1_dm_str = document.getElementById('tu_udm').value;
+        const mfg = document.getElementById('tu_mfg').value;
+        const num = parseInt(document.getElementById('tu_num_windings').value);
 
         const stdPriRcd = getInterpolatedPriRcd(temp, u1_dm_str);
-        const stdPriEl = document.getElementById('ti_std_rcd_pri');
+        const stdPriEl = document.getElementById('tu_std_rcd_pri');
         if(stdPriEl) stdPriEl.innerText = `≥ ${stdPriRcd.toFixed(0)} MΩ (${temp}°C)`;
 
         ['a', 'b', 'c'].forEach(p => {
-            const val = parseFloat(document.getElementById(`ti_rcd_pri_${p}`)?.value) || 0;
-            const el = document.getElementById(`ti_rcd_eval_pri_${p}`);
+            const val = parseFloat(document.getElementById(`tu_rcd_pri_${p}`)?.value) || 0;
+            const el = document.getElementById(`tu_rcd_eval_pri_${p}`);
             if(val > 0 && el) {
                 const pass = val >= stdPriRcd;
-                el.innerText = pass ? "✔ ĐẠT" : "✘ KHÔNG ĐẠT";
+                el.innerText = pass ? "✔ ĐẠT" : "✘ LỖI";
                 el.className = pass ? "sub-val pass" : "sub-val fail";
             }
         });
@@ -504,26 +858,26 @@ const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`
         else if (mfg === 'Alstom') stdSecRcd = 25;
 
         for(let i=1; i<=num; i++) {
-            const stdEl = document.getElementById(`ti_std_rcd_sec${i}`);
+            const stdEl = document.getElementById(`tu_std_rcd_sec${i}`);
             if(stdEl) stdEl.innerText = `≥ ${stdSecRcd} MΩ`;
             
             ['a', 'b', 'c'].forEach(p => {
-                const val = parseFloat(document.getElementById(`ti_rcd_sec${i}_${p}`)?.value) || 0;
-                const el = document.getElementById(`ti_rcd_eval_sec${i}_${p}`);
+                const val = parseFloat(document.getElementById(`tu_rcd_sec${i}_${p}`)?.value) || 0;
+                const el = document.getElementById(`tu_rcd_eval_sec${i}_${p}`);
                 if(val > 0 && el) {
                     const pass = val >= stdSecRcd;
-                    el.innerText = pass ? "✔ ĐẠT" : "✘ KHÔNG ĐẠT";
+                    el.innerText = pass ? "✔ ĐẠT" : "✘ LỖi";
                     el.className = pass ? "sub-val pass" : "sub-val fail";
                 }
             });
         }
 
         for(let i=1; i<=num; i++) {
-            const ref = parseFloat(document.getElementById(`ti_rdc_ref_${i}`)?.value) || 0;
+            const ref = parseFloat(document.getElementById(`tu_rdc_ref_${i}`)?.value) || 0;
             ['a', 'b', 'c'].forEach(p => {
-                const mVal = parseFloat(document.getElementById(`ti_rdc_m_${i}_${p}`)?.value) || 0;
-                const el75 = document.getElementById(`ti_rdc_75_${i}_${p}`);
-                const elStatus = document.getElementById(`ti_rdc_status_${i}_${p}`);
+                const mVal = parseFloat(document.getElementById(`tu_rdc_m_${i}_${p}`)?.value) || 0;
+                const el75 = document.getElementById(`tu_rdc_75_${i}_${p}`);
+                const elStatus = document.getElementById(`tu_rdc_status_${i}_${p}`);
                 if(mVal > 0) {
                     const r75 = mVal * ((235 + 75) / (235 + temp));
                     if(el75) el75.innerText = `75°C: ${r75.toFixed(2)}`;
@@ -540,30 +894,30 @@ const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`
             });
         }
 
-        const u1_dm_val = eval(document.getElementById('ti_u1_dm').value) * 1000;
-        const u1_tn_val = parseFloat(document.getElementById('ti_u1_tn').value) * 1000;
+        const u1_dm_val = eval(document.getElementById('tu_udm').value) * 1000;
+        const u1_tn_val = parseFloat(document.getElementById('tu_u1_tn').value) * 1000;
 
         if(u1_dm_val && u1_tn_val) {
             ['A', 'B', 'C'].forEach(pha => {
                 for(let i=1; i<=num; i++) {
-                    const u2_dm_w = eval(document.getElementById(`ti_u2_dm_w${i}`)?.value || "63.51");
-                    const accStr = document.getElementById(`ti_acc_w${i}`)?.value || "0.2";
+                    const u2_dm_w = eval(document.getElementById(`tu_u2_dm_w${i}`)?.value || "63.51");
+                    const accStr = document.getElementById(`tu_acc_w${i}`)?.value || "0.2";
                     let accLimit = (accStr === "3P" || accStr === "3.0") ? 3.0 : (accStr === "6P" ? 6.0 : parseFloat(accStr));
 
                     const K_dm = u1_dm_val / u2_dm_w;
-                    const u2_1 = parseFloat(document.getElementById(`ti_u2_w${i}_${pha}_1`)?.value);
-                    const u2_2 = parseFloat(document.getElementById(`ti_u2_w${i}_${pha}_2`)?.value);
+                    const u2_1 = parseFloat(document.getElementById(`tu_u2_w${i}_${pha}_1`)?.value);
+                    const u2_2 = parseFloat(document.getElementById(`tu_u2_w${i}_${pha}_2`)?.value);
 
                     if(!isNaN(u2_1) && !isNaN(u2_2)) {
                         const u2_avg = (u2_1 + u2_2) / 2;
                         const K_do = u1_tn_val / u2_avg;
                         const error = ((K_do - K_dm) / K_dm) * 100;
-                        const errCell = document.getElementById(`ti_err_w${i}_${pha}`);
+                        const errCell = document.getElementById(`tu_err_w${i}_${pha}`);
                         if(errCell) {
                             errCell.innerText = `f: ${error.toFixed(3)}%`;
                             errCell.className = Math.abs(error) <= accLimit ? 'pass' : 'fail';
                         }
-                        const kdoCell = document.getElementById(`ti_kdo_w${i}_${pha}`);
+                        const kdoCell = document.getElementById(`tu_kdo_w${i}_${pha}`);
                         if(kdoCell) kdoCell.innerText = `K_đo: ${K_do.toFixed(2)}`;
                     }
                 }
@@ -572,11 +926,11 @@ const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`
 
         ['A', 'B', 'C'].forEach(pha => {
             for(let idx=0; idx<3; idx++) {
-                const cmfg = parseFloat(document.getElementById(`ti_cmfg_${pha}_${idx}`)?.value);
-                const cmeas = parseFloat(document.getElementById(`ti_cmeas_${pha}_${idx}`)?.value);
+                const cmfg = parseFloat(document.getElementById(`tu_cmfg_${pha}_${idx}`)?.value);
+                const cmeas = parseFloat(document.getElementById(`tu_cmeas_${pha}_${idx}`)?.value);
                 if(!isNaN(cmfg) && !isNaN(cmeas) && cmfg > 0) {
                     const cerr = ((cmeas - cmfg) / cmfg) * 100;
-                    const errCell = document.getElementById(`ti_cerr_${pha}_${idx}`);
+                    const errCell = document.getElementById(`tu_cerr_${pha}_${idx}`);
                     if(errCell) {
                         errCell.innerText = cerr.toFixed(2) + '%';
                         errCell.className = (cerr >= -5.0 && cerr <= 10.0) ? 'pass' : 'fail';
@@ -588,157 +942,174 @@ const fetchUrl = `${GOOGLE_WEB_APP_URL}?nganLo=${nganLo}&module_name=${modName}`
 
     function saveDraftManually() {
         const draftData = captureCurrentInputValues();
-        localStorage.setItem('ti_DRAFT_DATA', JSON.stringify(draftData));
+        localStorage.setItem('TU_DRAFT', JSON.stringify(draftData));
         alert("💾 Đã tạm lưu bản nháp thành công vào thiết bị!");
     }
 
-    function loadDraftData() {
-        const savedDraft = localStorage.getItem('ti_DRAFT_DATA');
-        if (savedDraft) {
-            const draftValues = JSON.parse(savedDraft);
-            restoreInputValues(draftValues);
-        }
-    }
+
 
     function clearDraft() {
         if (confirm("⚠️ Anh có chắc muốn xóa toàn bộ dữ liệu tạm lưu để làm mới không?")) {
-            localStorage.removeItem('ti_DRAFT_DATA');
+            localStorage.removeItem('TU_DRAFT');
             location.reload();
         }
     }
 
-    // HÀM ĐỒNG BỘ THÔNG MINH MỚI
     function syncOneDrive() {
-        const userPin = prompt("🔒 XÁC THỰC BẢO MẬT:\nNhập mã PIN (3 chữ số) để xác nhận gửi Cloud:");
-        if (userPin === null) return;
-        if (userPin.trim() !== SECRET_PIN) {
-            alert("❌ SAI MÃ PIN! Dữ liệu chưa được gửi để tránh bấm nhầm.");
+        showLoading("Đang up dữ liệu ...");
+        const nguoiDo = prompt("Nhập tên người thực hiện (để trống nếu không cần):", "");
+		const tram = document.getElementById('info_tram').value || "";
+		const nganLo = document.getElementById('info_nganlo').value || "";
+		// Tạo mã phiên gộp theo ý anh:
+		
+		
+		const maPhienGop = tram + "_" + nganLo;
+		const payload = {
+            module_name: "TU",  timestamp: new Date().toLocaleString('vi-VN'),
+	    maPhien: maPhienGop,
+            ngayTN: document.getElementById('info_ngay').value, 
+            tram: document.getElementById('info_tram').value || "", 
+            nganLo: document.getElementById('info_nganlo').value || "", 
+            nguoiTN: nguoiDo || ""
+        };
+
+        const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], div[id^="${MODULE_PREFIX}"]`);
+        elements.forEach(el => {
+        // DÒNG 2 POST LUÔN SỐ CŨ
+		// DÒNG 3 CHỈ POST SỐ MỚI
+			// let value = (el.tagName === "INPUT" || el.tagName === "SELECT") ? el.value : el.innerText;
+			let value = ""; if (el.tagName === "INPUT") {value = el.value.trim() || el.placeholder.trim();} else if (el.tagName === "SELECT") {value = el.value;} else {value = el.innerText; }
+			//let value = ""; if (el.tagName === "INPUT") {value = el.value.trim() || el.value.trim();} else if (el.tagName === "SELECT") {value = el.value;} else {value = el.value; }
+		
+value = value ? value.trim().replace("75°C:", "").replace("ms", "").trim() : "";
+
+			
+			if (value && value !== '-' && value !== 'NaN' && value !== '0') payload[el.id] = value;
+      });
+
+        const formData = new FormData(); formData.append('payload', JSON.stringify(payload));
+        fetch(GOOGLE_WEB_APP_URL, { method: 'POST', body: formData })
+        .then(res => res.text()).then(text => {
+            hideLoading();
+            if(text === "OK") alert("🚀 ĐÃ LƯU!");
+            else alert("⚠️ Lỗi Server: " + text);
+        }).catch(err => { hideLoading(); alert("❌ Lỗi gửi: " + err); });
+    }
+
+
+    
+
+
+
+
+     async function exportWordFromDrive() {
+        if (!TEMPLATE_DRIVE_ID || TEMPLATE_DRIVE_ID === "1aBcDeFgHiJkLmNoPqRsTuVwXyZ") {
+            alert("⚠️ Anh chưa dán ID của file Word mẫu vào biến TEMPLATE_DRIVE_ID trong code HTML!");
             return;
         }
 
-        // Lấy thông tin trạm
-        const sessionStr = localStorage.getItem('CURRENT_SESSION');
-        const sessionObj = sessionStr ? JSON.parse(sessionStr) : {};
-        const trVal = sessionObj.tram || "Chưa nhập trạm";
-        const nlVal = sessionObj.nganLo || "Chưa nhập ngăn lộ";
-        const ngDo = sessionObj.ngayDo || new Date().toISOString().split('T')[0];
-
-        const payload = {
-            module_name: "TI",
-            maPhien: 'TI_' + Date.now(),
-            timestamp: new Date().toLocaleString('vi-VN'),
-            ngayTN: ngDo,
-            tram: trVal,
-            nganLo: nlVal
-        };
-
-        const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], td[id^="${MODULE_PREFIX}"]`);
-        
-        elements.forEach(el => {
-            let id = el.id;
-            let value = "";
-            
-            if (el.tagName === "INPUT" || el.tagName === "SELECT") {
-                value = el.value ? el.value.trim() : "";
-            } else if (el.tagName === "SPAN" || el.tagName === "TD") {
-                value = el.innerText ? el.innerText.trim() : "";
-                
-                // MÁY CẠO DỮ LIỆU: Xóa bỏ các chữ râu ria, chỉ lấy con số
-                value = value.replace("75°C:", "")
-                             .replace("K_đo:", "")
-                             .replace("f:", "")
-                             .replace("%", "")
-                             .trim();
-            }
-
-            // Chặn đứng các giá trị rỗng hoặc không hợp lệ (không cho gửi lên Sheet)
-            if (value === '0' || value === '0.00' || value === '-' || value === '' || value === 'NaN') {
-                return; 
-            }
-            payload[id] = value;
-        });
-
-        const formData = new FormData();
-        formData.append('payload', JSON.stringify(payload));
-
-        fetch(GOOGLE_WEB_APP_URL, {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.text())
-        .then(text => {
-            if(text === "OK") {
-                alert("🚀 ĐÃ CẬP NHẬT DỮ LIỆU!");
-            } else {
-                alert("⚠️ Lỗi từ Server: " + text);
-            }
-        })
-        .catch(err => alert("❌ Lỗi gửi: " + err));
-    }
-
-    // Chen chuc nan xuat ra word
-    function exportWord() {
-    const fileInput = document.getElementById('template_file');
-    if (fileInput.files.length === 0) {
-        alert("⚠️ Anh phải chọn file Word mẫu (.docx) trước rồi mới xuất được nhé!");
-        return;
-    }
-
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-
-    reader.onload = function(event) {
-        const arrayBuffer = event.target.result;
-        
-        // 1. Gom toàn bộ dữ liệu hiện tại trên màn hình (Giống hệt lúc gửi Cloud)
-        const payload = {};
-        
-        // Lấy thông tin trạm từ LocalStorage
-        const sessionStr = localStorage.getItem('CURRENT_SESSION');
-        const sessionObj = sessionStr ? JSON.parse(sessionStr) : {};
-        payload["tu_tram"] = sessionObj.tram || "";
-        payload["tu_nganlo"] = sessionObj.nganLo || "";
-        payload["ngayTN"] = sessionObj.ngayDo || "";
-        payload["nguoiTN"] = sessionObj.nguoido || "";
-
-        // Quét lấy các con số đo được
-        const elements = document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], td[id^="${MODULE_PREFIX}"]`);
-        elements.forEach(el => {
-            let id = el.id;
-            let val = (el.tagName === "INPUT" || el.tagName === "SELECT") ? el.value : el.innerText;
-            payload[id] = val ? val.trim() : "";
-        });
-
+        showLoading("Đang soạn file...");
         try {
-            // 2. Nạp file Word vào thư viện PizZip & Docxtemplater
-            const zip = new PizZip(arrayBuffer);
-            const doc = new window.docxtemplater(zip, {
-                paragraphLoop: true,
-                linebreaks: true,
-            });
-
-            // 3. Trộn dữ liệu: Bơm toàn bộ payload phẳng vào file Word
-            doc.render(payload);
-
-            // 4. Đóng gói và tải file Word mới về máy
-            const out = doc.getZip().generate({
-                type: "blob",
-                mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            });
-            saveAs(out, `Bien_Ban_TU_${payload["tu_nganlo"] || "New"}.docx`);
+            const res = await fetch(`${GOOGLE_WEB_APP_URL}?action=getTemplate&fileId=${TEMPLATE_DRIVE_ID}`);
+            const data = await res.json();
             
-            alert("🎉 Đã xuất Biên bản Word thành công! Anh kiểm tra thư mục Download nhé.");
+            if (data.error) throw new Error(data.error);
 
-        } catch (error) {
-            console.error(error);
-            alert("❌ Lỗi tạo file Word. Anh bật F12 xem chi tiết. Lỗi: " + error.message);
-        }
-    };
-    
-    // Đọc file Word mẫu dưới dạng Array Buffer
-    reader.readAsArrayBuffer(file);
+            const binaryString = window.atob(data.base64);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+            
+            const payload = {};
+            payload["tu_tram"] = document.getElementById('info_tram').value || ""; 
+            payload["tu_nganlo"] = document.getElementById('info_nganlo').value || "";
+            payload["ngayTN"] = document.getElementById('info_ngay').value || ""; 
+            payload["nguoiTN"] = ""; 
+            
+// CŨ OK 919-926: document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"], span[id^="${MODULE_PREFIX}"], div[id^="${MODULE_PREFIX}"]`).forEach(el => {
+// let val = "";
+    // if (el.tagName === "INPUT") {
+        // Có số mới -> lấy số mới
+        // DÒNG 1 LẤY LUÔN SỐ CŨ
+		// val = el.value.trim() || el.placeholder.trim();}else if (el.tagName === "SELECT") {val = el.value;}else {val=el.innerText;}
+		// DÒNG 2 CHỈ LẤY SỐ MỚI
+       	// val = el.value.trim() || el.value.trim();}else if (el.tagName === "SELECT") {val = el.value;}else {val=el.value;}
+// MỚI 927-929
+		document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"]`).forEach(el => {
+		let val = getVal(el.id);	
+
+
+    payload[el.id] = val ? val.replace("75°C:", "").replace("ms", "").trim() : "";
+});
+
+            // --- BỘ CÔNG TẮC ĐIỀU KIỆN ẨN/HIỆN FORM WORD ---
+			const sec1 = document.getElementById('chk_sec1').checked; if (sec1) {payload["is_sec1"] = true;} else {    delete payload["is_sec1"];}
+			const sec2 = document.getElementById('chk_sec2').checked; if (sec2) {payload["is_sec2"] = true;} else {    delete payload["is_sec2"];}
+			const sec3 = document.getElementById('chk_sec3').checked; if (sec3) {payload["is_sec3"] = true;} else {    delete payload["is_sec3"];}
+			const sec4 = document.getElementById('chk_sec4').checked; if (sec4) {payload["is_sec4"] = true;} else {    delete payload["is_sec4"];}
+			const sec5 = document.getElementById('chk_sec5').checked; if (sec5) {payload["is_sec5"] = true;} else {    delete payload["is_sec5"];}
+			//const sec6 = document.getElementById('chk_sec6').checked; if (sec6) {payload["is_sec6"] = true;} else {    delete payload["is_sec6"];}
+
+			const num_windings = document.getElementById('tu_num_windings').value;
+            payload["is_1wind"] = (num_windings === "1");
+			payload["is_2wind"] = (num_windings === "2");
+			payload["is_3wind"] = (num_windings === "3");
+			payload["is_4wind"] = (num_windings === "4");
+			payload["is_5wind"] = (num_windings === "5");
+		// ------------------------------------------------
+
+
+
+if (payload["ngayTN"]) {
+    const m = payload["ngayTN"].match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (m) {
+        payload["ngayTN"] = `${m[3]}/${m[2]}/${m[1]}`;
+    }
 }
-</script>
+            
+            const zip = new PizZip(bytes.buffer);
+            const doc = new window.docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+            doc.render(payload);
+            // const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }); Toi uu hoa dung luong file word bang doan duoi
+			const out = doc.getZip().generate({type: "blob",    mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",    compression: "DEFLATE"});
+            
+	const dateStr = payload["ngayTN"]? payload["ngayTN"].replace(/\//g, '-') : "New";const tramStr = payload["tu_tram"] ? payload["tu_tram"].replace(/[\/\\]/g, '-'):"Tram";
+	const nganLoStr = payload["tu_nganlo"]? payload["tu_nganlo"].replace(/[\/\\]/g, '-'): "NL";
+	saveAs(out, `Bien ban thi nghiem TU_${nganLoStr}_${tramStr}_${dateStr}.docx`);
+            
+            hideLoading();
+        } catch (e) {
+            hideLoading();
+            alert("❌ Lỗi xuất Word: " + e.message);
+        }
+    }
 
+/**
+ * Hàm lấy giá trị:
+ * - Đối với các ô Cấu hình cố định (NSX, Số chế tạo, Thông số định mức...): Ưu tiên lấy value cũ nếu ô mới bỏ trống.
+ * - Đối với Nhiệt độ, Độ ẩm và các ô kết quả đo: Chỉ lấy giá trị mới nhập, bỏ qua placeholder.
+ */
+function getVal(id) {
+    const el = document.getElementById(id);
+    if (!el) return "";
+
+	// NẾU LÀ SPAN HOẶC DIV, TRẢ VỀ INNERTEXT
+    if (el.tagName === "SPAN" || el.tagName === "DIV") return el.innerText.trim();
+
+    // Danh sách các ID thuộc phần cấu hình cố định cần GIỮ LẠI TRỊ SỐ CŨ (value thật)
+    const fixedConfigIds = [
+        'tu_nsx', 'tu_no', 'tu_namsx', 'tu_udm', 'tu_kieu'
+        // Anh có thể thêm các ID cấu hình khác vào đây nếu muốn
+    ];
+
+    // Nếu là ô cấu hình cố định VÀ ô nhập đang trống -> Lấy placeholder (dữ liệu cũ làm giá trị thật)
+    if (fixedConfigIds.includes(id)) {
+        return (el.value && el.value.trim() !== "") ? el.value : (el.placeholder || "");
+    }
+
+    // Riêng Nhiệt độ, độ ẩm hoặc các kết quả đo thông thường: Chỉ lấy giá trị mới nhập
+    return el.value || "";
+}
+
+</script>
 </body>
 </html>
