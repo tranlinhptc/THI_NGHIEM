@@ -707,44 +707,37 @@ function getInterpolatedPriRcd(temp, u1Str) {
 
 
 function renderRdcTable() {
-        const container = document.getElementById('table_rdc_container');
-        if (!container) return;
+    const container = document.getElementById('table_rdc_container');
+    if (!container) return;
 
-        const num = parseInt(document.getElementById('ti_num_windings').value);
-        let html = `<table><thead><tr><th>Stt Cuộn</th><th>Số cũ (75°C) </th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
-        
-        for(let i=1; i<=num; i++) {
-            html += `<tr>
-                <td><b>Cuộn ${i}</b></td>
-                
-                <!-- Gài phím Tab cho cột Số cũ -->
-                <td><input type="number" id="ti_rdc_ref_${i}" value="" oninput="calculateAll()" onkeydown="handleRdcTab(event, ${i}, 'ref')"></td>
-                
-                <!-- Gài phím Tab cho cột Pha A -->
-                <td>
-                    <input type="number" id="ti_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A" onkeydown="handleRdcTab(event, ${i}, 'a')">
-                    <span class="sub-val" id="ti_rdc_75_${i}_a">75°C: -</span>
-                    <span class="sub-val" id="ti_rdc_status_${i}_a"></span>
-                </td>
-                
-                <!-- Gài phím Tab cho cột Pha B -->
-                <td>
-                    <input type="number" id="ti_rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B" onkeydown="handleRdcTab(event, ${i}, 'b')">
-                    <span class="sub-val" id="ti_rdc_75_${i}_b">75°C: -</span>
-                    <span class="sub-val" id="ti_rdc_status_${i}_b"></span>
-                </td>
-                
-                <!-- Gài phím Tab cho cột Pha C -->
-                <td>
-                    <input type="number" id="ti_rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C" onkeydown="handleRdcTab(event, ${i}, 'c')">
-                    <span class="sub-val" id="ti_rdc_75_${i}_c">75°C: -</span>
-                    <span class="sub-val" id="ti_rdc_status_${i}_c"></span>
-                </td>
-            </tr>`;
-        }
-        html += `</tbody></table>`;
-        container.innerHTML = html;
+    const num = parseInt(document.getElementById('ti_num_windings').value);
+    let html = `<table><thead><tr><th>Stt Cuộn</th><th>Số cũ (75°C)</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
+    
+    for(let i=1; i<=num; i++) {
+        html += `<tr>
+            <td><b>Cuộn ${i}</b></td>
+            <td><input type="number" id="ti_rdc_ref_${i}" value="" oninput="calculateAll()" onkeydown="handleRdcTab(event, ${i}, 'ref')"></td>
+            <td>
+                <input type="number" id="ti_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A" onkeydown="handleRdcTab(event, ${i}, 'a')">
+                <span class="sub-val" id="ti_rdc_75_${i}_a">75°C: -</span>
+                <span class="sub-val" id="ti_rdc_status_${i}_a"></span>
+            </td>
+            <td>
+                <input type="number" id="ti_rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B" onkeydown="handleRdcTab(event, ${i}, 'b')">
+                <span class="sub-val" id="ti_rdc_75_${i}_b">75°C: -</span>
+                <span class="sub-val" id="ti_rdc_status_${i}_b"></span>
+            </td>
+            <td>
+                <input type="number" id="ti_rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C" onkeydown="handleRdcTab(event, ${i}, 'c')">
+                <span class="sub-val" id="ti_rdc_75_${i}_c">75°C: -</span>
+                <span class="sub-val" id="ti_rdc_status_${i}_c"></span>
+            </td>
+        </tr>`;
     }
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+}
+
 
 
 
