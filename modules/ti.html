@@ -1316,55 +1316,61 @@ function handleRatioTab(event, currentWinding, pha) {
 
 // 1. ĐIỀU HƯỚNG PHÍM TAB CHO BẢNG RDC (Điện trở 1 chiều)
 function handleRdcTab(event, currentWinding, colType) {
-    if (event.key === 'Tab') {
-        event.preventDefault(); // Chặn hành vi mặc định của trình duyệt
+    // Chỉ xử lý khi nhấn Tab hoặc Enter (Enter = Next trên mobile)
+    if (event.key === 'Tab' || event.key === 'Enter') {
+        event.preventDefault(); // Ngăn hành vi mặc định
         
-        const select = document.getElementById('ti_num_windings');
-        const numWindings = parseInt(select?.value) || 4;
-        
+        const numWindings = parseInt(document.getElementById('ti_num_windings')?.value) || 4;
+        const cols = ['ref', 'a', 'b', 'c'];
+        let colIndex = cols.indexOf(colType);
         let nextWinding = currentWinding;
-        let nextCol = colType; // 'ref', 'a', 'b', 'c'
+        let nextCol = colType;
 
         if (!event.shiftKey) {
-            // CHIỀU ĐI TỚI (Bấm Tab): Ưu tiên chạy dọc xuống dưới theo từng cột
+            // Bấm Tab/Next: đi xuống
             if (currentWinding < numWindings) {
-                nextWinding++; // Vẫn ở cột đó, xuống cuộn tiếp theo
+                nextWinding++; // Cùng cột, xuống cuộn tiếp theo
             } else {
-                // Đã hết cuộn của cột này -> Chuyển sang cột tiếp theo, quay về cuộn 1
+                // Hết cuộn -> chuyển sang cột tiếp theo
                 nextWinding = 1;
-                if (nextCol === 'ref') { nextCol = 'a'; }
-                else if (nextCol === 'a') { nextCol = 'b'; }
-                else if (nextCol === 'b') { nextCol = 'c'; }
-                else if (nextCol === 'c') { return; } // Hết cột C cuộn cuối -> Cho phép Tab ra ngoài
+                colIndex = (colIndex + 1) % cols.length;
+                nextCol = cols[colIndex];
+                if (colIndex === 0) {
+                    // Đã hết tất cả các cột -> thoát
+                    event.target.blur();
+                    return;
+                }
             }
         } else {
-            // CHIỀU ĐI LÙI (Bấm Shift + Tab)
+            // Bấm Shift+Tab: đi lên
             if (currentWinding > 1) {
-                nextWinding--;
+                nextWinding--; // Cùng cột, lên cuộn trước
             } else {
+                // Hết cuộn -> chuyển sang cột trước
                 nextWinding = numWindings;
-                if (nextCol === 'c') { nextCol = 'b'; }
-                else if (nextCol === 'b') { nextCol = 'a'; }
-                else if (nextCol === 'a') { nextCol = 'ref'; }
-                else if (nextCol === 'ref') { return; }
+                colIndex = (colIndex - 1 + cols.length) % cols.length;
+                nextCol = cols[colIndex];
+                if (colIndex === cols.length - 1) {
+                    // Đã hết tất cả các cột -> thoát
+                    event.target.blur();
+                    return;
+                }
             }
         }
 
-        // Tạo ID tiếp theo
-        let nextId = '';
-        if (nextCol === 'ref') {
-            nextId = `ti_rdc_ref_${nextWinding}`;
-        } else {
-            nextId = `ti_rdc_m_${nextWinding}_${nextCol}`;
-        }
-
+        // Tạo ID và focus
+        let nextId = nextCol === 'ref' 
+            ? `ti_rdc_ref_${nextWinding}`
+            : `ti_rdc_m_${nextWinding}_${nextCol}`;
+        
         const nextEl = document.getElementById(nextId);
         if (nextEl) {
             nextEl.focus();
-            nextEl.select();
+            nextEl.select(); // Bôi đen để gõ đè
         }
     }
 }
+
 
 
 
