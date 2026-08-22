@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BIẾN ĐIỆN ÁP (TU)</title>
+    <title>BIẾN DÒNG ĐIỆN</title>
     <!-- Cụm thư viện xuất Word chuẩn gốc -->
     <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
@@ -111,6 +111,10 @@
     </div>
 </div>
 
+
+
+<!-- them tu mc--!>
+
 <div id="loadingOverlay" class="modal-overlay" style="z-index: 2000; flex-direction: column;">
 	<div class="loader"></div>
     	<div id="loadingText" style="color: white; margin-top: 15px; font-weight: bold; font-size:14px;">Đang xử lý...	</div>
@@ -119,7 +123,7 @@
 
 <div class="container">
     <div class="header-bar">
-        <h2>⚡ THỬ NGHIỆM BIẾN DÒNG ĐIỆN</h2>
+        <h2>⚡ THỬ NGHIỆM BIẾN DÒNG ĐIỆN(CT/TI)</h2>
         <a href="../index.html" class="btn-back">← Trang Chủ</a>
     </div>
 
@@ -146,7 +150,7 @@
         <div id="unlock_message">⚠️ Vui lòng chọn Trạm và gõ Ngăn lộ để mở khóa Form nhập liệu!</div>
     </div>
    <!-- KHU VỰC BỊ KHÓA (SẼ MỞ KHI ĐỦ ĐIỀU KIỆN) -->
-    <div id="locked_zone" class="form-locked">
+    <!--div id="locked_zone" class="form-locked">
   <!-- 0. CẤU HÌNH ĐỘNG -->
     <div class="card">
         <div class="card-title"><span> CẤU HÌNH THIẾT BỊ</span>
@@ -158,7 +162,7 @@
 
             <div class="form-group">
                 <label>Chế Độ Thí Nghiệm:</label>
-                <select id="tu_mode" onchange="calculateAll()">
+                <select id="ti_mode" onchange="calculateAll()">
                     <option value="new" selected>Mới / Sau lắp đặt</option>
                     <option value="1yr">Sau 1 năm vận hành</option>
                     <option value="3yr">Sau 3 năm vận hành</option>
@@ -172,7 +176,7 @@
 
             <div class="form-group">
                 <label>Hiệu:</label>
-                <select id="tu_mfg" onchange="calculateAll()">
+                <select id="ti_mfg" onchange="calculateAll()">
                     <option value="ABB">ABB (R_CĐ nhị thứ ≥ 5 MΩ)</option>
                     <option value="Sieyun">Sieyun TYD (R_CĐ nhị thứ ≥ 1000 MΩ)</option>
                     <option value="Areva">Areva (R_CĐ nhị thứ ≥ 50 MΩ)</option>
@@ -181,35 +185,38 @@
                     <option value="Other" selected>Hãng khác (R_CĐ nhị thứ > 200 MΩ)</option>
                 </select>
             </div>
-			<div class="form-group"><label>Kiểu (Type):</label><input type="text" 	id="tu_kieu" placeholder="LTB145"></div>
+			<div class="form-group"><label>Kiểu (Type):</label><input type="text" 	id="ti_kieu" placeholder="LTB145"></div>
 
-			<div class="form-group"><label>Cấp chính xác:</label><input type="text" 	id="tu_ccx" placeholder="0.3/0.5"></div>
+			<div class="form-group"><label>Cấp chính xác:</label><input type="text" 	id="ti_ccx" placeholder="0.3/0.5"></div>
 
-			<div class="form-group"><label>Năm SX:</label><input type="number" 	id="tu_namsx" placeholder="2020"></div>
+			<div class="form-group"><label>Năm SX:</label><input type="number" 	id="ti_namsx" placeholder="2020"></div>
 
-            <div class="form-group"><label>Uđm(kV):</label><input type="number" 	id="tu_udm" placeholder="245"></div>
+            <div class="form-group"><label>Uđm (kV):</label><input type="number" 	id="ti_udm" placeholder="245"></div>
 			
-			<div class="form-group"><label>No:</label><input type="text" id="tu_no" 			placeholder="Serial:"></div>
+			<div class="form-group"><label>No:</label><input type="text" id="ti_no" 			placeholder="Serial:"></div>
 			
-			<div class="form-group"><label>Công suất:</label><input type="text" 	id="tu_csuat" 	placeholder="50/50"></div>
+			<div class="form-group"><label>Công suất:</label><input type="text" 	id="ti_csuat" 	placeholder="50/50"></div>
 			
-			<div class="form-group"><label>Điện dung (pF) (Type):</label><input 		type="number" id="tu_ddung" placeholder="4400"></div>
+			<div class="form-group"><label>Điện dung (pF) (Type):</label><input 		type="number" id="ti_ddung" placeholder="4400"></div>
 			
 			<div class="form-group">
                 <label>Tỉ số biến:</label>
-                <select id="tu_tsbien" >
-                    <option value="200:1"200/1</option>
-                    <option value="220:1" selected>220:√3/110/√3</option>
-                    <option value="400">400/1</option>
-                    <option value="600">600/1</option>
-                    <option value="800">800/1</option>
-                    <option value="1000:1">1000/1</option>
+                <select id="ti_tsbien" >
+                    <option value="200:1">200</option>
+                    <option value="400:1" selected>400</option>
+                    <option value="600:1">600</option>
+                    <option value="800:1">800</option>
+                    <option value="1000:1">1.000</option>
+                    <option value="1200:1">1.200</option>
+                    <option value="1500:1">1.500</option>
+                    <option value="2000:1">2.000</option>
+                    <option value="3000:1">3.000</option>
                 </select>
             </div>
 			
 			<div class="form-group">
                 <label>Vật Liệu Cách Điện:</label>
-                <select id="tu_insulation" onchange="calculateAll()">
+                <select id="ti_insulation" onchange="calculateAll()">
                     <option value="paper" selected>Loại Giấy (Mới ≤0.5%, Cũ ≤0.8%)</option>
                     <option value="paper_film_paper">Giấy-Film-Giấy (Mới ≤0.2%, Cũ ≤0.3%)</option>
                     <option value="film_paper_film">Film-Giấy-Film (Mới ≤0.2%, Cũ ≤0.3%)</option>
@@ -219,31 +226,30 @@
 			
 			<div class="form-group">
                 <label>Số Cuộn:</label>
-                <select id="tu_num_windings" onchange="changeWindingCount()">
+                <select id="ti_num_windings" onchange="changeWindingCount()">
                     <option value="2">2 Cuộn</option>
                     <option value="3">3 Cuộn</option>
-					<option value="4"selected>4 Cuộn</option>
-					<option value="5">5 Cuộn</option>
-					<option value="6">6 Cuộn</option>
-					<option value="7">7 Cuộn</option>
-					<option value="8">8 Cuộn</option>
-
+                    <option value="4" selected>4 Cuộn</option>
+                    <option value="5">5 Cuộn</option>
+                    <option value="6">6 Cuộn</option>
+                    <option value="7">7 Cuộn</option>
+                    <option value="8">8 Cuộn</option>
                 </select>
             </div>
 			
 			<div class="form-group">
                 <label>Nhiệt độ MT (°C):</label>
-                <input type="number" id="tu_temp" value="" oninput="calculateAll()">
+                <input type="number" id="ti_temp" value="" oninput="calculateAll()">
             </div>
 			
 			<div class="form-group">
                 <label>Độ ẩm (%):</label>
-                <input type="number" id="tu_humidity" value="" oninput="calculateAll()">
+                <input type="number" id="ti_humidity" value="" oninput="calculateAll()">
             </div>
 			
 			<!--div class="form-group">
                 <label>Uđm (kV):</label>
-                <select id="tu_udm" onchange="calculateAll()">
+                <select id="ti_udm" onchange="calculateAll()">
                     <option value="550/1.73205">550</option>
                     <option value="220/1.73205" selected>220</option>
                     <option value="110/1.73205">110</option>
@@ -267,7 +273,7 @@
                 <label class="chk-disable"><input type="checkbox" id="chk_sec1" onchange="toggleSection('body_sec1', this)"> ✏️ Nhập</label>
         	</div>
             	<div id="body_sec1" class="table-responsive hidden-section">
-            <input type="text" id="tu_visual" value="Bình thường, sứ không nứt vỡ, không rò rỉ dầu.">
+            <input type="text" id="ti_visual" value="Bình thường, sứ không nứt vỡ, không rò rỉ dầu.">
        		</div> 
 	</div> 
 
@@ -279,7 +285,7 @@
                 <label class="chk-disable"><input type="checkbox" id="chk_sec2" onchange="toggleSection('body_sec2', this)"> ✏️ Nhập</label>
         </div>
             	<div id="body_sec2" class="table-responsive hidden-section">
-            <div class="note-text">* Tự động quy đổi 75°C và đánh giá NGAY KHI NHẬ.</div>
+            <div class="note-text">* TI động quy đổi 75°C và đánh giá NGAY KHI NHẬ.</div>
             <div class="table-responsive" id="table_rdc_container"></div>
         </div>
         </div>
@@ -300,19 +306,7 @@
 	</div>
 	</div>
 
-    <!-- 4. CỰC TÍNH
-    <div class="card">
-        <div class="card-title">
-            <span>4. Cực Tính</span>
-            <div>
-                <button type="button" class="btn-view-old" onclick="loadOldDataSection('pol')">👁️ Kq cũ</button>
-                <label class="chk-disable"><input type="checkbox" id="chk_sec4" onchange="toggleSection('body_sec4', this)"> Không đo</label>
-            </div>
-        </div>
-        <div id="body_sec4">
-            <div class="table-responsive" id="table_pol_container"></div>
-        </div>
-    </div> -->
+
 
 
 
@@ -325,8 +319,8 @@
             	<div id="body_sec4" class="table-responsive hidden-section">
 <div class="grid" style="margin-bottom:8px;">
                 <div class="form-group">
-                    <label>U_Thử Nghiệm(kV):</label>
-                    <input type="number" id="tu_u1_tn" value="10" oninput="calculateAll()">
+                    <label>I_Thử Nghiệm(A):</label>
+                    <input type="number" id="ti_i1_tn" value="10" oninput="calculateAll()">
                 </div>
             </div>
             <div class="table-responsive" id="table_ratio_container"></div>
@@ -377,10 +371,10 @@
     // 🔴 BƯỚC QUAN TRỌNG: ANH PASTE ID CỦA FILE WORD TRÊN GOOGLE DRIVE VÀO ĐÂY
     const TEMPLATE_DRIVE_ID = "1-VQ8Femmz7jaOoys3UvTeJyV1kAYRFjH"; 
     const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxr-8Y25S607UYytRjKutvw4Zhx69W05XOc3Qs5gsSBQNxAZ8S16mmt7Nj8xUV1nNIn/exec";
-    const MODULE_PREFIX = "tu_"; 
+    const MODULE_PREFIX = "ti_"; 
     let globalHistoryData = [];
 
-    // Tự động thiết lập Ngày hôm nay cho ô Ngày
+    // TI động thiết lập Ngày hôm nay cho ô Ngày
     function setTodayDate() {
         const today = new Date();
         const yyyy = today.getFullYear();
@@ -393,12 +387,12 @@
         document.getElementById('info_ngay').value = yyyy + '-' + mm + '-' + dd;
     }
 
-// Load danh sách Trạm từ Sheet (Có Cache & Bắt Lỗi)
+// Load danh sách Trạm TI Sheet (Có Cache & Bắt Lỗi)
     function fetchSubstations() {
         const cachedTrams = localStorage.getItem('CACHE_TRAMS');
         const select = document.getElementById('info_tram');
         
-        // Nếu đã có cache, load ngay lập tức
+        // Nếu đã có cache, load ngay lập TIc
         if (cachedTrams) {
             populateSelect(JSON.parse(cachedTrams));
         } else {
@@ -412,8 +406,8 @@
                 // NẾU GAS BÁO LỖI (Ví dụ sai tên sheet)
                 if(data.error) {
                     if (!cachedTrams) select.innerHTML = `<option value="">⚠️ Lỗi: ${data.error}</option>`;
-                    console.error("Lỗi từ GAS:", data.error);
-                    return;
+                    console.error("Lỗi TI GAS:", data.error);
+                    reTIrn;
                 }
                 
                 // NẾU THÀNH CÔNG: Lưu Cache và cập nhật UI
@@ -479,7 +473,7 @@
         const nganLo = encodeURIComponent(document.getElementById('info_nganlo').value.trim());
         const tram = encodeURIComponent(document.getElementById('info_tram').value);
         
-        if (!nganLo || !tram) { alert("⚠️ Chưa chọn Trạm và Ngăn Lộ!"); return; }
+        if (!nganLo || !tram) { alert("⚠️ Chưa chọn Trạm và Ngăn Lộ!"); reTIrn; }
 
         showLoading("Đang tải dữ liệu ...");
         const modName = MODULE_PREFIX.replace('_', '').toUpperCase();
@@ -487,14 +481,14 @@
 
         fetch(fetchUrl).then(res => res.json()).then(data => {
             hideLoading();
-            if (!data || data.length === 0 || data.error) { alert("ℹ️ Không tìm thấy dữ liệu cũ!"); return; }
+            if (!data || data.length === 0 || data.error) { alert("ℹ️ Không tìm thấy dữ liệu cũ!"); reTIrn; }
             globalHistoryData = data; 
             showHistoryModal(data);
         }).catch(err => { hideLoading(); alert("❌ Lỗi tải data: " + err); });
     }
 
 
-// HÀM MỚI: Tải ngay lập tức dữ liệu mới nhất từ sheet LATEST
+// HÀM MỚI: Tải ngay lập TIc dữ liệu mới nhất TI sheet LATEST
     function loadLatestData() {
         const nganLo = encodeURIComponent(document.getElementById('info_nganlo').value.trim());
         const tram = encodeURIComponent(document.getElementById('info_tram').value);
@@ -519,7 +513,7 @@
 // HÀM MỚI: Rải dữ liệu mờ (Placeholder) vào form (Bỏ qua bước chọn Popup)
     function applyLatestData(data) {
         // Áp dụng cấu hình
-        ['tu_num_windings'].forEach(id => {
+        ['ti_num_windings'].forEach(id => {
             if(data[id] !== undefined) { const el = document.getElementById(id); if(el) el.value = data[id]; }
         });
         refreshTables();
@@ -528,14 +522,14 @@
         for (let key in data) {
             const el = document.getElementById(key);
             if (el && data[key] !== undefined && data[key] !== '') {
-                if (el.tagName === 'INPUT' && !['tu_temp', 'tu_nsx', 'tu_no', 'tu_namsx', 'tu_udm', 'tu_idm', 'tu_inm', 'tu_kieu', 'tu_ghichu', 'info_ngay', 'info_tram', 'info_nganlo'].includes(key)) {
+                if (el.tagName === 'INPUT' && !['ti_temp', 'ti_nsx', 'ti_no', 'ti_namsx', 'ti_udm', 'ti_idm', 'ti_inm', 'ti_kieu', 'ti_ghichu', 'info_ngay', 'info_tram', 'info_nganlo'].includes(key)) {
                     el.value = ""; 
                     el.placeholder = data[key];
                     el.classList.add('old-data');
                     el.dataset.oldval = data[key]; 
                 } else if (el.tagName === 'SELECT' && key !== 'info_tram') { 
                     el.value = data[key]; 
-                } else if (['tu_temp', 'tu_nsx', 'tu_no', 'tu_namsx', 'tu_udm', 'tu_idm', 'tu_inm', 'tu_kieu', 'tu_ghichu'].includes(key)) {
+                } else if (['ti_temp', 'ti_nsx', 'ti_no', 'ti_namsx', 'ti_udm', 'ti_idm', 'ti_inm', 'ti_kieu', 'ti_ghichu'].includes(key)) {
                     // Mấy ô thông tin thiết bị tĩnh thì rải thẳng vào value luôn cho khỏe
                     el.value = data[key];
                 }
@@ -568,7 +562,7 @@
             // div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div><div class="history-person">👤 Nhập: ${row.nguoiTN || '?'}</div>`;
             // Dịch mã value lưu trên sheet sang Tiếng Việt hiển thị cho đẹp
 const modeMap = { "new": "Mới", "1yr": "Sau 1 năm", "3yr": "Sau 3 năm", "6yr": "Sau 6 năm", "boost": "Tăng cường" };
-const modeText = modeMap[row.tu_mode] || row.tu_mode || 'Không ghi nhận';
+const modeText = modeMap[row.ti_mode] || row.ti_mode || 'Không ghi nhận';
 
 div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div><div class="history-person" style="color: #0288d1; font-weight: bold;">⚙️ Chế độ: ${modeText}</div>`;
             div.onclick = () => applyHistoryData(index);
@@ -643,7 +637,7 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
             if (data['info_nganlo']) document.getElementById('info_nganlo').value = data['info_nganlo'];
             // if (data['info_ngay']) document.getElementById('info_ngay').value = data['info_ngay'];
 
-            ['tu_num_windings'].forEach(id => { if(data[id]) document.getElementById(id).value = data[id]; });
+            ['ti_num_windings'].forEach(id => { if(data[id]) document.getElementById(id).value = data[id]; });
             refreshTables();
             for(let key in data) { const el = document.getElementById(key); if(el) el.value = data[key]; }
             calculateAll();
@@ -669,29 +663,34 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
         calculateAll();
     }
 
-    function renderAllTables() {
+    function changeWindingCount() {
+    renderAllTables();
+}
+
+function renderAllTables() {
         renderRcdTable();
         renderRdcTable();
-        renderPolTable();
         renderRatioTable();
         renderTgTable();
         calculateAll();
     }
-	function changeWindingCount() {
-    renderAllTables();
-}
 
-    function getInterpolatedPriRcd(temp, u1Str) {
+function getInterpolatedPriRcd(temp, u1Str) {
         let points = [];
-        if (u1Str.includes('550') || u1Str.includes('220') || u1Str.includes('110')) {
+        // Ép giá trị anh gõ vào thành Số thực (Ví dụ gõ 245 -> 245)
+        const u = parseFloat(u1Str) || 0; 
+
+        // So sánh bằng Số học thay vì tìm chuỗi
+        if (u >= 110) { // Dành cho 110kV, 220kV (245), 500kV
             points = [[20, 1200], [30, 600], [40, 300], [50, 150], [60, 75]];
-        } else if (u1Str.includes('35') || u1Str.includes('22')) {
+        } else if (u >= 22 && u < 110) { // Dành cho 22kV, 35kV
             points = [[20, 1000], [30, 500], [40, 250], [50, 125], [60, 65]];
-        } else if (u1Str.includes('15')) {
+        } else if (u === 15) { // Dành cho 15kV
             points = [[20, 800], [30, 400], [40, 200], [50, 100], [60, 50]];
-        } else {
+        } else { // Nhỏ hơn 15kV
             points = [[20, 400], [30, 200], [40, 100], [50, 50], [60, 25]];
         }
+        
         for (let p of points) { if (temp === p[0]) return p[1]; }
         if (temp < points[0][0]) return points[0][1];
         if (temp > points[points.length - 1][0]) return points[points.length - 1][1];
@@ -706,27 +705,30 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
     }
 
 
+
+
+
 function renderRdcTable() {
-        const num = parseInt(document.getElementById('tu_num_windings').value);
+        const num = parseInt(document.getElementById('ti_num_windings').value);
         let html = `<table><thead><tr><th>Stt Cuộn</th><th>Số cũ (75°C) </th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td><b>Cuộn ${i}</b></td>
-                <td><input type="number" id="tu_rdc_ref_${i}" value="" oninput="calculateAll()"></td>
+                <td><input type="number" id="ti_rdc_ref_${i}" value="" oninput="calculateAll()"></td>
                 <td>
-                    <input type="number" id="tu_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A">
-                    <span class="sub-val" id="tu_rdc_75_${i}_a">75°C: -</span>
-                    <span class="sub-val" id="tu_rdc_status_${i}_a"></span>
+                    <input type="number" id="ti_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A">
+                    <span class="sub-val" id="ti_rdc_75_${i}_a">75°C: -</span>
+                    <span class="sub-val" id="ti_rdc_status_${i}_a"></span>
                 </td>
                 <td>
-                    <input type="number" id="tu_rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B">
-                    <span class="sub-val" id="tu_rdc_75_${i}_b">75°C: -</span>
-                    <span class="sub-val" id="tu_rdc_status_${i}_b"></span>
+                    <input type="number" id="ti_rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B">
+                    <span class="sub-val" id="ti_rdc_75_${i}_b">75°C: -</span>
+                    <span class="sub-val" id="ti_rdc_status_${i}_b"></span>
                 </td>
                 <td>
-                    <input type="number" id="tu_rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C">
-                    <span class="sub-val" id="tu_rdc_75_${i}_c">75°C: -</span>
-                    <span class="sub-val" id="tu_rdc_status_${i}_c"></span>
+                    <input type="number" id="ti_rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C">
+                    <span class="sub-val" id="ti_rdc_75_${i}_c">75°C: -</span>
+                    <span class="sub-val" id="ti_rdc_status_${i}_c"></span>
                 </td>
             </tr>`;
         }
@@ -735,23 +737,23 @@ function renderRdcTable() {
     }
 
     function renderRcdTable() {
-        const num = parseInt(document.getElementById('tu_num_windings').value);
+        const num = parseInt(document.getElementById('ti_num_windings').value);
         let html = `<table><thead><tr><th>Phép Đo</th><th>Tiêu Chuẩn</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
         html += `<tr>
             <td><b>Sơ cấp - ∑</b></td>
-            <td id="tu_std_rcd_pri">-</td>
-            <td><input type="number" id="tu_rcd_pri_a" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_a"></span></td>
-            <td><input type="number" id="tu_rcd_pri_b" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_b"></span></td>
-            <td><input type="number" id="tu_rcd_pri_c" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_pri_c"></span></td>
+            <td id="ti_std_rcd_pri">-</td>
+            <td><input type="number" id="ti_rcd_pri_a" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_pri_a"></span></td>
+            <td><input type="number" id="ti_rcd_pri_b" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_pri_b"></span></td>
+            <td><input type="number" id="ti_rcd_pri_c" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_pri_c"></span></td>
         </tr>`;
         
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td>Cuộn ${i} - ∑</td>
-                <td id="tu_std_rcd_sec${i}">-</td>
-                <td><input type="number" id="tu_rcd_sec${i}_a" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_a"></span></td>
-                <td><input type="number" id="tu_rcd_sec${i}_b" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_b"></span></td>
-                <td><input type="number" id="tu_rcd_sec${i}_c" oninput="calculateAll()"><span class="sub-val" id="tu_rcd_eval_sec${i}_c"></span></td>
+                <td id="ti_std_rcd_sec${i}">-</td>
+                <td><input type="number" id="ti_rcd_sec${i}_a" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_sec${i}_a"></span></td>
+                <td><input type="number" id="ti_rcd_sec${i}_b" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_sec${i}_b"></span></td>
+                <td><input type="number" id="ti_rcd_sec${i}_c" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_sec${i}_c"></span></td>
             </tr>`;
         }
         html += `</tbody></table>`;
@@ -759,96 +761,75 @@ function renderRdcTable() {
     }
 
 
-   function renderPolTable() {
-        const num = parseInt(document.getElementById('tu_num_windings').value);
-        let html = `<table><thead><tr><th>Cuộn Nhị Thứ</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
-        for(let i=1; i<=num; i++) {
-            html += `<tr>
-                <td><b>Cuộn ${i}</b><br><span class="note-text">(Sơ: A-N; Thứ: ${i}a-${i}n)</span></td>
-                <td><select id="tu_pol_eval_${i}_a"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
-                <td><select id="tu_pol_eval_${i}_b"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
-                <td><select id="tu_pol_eval_${i}_c"><option value="ĐẠT">✔ ĐẠT</option><option value="KHÔNG ĐẠT">✘ LỖI</option></select></td>
-            </tr>`;
-        }
-        html += `</tbody></table>`;
-        document.getElementById('table_pol_container').innerHTML = html;
-   }
+
+
+
 
 function renderRatioTable() {
-    const num = parseInt(document.getElementById('tu_num_windings').value);
+
+
+    const select = document.getElementById('ti_num_windings');
+    const num = parseInt(select?.value) || 4;
 
     let html = `
-    <table>
-        <thead>
-            <tr>
-                <th rowspan="2">Cuộn</th>
-                <th rowspan="2">Thông số</th>
-                <th colspan="2">Pha A</th>
-                <th colspan="2">Pha B</th>
-                <th colspan="2">Pha C</th>
-            </tr>
-            <tr>
-                <th>Uđo</th>
-                <th>Sai số</th>
-                <th>Uđo</th>
-                <th>Sai số</th>
-                <th>Uđo</th>
-                <th>Sai số</th>
-            </tr>
-        </thead>
-        <tbody>
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2" style="min-width:110px;">Cuộn / Pha</th>
+                    <th colspan="2">Pha A</th>
+                    <th colspan="2">Pha B</th>
+                    <th colspan="2">Pha C</th>
+                </tr>
+                <tr>
+                    <th>Trị số đo</th><th>Sai số</th>
+                    <th>Trị số đo</th><th>Sai số</th>
+                    <th>Trị số đo</th><th>Sai số</th>
+                </tr>
+            </thead>
+            <tbody>
     `;
 
+    // ============================================
+    // TẠO ĐỘNG TỪNG CUỘN (Chạy từ 1 đến num)
+    // ============================================
     for (let i = 1; i <= num; i++) {
-
         html += `
-        <tr>
-            <td rowspan="2"><b>Cuộn ${i}</b></td>
-
-            <td>
-                <select id="tu_u2_dm_w${i}"
-                    onchange="calculateAll()"
-                    style="font-size:10px;">
-                    <option value="110/1.73205" selected>110/√3V</option>
-                    <option value="110/3">110/3V</option>
-                    <option value="110">110V</option>
-                </select>
-
-                <select id="tu_acc_w${i}"
-                    onchange="calculateAll()"
-                    style="font-size:10px; margin-top:3px;">
-                    <option value="0.2" selected>CCX 0.2</option>
-                    <option value="0.5">CCX 0.5</option>
-                    <option value="3P">Cấp 3P</option>
-                    <option value="6P">Cấp 6P</option>
-                </select>
-            </td>
+            <tr>
+                <td>
+                    <b>Cuộn ${i}</b>
+                    <select id="ti_i2_dm_w${i}" onchange="calculateAll()" style="font-size:10px;margin-top:4px;width:95%;">
+                        <option value="1">Thứ cấp 1A</option>
+                        <option value="5">Thứ cấp 5A</option>
+                    </select>
+                    <select id="ti_acc_w${i}" onchange="calculateAll()" style="font-size:10px;margin-top:3px;width:95%;">
+                        <option value="0.2">Đo lường 0.2</option>
+                        <option value="0.5">Đo lường 0.5</option>
+                        <option value="5P">Bảo vệ 5P</option>
+                        <option value="10P">Bảo vệ 10P</option>
+                    </select>
+                    <span class="sub-val" id="ti_kdm_w${i}" style="font-size:10px;color:#1565c0;">Kđm: -</span>
+                </td>
         `;
 
-        // Hàng Uđo
+        // ============================================
+        // TẠO Ô NHẬP LIỆU CHO 3 PHA A, B, C
+        // ============================================
         ['A', 'B', 'C'].forEach(pha => {
             html += `
                 <td>
-                    <input type="number"
-                        id="tu_u2_w${i}_${pha}_1"
+                    <input
+                        type="number"
                         step="any"
-                        placeholder="L1"
+                        id="ti_i2_w${i}_${pha}"
+                        placeholder="I₂ đo"
                         oninput="calculateAll()"
-                        style="margin-bottom:2px;">
-                    <input type="number"
-                        id="tu_u2_w${i}_${pha}_2"
-                        step="any"
-                        placeholder="L2"
-                        oninput="calculateAll()">
+                        onkeydown="handleRatioTab(event, ${i}, '${pha}')" 
+                        style="width:100%;"
+                    >
                 </td>
-
-                <td rowspan="1">
-                    <span id="tu_err_w${i}_${pha}"
-                        style="font-weight:bold;">-</span>
-                    <span class="sub-val"
-                        id="tu_kdo_w${i}_${pha}">
-                        K_đo: -
-                    </span>
+                <td>
+                    <span id="ti_err_w${i}_${pha}" style="font-weight:bold;">-</span><br>
+                    <span class="sub-val" id="ti_kdo_w${i}_${pha}" style="font-size:10px;color:#555;">Kđo: -</span>
                 </td>
             `;
         });
@@ -856,32 +837,46 @@ function renderRatioTable() {
         html += `</tr>`;
     }
 
-    html += `
-        </tbody>
-    </table>
-    `;
-
+    html += `</tbody></table>`;
     document.getElementById('table_ratio_container').innerHTML = html;
 }
 
 
 
 
-	
+
+
+    function renderTgTable() {
+        let html = `<table><thead><tr><th>Pha</th><th>Tụ đo</th><th>Tgδ (%) Đo</th><th>C_NSX (pF)</th><th>C_Đo (pF)</th><th>Sai số %</th></tr></thead><tbody>`;
+        ['A', 'B', 'C'].forEach(pha => {
+            ['C1', 'C2', 'C_Total'].forEach((cap, idx) => {
+                html += `<tr>
+                    ${idx === 0 ? `<td rowspan="3"><b>Pha ${pha}</b></td>` : ''}
+                    <td><b>${cap}</b></td>
+                    <td><input type="number" id="ti_tg_${pha}_${idx}" step="0.001" placeholder="Nhập Tgδ" oninput="calculateAll()"></td>
+                    <td><input type="number" id="ti_cmfg_${pha}_${idx}" placeholder="Nhập C_NSX" oninput="calculateAll()"></td>
+                    <td><input type="number" id="ti_cmeas_${pha}_${idx}" placeholder="Nhập C_đo" oninput="calculateAll()"></td>
+                    <td id="ti_cerr_${pha}_${idx}">-</td>
+                </tr>`;
+            });
+        });
+        html += `</tbody></table>`;
+        document.getElementById('table_tg_container').innerHTML = html;
+    }
 
     function calculateAll() {
-        const temp = parseFloat(document.getElementById('tu_temp').value) || 23;
-        const u1_dm_str = document.getElementById('tu_udm').value;
-        const mfg = document.getElementById('tu_mfg').value;
-        const num = parseInt(document.getElementById('tu_num_windings').value);
+        const temp = parseFloat(document.getElementById('ti_temp').value) || 23;
+        const i1_dm_str = document.getElementById('ti_udm').value;
+        const mfg = document.getElementById('ti_mfg').value;
+        const num = parseInt(document.getElementById('ti_num_windings').value);
 
-        const stdPriRcd = getInterpolatedPriRcd(temp, u1_dm_str);
-        const stdPriEl = document.getElementById('tu_std_rcd_pri');
+        const stdPriRcd = getInterpolatedPriRcd(temp, i1_dm_str);
+        const stdPriEl = document.getElementById('ti_std_rcd_pri');
         if(stdPriEl) stdPriEl.innerText = `≥ ${stdPriRcd.toFixed(0)} MΩ (${temp}°C)`;
 
         ['a', 'b', 'c'].forEach(p => {
-            const val = parseFloat(document.getElementById(`tu_rcd_pri_${p}`)?.value) || 0;
-            const el = document.getElementById(`tu_rcd_eval_pri_${p}`);
+            const val = parseFloat(document.getElementById(`ti_rcd_pri_${p}`)?.value) || 0;
+            const el = document.getElementById(`ti_rcd_eval_pri_${p}`);
             if(val > 0 && el) {
                 const pass = val >= stdPriRcd;
                 el.innerText = pass ? "✔ ĐẠT" : "✘ LỖI";
@@ -896,12 +891,12 @@ function renderRatioTable() {
         else if (mfg === 'Alstom') stdSecRcd = 25;
 
         for(let i=1; i<=num; i++) {
-            const stdEl = document.getElementById(`tu_std_rcd_sec${i}`);
+            const stdEl = document.getElementById(`ti_std_rcd_sec${i}`);
             if(stdEl) stdEl.innerText = `≥ ${stdSecRcd} MΩ`;
             
             ['a', 'b', 'c'].forEach(p => {
-                const val = parseFloat(document.getElementById(`tu_rcd_sec${i}_${p}`)?.value) || 0;
-                const el = document.getElementById(`tu_rcd_eval_sec${i}_${p}`);
+                const val = parseFloat(document.getElementById(`ti_rcd_sec${i}_${p}`)?.value) || 0;
+                const el = document.getElementById(`ti_rcd_eval_sec${i}_${p}`);
                 if(val > 0 && el) {
                     const pass = val >= stdSecRcd;
                     el.innerText = pass ? "✔ ĐẠT" : "✘ LỖi";
@@ -911,11 +906,11 @@ function renderRatioTable() {
         }
 
         for(let i=1; i<=num; i++) {
-            const ref = parseFloat(document.getElementById(`tu_rdc_ref_${i}`)?.value) || 0;
+            const ref = parseFloat(document.getElementById(`ti_rdc_ref_${i}`)?.value) || 0;
             ['a', 'b', 'c'].forEach(p => {
-                const mVal = parseFloat(document.getElementById(`tu_rdc_m_${i}_${p}`)?.value) || 0;
-                const el75 = document.getElementById(`tu_rdc_75_${i}_${p}`);
-                const elStatus = document.getElementById(`tu_rdc_status_${i}_${p}`);
+                const mVal = parseFloat(document.getElementById(`ti_rdc_m_${i}_${p}`)?.value) || 0;
+                const el75 = document.getElementById(`ti_rdc_75_${i}_${p}`);
+                const elStatus = document.getElementById(`ti_rdc_status_${i}_${p}`);
                 if(mVal > 0) {
                     const r75 = mVal * ((235 + 75) / (235 + temp));
                     if(el75) el75.innerText = `75°C: ${r75.toFixed(2)}`;
@@ -932,43 +927,149 @@ function renderRatioTable() {
             });
         }
 
-        const u1_dm_val = eval(document.getElementById('tu_udm').value) * 1000;
-        const u1_tn_val = parseFloat(document.getElementById('tu_u1_tn').value) * 1000;
+// ==========================================================
+// TÍNH TỈ SỐ BIẾN - CHẠY ĐỘNG 2 → 8 CUỘN
+// ==========================================================
 
-        if(u1_dm_val && u1_tn_val) {
-            ['A', 'B', 'C'].forEach(pha => {
-                for(let i=1; i<=num; i++) {
-                    const u2_dm_w = eval(document.getElementById(`tu_u2_dm_w${i}`)?.value || "63.51");
-                    const accStr = document.getElementById(`tu_acc_w${i}`)?.value || "0.2";
-                    let accLimit = (accStr === "3P" || accStr === "3.0") ? 3.0 : (accStr === "6P" ? 6.0 : parseFloat(accStr));
+// Tỉ số biến định mức, ví dụ:
+// 400:1  → Kđm = 400 nếu thứ cấp 1A
+// 400:5  → Kđm = 80  nếu thứ cấp 5A
 
-                    const K_dm = u1_dm_val / u2_dm_w;
-                    const u2_1 = parseFloat(document.getElementById(`tu_u2_w${i}_${pha}_1`)?.value);
-                    const u2_2 = parseFloat(document.getElementById(`tu_u2_w${i}_${pha}_2`)?.value);
+const tsBienStr = document.getElementById('ti_tsbien')?.value || "";
+const i1_tn = parseFloat(document.getElementById('ti_i1_tn')?.value);
 
-                    if(!isNaN(u2_1) && !isNaN(u2_2)) {
-                        const u2_avg = (u2_1 + u2_2) / 2;
-                        const K_do = u1_tn_val / u2_avg;
-                        const error = ((K_do - K_dm) / K_dm) * 100;
-                        const errCell = document.getElementById(`tu_err_w${i}_${pha}`);
-                        if(errCell) {
-                            errCell.innerText = `f: ${error.toFixed(3)}%`;
-                            errCell.className = Math.abs(error) <= accLimit ? 'pass' : 'fail';
-                        }
-                        const kdoCell = document.getElementById(`tu_kdo_w${i}_${pha}`);
-                        if(kdoCell) kdoCell.innerText = `K_đo: ${K_do.toFixed(2)}`;
+// Lấy dòng sơ cấp từ "400:1", "600:1",...
+let i1_dm = parseFloat(tsBienStr.split(':')[0]);
+
+if (!isNaN(i1_dm) && !isNaN(i1_tn) && i1_tn > 0) {
+
+    ['A', 'B', 'C'].forEach(pha => {
+
+        for (let i = 1; i <= num; i++) {
+
+            // -----------------------------------------
+            // Thứ cấp định mức của từng cuộn: 1A / 5A
+            // -----------------------------------------
+            const i2_dm_el = document.getElementById(`ti_i2_dm_w${i}`);
+            const i2_dm = parseFloat(i2_dm_el?.value);
+
+            // -----------------------------------------
+            // Cấp chính xác từng cuộn
+            // -----------------------------------------
+            const accEl = document.getElementById(`ti_acc_w${i}`);
+            const accStr = accEl?.value || "0.2";
+
+            let accLimit = 0.2;
+
+            if (accStr === "0.5") {
+                accLimit = 0.5;
+            }
+            else if (accStr === "5P") {
+                accLimit = 5.0;
+            }
+            else if (accStr === "10P") {
+                accLimit = 10.0;
+            }
+            else {
+                accLimit = parseFloat(accStr) || 0.2;
+            }
+
+            // -----------------------------------------
+            // KĐM = I1đm / I2đm
+            // -----------------------------------------
+            if (!isNaN(i2_dm) && i2_dm > 0) {
+
+                const K_dm = i1_dm / i2_dm;
+
+                // Hiển thị Kđm ngay dưới thông tin cuộn
+                const kdmCell =
+                    document.getElementById(`ti_kdm_w${i}`);
+
+                if (kdmCell) {
+                    kdmCell.innerText =
+                        `Kđm: ${K_dm.toFixed(2)}`;
+                }
+
+                // -----------------------------------------
+                // LẤY DÒNG THỨ CẤP ĐO
+                // ID chính xác:
+                // ti_i2_w1_A
+                // ti_i2_w2_A
+                // ...
+                // ti_i2_w8_C
+                // -----------------------------------------
+                const i2El =
+                    document.getElementById(`ti_i2_w${i}_${pha}`);
+
+                const i2_do = parseFloat(i2El?.value);
+
+                const errCell =
+                    document.getElementById(`ti_err_w${i}_${pha}`);
+
+                const kdoCell =
+                    document.getElementById(`ti_kdo_w${i}_${pha}`);
+
+                // Không có số đo
+                if (isNaN(i2_do) || i2_do <= 0) {
+
+                    if (errCell) {
+                        errCell.innerText = "-";
+                        errCell.className = "";
+                    }
+
+                    if (kdoCell) {
+                        kdoCell.innerText = "Kđo: -";
+                    }
+
+                    return;
+                }
+
+                // -----------------------------------------
+                // KĐO = I1 THỬ NGHIỆM / I2 ĐO
+                // -----------------------------------------
+                const K_do = i1_tn / i2_do;
+
+                // -----------------------------------------
+                // SAI SỐ TỈ SỐ BIẾN
+                // -----------------------------------------
+                const error =
+		const error = ((K_dm * i2_do) - i1_tn) / i1_tn * 100;
+                // -----------------------------------------
+                // HIỂN THỊ KĐO
+                // -----------------------------------------
+                if (kdoCell) {
+                    kdoCell.innerText =
+                        `Kđo: ${K_do.toFixed(2)}`;
+                }
+
+                // -----------------------------------------
+                // HIỂN THỊ SAI SỐ + ĐẠT / KHÔNG ĐẠT
+                // -----------------------------------------
+                if (errCell) {
+
+                    errCell.innerText =
+                        `f: ${error.toFixed(3)}%`;
+
+                    if (Math.abs(error) <= accLimit) {
+                        errCell.className = "pass";
+                    } else {
+                        errCell.className = "fail";
                     }
                 }
-            });
+            }
         }
+    });
+}
+
+
 
         ['A', 'B', 'C'].forEach(pha => {
             for(let idx=0; idx<3; idx++) {
-                const cmfg = parseFloat(document.getElementById(`tu_cmfg_${pha}_${idx}`)?.value);
-                const cmeas = parseFloat(document.getElementById(`tu_cmeas_${pha}_${idx}`)?.value);
+                const cmfg = parseFloat(document.getElementById(`ti_cmfg_${pha}_${idx}`)?.value);
+                const cmeas = parseFloat(document.getElementById(`ti_cmeas_${pha}_${idx}`)?.value);
                 if(!isNaN(cmfg) && !isNaN(cmeas) && cmfg > 0) {
                     const cerr = ((cmeas - cmfg) / cmfg) * 100;
-                    const errCell = document.getElementById(`tu_cerr_${pha}_${idx}`);
+                    const errCell = document.getElementById(`ti_cerr_${pha}_${idx}`);
                     if(errCell) {
                         errCell.innerText = cerr.toFixed(2) + '%';
                         errCell.className = (cerr >= -5.0 && cerr <= 10.0) ? 'pass' : 'fail';
@@ -980,7 +1081,7 @@ function renderRatioTable() {
 
     function saveDraftManually() {
         const draftData = captureCurrentInputValues();
-        localStorage.setItem('TU_DRAFT', JSON.stringify(draftData));
+        localStorage.setItem('ti_DRAFT', JSON.stringify(draftData));
         alert("💾 Đã tạm lưu bản nháp thành công vào thiết bị!");
     }
 
@@ -988,7 +1089,7 @@ function renderRatioTable() {
 
     function clearDraft() {
         if (confirm("⚠️ Anh có chắc muốn xóa toàn bộ dữ liệu tạm lưu để làm mới không?")) {
-            localStorage.removeItem('TU_DRAFT');
+            localStorage.removeItem('ti_DRAFT');
             location.reload();
         }
     }
@@ -1003,7 +1104,7 @@ function renderRatioTable() {
 		
 		const maPhienGop = tram + "_" + nganLo;
 		const payload = {
-            module_name: "TU",  timestamp: new Date().toLocaleString('vi-VN'),
+            module_name: "TI",  timestamp: new Date().toLocaleString('vi-VN'),
 	    maPhien: maPhienGop,
             ngayTN: document.getElementById('info_ngay').value, 
             tram: document.getElementById('info_tram').value || "", 
@@ -1058,8 +1159,8 @@ value = value ? value.trim().replace("75°C:", "").replace("ms", "").trim() : ""
             for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
             
             const payload = {};
-            payload["tu_tram"] = document.getElementById('info_tram').value || ""; 
-            payload["tu_nganlo"] = document.getElementById('info_nganlo').value || "";
+            payload["ti_tram"] = document.getElementById('info_tram').value || ""; 
+            payload["ti_nganlo"] = document.getElementById('info_nganlo').value || "";
             payload["ngayTN"] = document.getElementById('info_ngay').value || ""; 
             payload["nguoiTN"] = ""; 
             
@@ -1087,12 +1188,15 @@ value = value ? value.trim().replace("75°C:", "").replace("ms", "").trim() : ""
 			const sec5 = document.getElementById('chk_sec5').checked; if (sec5) {payload["is_sec5"] = true;} else {    delete payload["is_sec5"];}
 			//const sec6 = document.getElementById('chk_sec6').checked; if (sec6) {payload["is_sec6"] = true;} else {    delete payload["is_sec6"];}
 
-			const num_windings = document.getElementById('tu_num_windings').value;
+			const num_windings = document.getElementById('ti_num_windings').value;
             payload["is_1wind"] = (num_windings === "1");
 			payload["is_2wind"] = (num_windings === "2");
 			payload["is_3wind"] = (num_windings === "3");
 			payload["is_4wind"] = (num_windings === "4");
 			payload["is_5wind"] = (num_windings === "5");
+			payload["is_6wind"] = (num_windings === "6");
+			payload["is_7wind"] = (num_windings === "7");
+			payload["is_8wind"] = (num_windings === "8");
 		// ------------------------------------------------
 
 
@@ -1110,9 +1214,9 @@ if (payload["ngayTN"]) {
             // const out = doc.getZip().generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }); Toi uu hoa dung luong file word bang doan duoi
 			const out = doc.getZip().generate({type: "blob",    mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",    compression: "DEFLATE"});
             
-	const dateStr = payload["ngayTN"]? payload["ngayTN"].replace(/\//g, '-') : "New";const tramStr = payload["tu_tram"] ? payload["tu_tram"].replace(/[\/\\]/g, '-'):"Tram";
-	const nganLoStr = payload["tu_nganlo"]? payload["tu_nganlo"].replace(/[\/\\]/g, '-'): "NL";
-	saveAs(out, `Bien ban thi nghiem TU_${nganLoStr}_${tramStr}_${dateStr}.docx`);
+	const dateStr = payload["ngayTN"]? payload["ngayTN"].replace(/\//g, '-') : "New";const tramStr = payload["ti_tram"] ? payload["ti_tram"].replace(/[\/\\]/g, '-'):"Tram";
+	const nganLoStr = payload["ti_nganlo"]? payload["ti_nganlo"].replace(/[\/\\]/g, '-'): "NL";
+	saveAs(out, `Bien ban thi nghiem ti_${nganLoStr}_${tramStr}_${dateStr}.docx`);
             
             hideLoading();
         } catch (e) {
@@ -1135,7 +1239,7 @@ function getVal(id) {
 
     // Danh sách các ID thuộc phần cấu hình cố định cần GIỮ LẠI TRỊ SỐ CŨ (value thật)
     const fixedConfigIds = [
-        'tu_nsx', 'tu_no', 'tu_namsx', 'tu_udm', 'tu_kieu'
+        'ti_nsx', 'ti_no', 'ti_namsx', 'ti_udm', 'ti_kieu'
         // Anh có thể thêm các ID cấu hình khác vào đây nếu muốn
     ];
 
@@ -1147,7 +1251,46 @@ function getVal(id) {
     // Riêng Nhiệt độ, độ ẩm hoặc các kết quả đo thông thường: Chỉ lấy giá trị mới nhập
     return el.value || "";
 }
+// HÀM ĐIỀU HƯỚNG PHÍM TAB THEO CỘT DỌC (DÀNH RIÊNG CHO BẢNG TỈ SỐ BIẾN)
+function handleRatioTab(event, currentWinding, pha) {
+    if (event.key === 'Tab') {
+        const select = document.getElementById('ti_num_windings');
+        const numWindings = parseInt(select?.value) || 4;
+        
+        let nextWinding = currentWinding;
+        let nextPha = pha;
 
+        if (!event.shiftKey) {
+            // Bấm Tab (Đi tới)
+            if (currentWinding < numWindings) {
+                nextWinding++; // Đi xuống cuộn tiếp theo cùng pha
+            } else {
+                // Đã đến cuộn cuối của pha -> Nhảy sang cuộn 1 của Pha tiếp theo
+                if (pha === 'A') { nextPha = 'B'; nextWinding = 1; }
+                else if (pha === 'B') { nextPha = 'C'; nextWinding = 1; }
+                else { return; } // Đang ở cuộn cuối pha C -> Buông cho trình duyệt đi tiếp tới mục khác
+            }
+        } else {
+            // Bấm Shift + Tab (Đi lùi lên trên)
+            if (currentWinding > 1) {
+                nextWinding--; // Đi ngược lên cuộn trước cùng pha
+            } else {
+                // Đang ở cuộn 1 -> Lùi về cuộn cuối của Pha trước đó
+                if (pha === 'C') { nextPha = 'B'; nextWinding = numWindings; }
+                else if (pha === 'B') { nextPha = 'A'; nextWinding = numWindings; }
+                else { return; } // Pha A cuộn 1 -> Buông cho trình duyệt lùi tự do
+            }
+        }
+
+        const nextId = `ti_i2_w${nextWinding}_${nextPha}`;
+        const nextEl = document.getElementById(nextId);
+        if (nextEl) {
+            event.preventDefault(); // Chặn không cho Tab chạy ngang theo mặc định
+            nextEl.focus();         // Nhảy chuột tới ô đích
+            nextEl.select();        // Bôi đen sẵn số cũ (nếu có) để anh gõ số mới đè lên luôn
+        }
+    }
+}
 </script>
 </body>
 </html>
