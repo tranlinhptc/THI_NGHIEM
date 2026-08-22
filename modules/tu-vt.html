@@ -668,7 +668,11 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
         calculateAll();
     }
 
-    function renderAllTables() {
+    function changeWindingCount() {
+    renderAllTables();
+}
+
+function renderAllTables() {
         renderRcdTable();
         renderRdcTable();
         renderPolTable();
