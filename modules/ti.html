@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -705,59 +706,79 @@ function getInterpolatedPriRcd(temp, u1Str) {
     }
 
 
-
-
-
 function renderRdcTable() {
+        const container = document.getElementById('table_rdc_container');
+        if (!container) return;
+
         const num = parseInt(document.getElementById('ti_num_windings').value);
         let html = `<table><thead><tr><th>Stt Cuộn</th><th>Số cũ (75°C) </th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
+        
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td><b>Cuộn ${i}</b></td>
-                <td><input type="number" id="ti_rdc_ref_${i}" value="" oninput="calculateAll()"></td>
+                
+                <!-- Gài phím Tab cho cột Số cũ -->
+                <td><input type="number" id="ti_rdc_ref_${i}" value="" oninput="calculateAll()" onkeydown="handleRdcTab(event, ${i}, 'ref')"></td>
+                
+                <!-- Gài phím Tab cho cột Pha A -->
                 <td>
-                    <input type="number" id="ti_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A">
+                    <input type="number" id="ti_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A" onkeydown="handleRdcTab(event, ${i}, 'a')">
                     <span class="sub-val" id="ti_rdc_75_${i}_a">75°C: -</span>
                     <span class="sub-val" id="ti_rdc_status_${i}_a"></span>
                 </td>
+                
+                <!-- Gài phím Tab cho cột Pha B -->
                 <td>
-                    <input type="number" id="ti_rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B">
+                    <input type="number" id="ti_rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B" onkeydown="handleRdcTab(event, ${i}, 'b')">
                     <span class="sub-val" id="ti_rdc_75_${i}_b">75°C: -</span>
                     <span class="sub-val" id="ti_rdc_status_${i}_b"></span>
                 </td>
+                
+                <!-- Gài phím Tab cho cột Pha C -->
                 <td>
-                    <input type="number" id="ti_rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C">
+                    <input type="number" id="ti_rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C" onkeydown="handleRdcTab(event, ${i}, 'c')">
                     <span class="sub-val" id="ti_rdc_75_${i}_c">75°C: -</span>
                     <span class="sub-val" id="ti_rdc_status_${i}_c"></span>
                 </td>
             </tr>`;
         }
         html += `</tbody></table>`;
-        document.getElementById('table_rdc_container').innerHTML = html;
+        container.innerHTML = html;
     }
 
-    function renderRcdTable() {
+
+
+
+
+
+function renderRcdTable() {
+        const container = document.getElementById('table_rcd_container');
+        if (!container) return;
+
         const num = parseInt(document.getElementById('ti_num_windings').value);
         let html = `<table><thead><tr><th>Phép Đo</th><th>Tiêu Chuẩn</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
+        
+        // Dòng Sơ cấp
         html += `<tr>
             <td><b>Sơ cấp - ∑</b></td>
             <td id="ti_std_rcd_pri">-</td>
-            <td><input type="number" id="ti_rcd_pri_a" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_pri_a"></span></td>
+            <td><input type="number" id="ti_rcd_pri_a" oninput="calculateAll()" onkeydown="onkeydown="handleRcdTab(event, 0, true, true)"><span class="sub-val" id="ti_rcd_eval_pri_a"></span></td>
             <td><input type="number" id="ti_rcd_pri_b" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_pri_b"></span></td>
             <td><input type="number" id="ti_rcd_pri_c" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_pri_c"></span></td>
         </tr>`;
         
+        // Các dòng Nhị thứ
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td>Cuộn ${i} - ∑</td>
                 <td id="ti_std_rcd_sec${i}">-</td>
-                <td><input type="number" id="ti_rcd_sec${i}_a" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_sec${i}_a"></span></td>
-                <td><input type="number" id="ti_rcd_sec${i}_b" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_sec${i}_b"></span></td>
-                <td><input type="number" id="ti_rcd_sec${i}_c" oninput="calculateAll()"><span class="sub-val" id="ti_rcd_eval_sec${i}_c"></span></td>
+                <td><input type="number" id="ti_rcd_sec${i}_a" oninput="calculateAll()" onkeydown="handleRcdTab(event, ${i}, 'a', false)"><span class="sub-val" id="ti_rcd_eval_sec${i}_a"></span></td>
+                <td><input type="number" id="ti_rcd_sec${i}_b" oninput="calculateAll()"  onkeydown="handleRcdTab(event, ${i}, 'a', false)"><span class="sub-val" id="ti_rcd_eval_sec${i}_b"></span></td>
+                <td><input type="number" id="ti_rcd_sec${i}_c" oninput="calculateAll()" onkeydown="handleRcdTab(event, ${i}, 'a', false)"><span class="sub-val" id="ti_rcd_eval_sec${i}_c"></span></td>
             </tr>`;
         }
         html += `</tbody></table>`;
-        document.getElementById('table_rcd_container').innerHTML = html;
+        container.innerHTML = html;
     }
 
 
@@ -1032,8 +1053,9 @@ if (!isNaN(i1_dm) && !isNaN(i1_tn) && i1_tn > 0) {
                 // -----------------------------------------
                 // SAI SỐ TỈ SỐ BIẾN
                 // -----------------------------------------
-                const error =
-		const error = ((K_dm * i2_do) - i1_tn) / i1_tn * 100;
+
+const error = ((K_dm * i2_do) - i1_tn) / i1_tn * 100;
+
                 // -----------------------------------------
                 // HIỂN THỊ KĐO
                 // -----------------------------------------
@@ -1142,7 +1164,7 @@ value = value ? value.trim().replace("75°C:", "").replace("ms", "").trim() : ""
 
 
      async function exportWordFromDrive() {
-        if (!TEMPLATE_DRIVE_ID || TEMPLATE_DRIVE_ID === "1QO6kT2McKaC9cQYfQIy0HQ4SopoH-M4H") {
+        if (!TEMPLATE_DRIVE_ID || TEMPLATE_DRIVE_ID === "1aBcDeFgHiJkLmNoPqRsTuVwXyZ") {
             alert("⚠️ Anh chưa dán ID của file Word mẫu vào biến TEMPLATE_DRIVE_ID trong code HTML!");
             return;
         }
@@ -1291,6 +1313,167 @@ function handleRatioTab(event, currentWinding, pha) {
         }
     }
 }
-</script>
+
+// 1. ĐIỀU HƯỚNG PHÍM TAB CHO BẢNG RDC (Điện trở 1 chiều)
+function handleRdcTab(event, currentWinding, colType) {
+    if (event.key === 'Tab') {
+        event.preventDefault(); // Chặn hành vi mặc định của trình duyệt
+        
+        const select = document.getElementById('ti_num_windings');
+        const numWindings = parseInt(select?.value) || 4;
+        
+        let nextWinding = currentWinding;
+        let nextCol = colType; // 'ref', 'a', 'b', 'c'
+
+        if (!event.shiftKey) {
+            // CHIỀU ĐI TỚI (Bấm Tab): Ưu tiên chạy dọc xuống dưới theo từng cột
+            if (currentWinding < numWindings) {
+                nextWinding++; // Vẫn ở cột đó, xuống cuộn tiếp theo
+            } else {
+                // Đã hết cuộn của cột này -> Chuyển sang cột tiếp theo, quay về cuộn 1
+                nextWinding = 1;
+                if (nextCol === 'ref') { nextCol = 'a'; }
+                else if (nextCol === 'a') { nextCol = 'b'; }
+                else if (nextCol === 'b') { nextCol = 'c'; }
+                else if (nextCol === 'c') { return; } // Hết cột C cuộn cuối -> Cho phép Tab ra ngoài
+            }
+        } else {
+            // CHIỀU ĐI LÙI (Bấm Shift + Tab)
+            if (currentWinding > 1) {
+                nextWinding--;
+            } else {
+                nextWinding = numWindings;
+                if (nextCol === 'c') { nextCol = 'b'; }
+                else if (nextCol === 'b') { nextCol = 'a'; }
+                else if (nextCol === 'a') { nextCol = 'ref'; }
+                else if (nextCol === 'ref') { return; }
+            }
+        }
+
+        // Tạo ID tiếp theo
+        let nextId = '';
+        if (nextCol === 'ref') {
+            nextId = `ti_rdc_ref_${nextWinding}`;
+        } else {
+            nextId = `ti_rdc_m_${nextWinding}_${nextCol}`;
+        }
+
+        const nextEl = document.getElementById(nextId);
+        if (nextEl) {
+            nextEl.focus();
+            nextEl.select();
+        }
+    }
+}
+
+
+
+// 2. ĐIỀU HƯỚNG PHÍM TAB CHO BẢNG RCD (Điện trở cách điện)
+function handleRcdTab(event, currentWinding, colType, isPri) {
+
+    if (event.key !== 'Tab') return;
+
+    event.preventDefault();
+
+    const numWindings =
+        parseInt(document.getElementById('ti_num_windings')?.value) || 4;
+
+    const cols = ['a', 'b', 'c'];
+
+    let colIndex = cols.indexOf(colType);
+
+    // ==========================================
+    // TAB ĐI TỚI
+    // ==========================================
+    if (!event.shiftKey) {
+
+        // Sơ cấp -> Cuộn 1 cùng pha
+        if (isPri) {
+
+            currentWinding = 1;
+            isPri = false;
+
+        }
+
+        // Cuộn 1 -> ... -> Cuộn cuối
+        else if (currentWinding < numWindings) {
+
+            currentWinding++;
+
+        }
+
+        // Đã hết cuộn của pha hiện tại
+        else {
+
+            // Sang pha kế tiếp
+            colIndex++;
+
+            // Hết pha C -> cho Tab ra ngoài bảng
+            if (colIndex >= cols.length) {
+
+                event.target.blur();
+                return;
+            }
+
+            // Vào Sơ cấp của pha mới
+            currentWinding = 0;
+            isPri = true;
+        }
+
+    }
+
+    // ==========================================
+    // SHIFT + TAB ĐI LÙI
+    // ==========================================
+    else {
+
+        // Đang ở Sơ cấp
+        if (isPri) {
+
+            // Pha A -> cho phép quay ra ngoài
+            if (colIndex <= 0) {
+
+                event.target.blur();
+                return;
+            }
+
+            // Sang pha trước
+            colIndex--;
+
+            // Về Cuộn cuối của pha trước
+            currentWinding = numWindings;
+            isPri = false;
+        }
+
+        // Đang ở Cuộn > 1
+        else if (currentWinding > 1) {
+
+            currentWinding--;
+
+        }
+
+        // Đang ở Cuộn 1 -> Sơ cấp cùng pha
+        else {
+
+            currentWinding = 0;
+            isPri = true;
+        }
+    }
+
+    const nextCol = cols[colIndex];
+
+    const nextId = isPri
+        ? `ti_rcd_pri_${nextCol}`
+        : `ti_rcd_sec${currentWinding}_${nextCol}`;
+
+    const nextEl = document.getElementById(nextId);
+
+    if (nextEl) {
+
+        nextEl.focus();
+        nextEl.select();
+
+    }
+}</script>
 </body>
 </html>
