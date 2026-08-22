@@ -868,15 +868,21 @@ function renderRatioTable() {
 
 
     function renderTgTable() {
-        let html = `<table><thead><tr><th>Pha</th><th>Tụ đo</th><th>Tgδ (%) Đo</th><th>C_NSX (pF)</th><th>C_Đo (pF)</th><th>Sai số %</th></tr></thead><tbody>`;
+        let html = `<table><thead><tr><th>Pha</th><th>Điện áp đo</th><th>Tgδ (%)</th><th>C_Đo (pF)</th><th>Sơ đồ đo</th></tr></thead><tbody>`;
         ['A', 'B', 'C'].forEach(pha => {
-            ['C1', 'C2', 'C_Total'].forEach((cap, idx) => {
+            ['C'].forEach((cap, idx) => {
                 html += `<tr>
                     ${idx === 0 ? `<td rowspan="3"><b>Pha ${pha}</b></td>` : ''}
                     <td><b>${cap}</b></td>
                     <td><input type="number" id="ti_tg_${pha}_${idx}" step="0.001" placeholder="Nhập Tgδ" oninput="calculateAll()"></td>
                     <td><input type="number" id="ti_cmfg_${pha}_${idx}" placeholder="Nhập C_NSX" oninput="calculateAll()"></td>
                     <td><input type="number" id="ti_cmeas_${pha}_${idx}" placeholder="Nhập C_đo" oninput="calculateAll()"></td>
+
+					</select>
+                    <select id="ti_acc_w${i}" onchange="calculateAll()" style="font-size:10px;margin-top:3px;width:95%;">
+                        <option value="0.2">Đo lường 0.2</option>
+                        <option value="0.5">Đo lường 0.5</option>
+                    </select>
                     <td id="ti_cerr_${pha}_${idx}">-</td>
                 </tr>`;
             });
