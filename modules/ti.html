@@ -945,6 +945,7 @@ function renderRatioTable() {
 
     // [ĐÃ SỬA] Bảng Tgδ - Đơn giản mỗi pha 1 giá trị Tgδ và C
 // [ĐÃ SỬA] Bảng Tgδ - KHÔNG phụ thuộc số cuộn, chỉ 3 pha A,B,C
+// [ĐÃ SỬA] Bảng Tgδ - KHÔNG phụ thuộc số cuộn, chỉ 3 pha A,B,C
 function renderTgTable() {
     const container = document.getElementById('table_tg_container');
     if (!container) return;
@@ -987,6 +988,7 @@ function renderTgTable() {
     container.innerHTML = html;
 }
 
+	
 	
     function calculateAll() {
         const temp = parseFloat(document.getElementById('ti_temp').value) || 23;
@@ -1182,52 +1184,45 @@ const error = ((K_dm * i2_do) - i1_tn) / i1_tn * 100;
 
 
 // Xác định giới hạn Tgδ theo vật liệu và chế độ
+// PHẦN TÍNH Tgδ - KHÔNG dùng num, chỉ 3 pha A,B,C
 const insulation = document.getElementById('ti_insulation').value;
 const mode = document.getElementById('ti_mode').value;
 const isNew = (mode === 'new');
 
-let tgLimit = 0.5; // Mặc định cho loại giấy (mới)
+let tgLimit = 0.5;
 switch(insulation) {
-    case 'paper':
-        tgLimit = isNew ? 0.5 : 0.8;
-        break;
+    case 'paper': tgLimit = isNew ? 0.5 : 0.8; break;
     case 'paper_film_paper':
-    case 'film_paper_film':
-        tgLimit = isNew ? 0.2 : 0.3;
-        break;
-    case 'film':
-        tgLimit = isNew ? 0.1 : 0.15;
-        break;
-    default:
-        tgLimit = isNew ? 0.5 : 0.8;
+    case 'film_paper_film': tgLimit = isNew ? 0.2 : 0.3; break;
+    case 'film': tgLimit = isNew ? 0.1 : 0.15; break;
+    default: tgLimit = isNew ? 0.5 : 0.8;
 }
 
-// Đánh giá từng pha
-for(let i = 1; i <= num; i++) {
-    ['A', 'B', 'C'].forEach(pha => {
-        const tgVal = parseFloat(document.getElementById(`ti_tg_${i}_${pha}`)?.value);
-        const cVal = parseFloat(document.getElementById(`ti_c_${i}_${pha}`)?.value);
-        
-        // Đánh giá Tgδ
-        const tgCell = document.getElementById(`ti_tg_${i}_${pha}`);
-        if(tgCell && !isNaN(tgVal) && tgVal > 0) {
-            const pass = tgVal <= tgLimit;
-            tgCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
-            tgCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
-            tgCell.title = pass ? `✔ ĐẠT (≤ ${tgLimit}%)` : `✘ LỖI (> ${tgLimit}%)`;
-        }
-        
-        // Đánh giá C (nếu có giá trị chuẩn)
-        const cCell = document.getElementById(`ti_c_${i}_${pha}`);
-        const cStandard = parseFloat(document.getElementById('ti_ddung')?.value);
-        if(cCell && !isNaN(cVal) && cVal > 0 && !isNaN(cStandard) && cStandard > 0) {
-            const err = ((cVal - cStandard) / cStandard) * 100;
-            const pass = (err >= -5 && err <= 10);
-            cCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
-            cCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
-            cCell.title = pass ? `✔ ĐẠT (sai số ${err.toFixed(2)}%)` : `✘ LỖI (sai số ${err.toFixed(2)}%)`;
-        }
-    });
+// Chỉ 3 pha A, B, C - KHÔNG phụ thuộc số cuộn
+['A', 'B', 'C'].forEach(pha => {
+    const tgVal = parseFloat(document.getElementById(`ti_tg_${pha}`)?.value);
+    const cVal = parseFloat(document.getElementById(`ti_c_${pha}`)?.value);
+    
+    // Đánh giá Tgδ
+    const tgCell = document.getElementById(`ti_tg_${pha}`);
+    if(tgCell && !isNaN(tgVal) && tgVal > 0) {
+        const pass = tgVal <= tgLimit;
+        tgCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
+        tgCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
+        tgCell.title = pass ? `✔ ĐẠT (≤ ${tgLimit}%)` : `✘ LỖI (> ${tgLimit}%)`;
+    }
+    
+    // Đánh giá C (nếu có giá trị chuẩn)
+    const cCell = document.getElementById(`ti_c_${pha}`);
+    const cStandard = parseFloat(document.getElementById('ti_ddung')?.value);
+    if(cCell && !isNaN(cVal) && cVal > 0 && !isNaN(cStandard) && cStandard > 0) {
+        const err = ((cVal - cStandard) / cStandard) * 100;
+        const pass = (err >= -5 && err <= 10);
+        cCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
+        cCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
+        cCell.title = pass ? `✔ ĐẠT (sai số ${err.toFixed(2)}%)` : `✘ LỖI (sai số ${err.toFixed(2)}%)`;
+    }
+});
 }
 	}
 
@@ -1562,15 +1557,14 @@ function handleRcdTab(event, currentWinding, colType, isPri) {
 // HÀM XỬ LÝ TANG DELTA
 
 // [BỔ SUNG] Hàm điều hướng Tab/Enter cho bảng Tgδ (đơn giản)
-function handleTgTab(event, cuon, pha, fieldType) {
+// [ĐÃ SỬA] Hàm điều hướng Tab/Enter cho bảng Tgδ - Chỉ 3 pha
+function handleTgTab(event, pha, fieldType) {
     if (event.key === 'Enter' || event.key === 'Tab') {
         event.preventDefault();
         
-        const num = parseInt(document.getElementById('ti_num_windings').value) || 4;
         const phas = ['A', 'B', 'C'];
         const fields = ['tg', 'c'];
         
-        let nextCuon = cuon;
         let nextPha = pha;
         let nextField = fieldType;
         
@@ -1586,15 +1580,9 @@ function handleTgTab(event, cuon, pha, fieldType) {
                     nextPha = phas[phaIndex + 1];
                     nextField = 'tg';
                 } else {
-                    // Hết pha của cuộn này -> qua cuộn tiếp theo
-                    if (cuon < num) {
-                        nextCuon++;
-                        nextPha = 'A';
-                        nextField = 'tg';
-                    } else {
-                        event.target.blur();
-                        return;
-                    }
+                    // Hết pha C -> thoát
+                    event.target.blur();
+                    return;
                 }
             }
         } else {
@@ -1609,22 +1597,16 @@ function handleTgTab(event, cuon, pha, fieldType) {
                     nextPha = phas[phaIndex - 1];
                     nextField = 'c';
                 } else {
-                    // Hết pha của cuộn này -> qua cuộn trước
-                    if (cuon > 1) {
-                        nextCuon--;
-                        nextPha = 'C';
-                        nextField = 'c';
-                    } else {
-                        event.target.blur();
-                        return;
-                    }
+                    // Hết pha A -> thoát
+                    event.target.blur();
+                    return;
                 }
             }
         }
         
         const nextId = nextField === 'tg' 
-            ? `ti_tg_${nextCuon}_${nextPha}`
-            : `ti_c_${nextCuon}_${nextPha}`;
+            ? `ti_tg_${nextPha}`
+            : `ti_c_${nextPha}`;
         
         const nextEl = document.getElementById(nextId);
         if (nextEl) {
