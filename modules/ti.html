@@ -335,19 +335,23 @@
 
 
 
-    <!-- 6. TAN DELTA & ĐIỆN DUNG -->
-    <div class="card">
-        <div class="card-title">
-            <span>5. Tgδ(%)& Điện Dung (pF)</span>
-            <div>
-                <label class="chk-disable"><input type="checkbox" id="chk_sec5" onchange="toggleSection('body_sec5', this)"> ✏️ Nhập</label>
-            </div>
-        </div>
-            	<div id="body_sec5" class="table-responsive hidden-section">
-            <div class="note-text">* C_đo cho phép lệch -5% ÷ +10% so với C_NSX.</div>
-            <div class="table-responsive" id="table_tg_container"></div>
+
+<!-- 6. TAN DELTA & ĐIỆN DUNG -->
+<div class="card">
+    <div class="card-title">
+        <span>5. Tgδ(%) & Điện Dung (pF)</span>
+        <div>
+            <label class="chk-disable"><input type="checkbox" id="chk_sec5" onchange="toggleSection('body_sec5', this)"> ✏️ Nhập</label>
         </div>
     </div>
+    <div id="body_sec5" class="table-responsive hidden-section">
+        <div class="note-text">
+            * Tiêu chuẩn Tgδ: Giấy ≤0.5% (mới)/0.8% (cũ); Film-Giấy ≤0.2%/0.3%; Film ≤0.1%/0.15%.<br>
+            * Điện dung C cho phép sai số -5% ÷ +10% so với C_NSX.
+        </div>
+        <div class="table-responsive" id="table_tg_container"></div>
+    </div>
+</div>
 
 
 
@@ -939,23 +943,55 @@ function renderRatioTable() {
 
 
 
-    function renderTgTable() {
-        let html = `<table><thead><tr><th>Pha</th><th>Tụ đo</th><th>Tgδ (%) Đo</th><th>C_NSX (pF)</th><th>C_Đo (pF)</th><th>Sai số %</th></tr></thead><tbody>`;
+    // [ĐÃ SỬA] Bảng Tgδ - Đơn giản mỗi pha 1 giá trị Tgδ và C
+function renderTgTable() {
+    const num = parseInt(document.getElementById('ti_num_windings').value) || 4;
+    
+    let html = `
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="2">Cuộn</th>
+                <th rowspan="2">Pha</th>
+                <th rowspan="2">Sơ đồ đo</th>
+                <th colspan="2">Kết quả đo</th>
+            </tr>
+            <tr>
+                <th>Tgδ (%)</th>
+                <th>C (pF)</th>
+            </tr>
+        </thead>
+        <tbody>
+    `;
+    
+    // Lặp qua từng cuộn
+    for(let i = 1; i <= num; i++) {
+        // Lặp qua 3 pha
         ['A', 'B', 'C'].forEach(pha => {
-            ['C1', 'C2', 'C_Total'].forEach((cap, idx) => {
-                html += `<tr>
-                    ${idx === 0 ? `<td rowspan="3"><b>Pha ${pha}</b></td>` : ''}
-                    <td><b>${cap}</b></td>
-                    <td><input type="number" id="ti_tg_${pha}_${idx}" step="0.001" placeholder="Nhập Tgδ" oninput="calculateAll()"></td>
-                    <td><input type="number" id="ti_cmfg_${pha}_${idx}" placeholder="Nhập C_NSX" oninput="calculateAll()"></td>
-                    <td><input type="number" id="ti_cmeas_${pha}_${idx}" placeholder="Nhập C_đo" oninput="calculateAll()"></td>
-                    <td id="ti_cerr_${pha}_${idx}">-</td>
-                </tr>`;
-            });
+            html += `
+            <tr>
+                <td><b>Cuộn ${i}</b></td>
+                <td><b>${pha}</b></td>
+                <td>
+                    <select id="ti_tg_schema_${i}_${pha}" onchange="calculateAll()" style="font-size:10px;width:100%;">
+                        <option value="UST">UST</option>
+                        <option value="GST" selected>GST</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="number" id="ti_tg_${i}_${pha}" step="0.001" placeholder="Tgδ" oninput="calculateAll()" onkeydown="handleTgTab(event, ${i}, '${pha}', 'tg')" onkeypress="handleEnterToNext(event)" style="width:100%;">
+                </td>
+                <td>
+                    <input type="number" id="ti_c_${i}_${pha}" step="0.01" placeholder="C (pF)" oninput="calculateAll()" onkeydown="handleTgTab(event, ${i}, '${pha}', 'c')" onkeypress="handleEnterToNext(event)" style="width:100%;">
+                </td>
+            </tr>
+            `;
         });
-        html += `</tbody></table>`;
-        document.getElementById('table_tg_container').innerHTML = html;
     }
+    
+    html += `</tbody></table>`;
+    document.getElementById('table_tg_container').innerHTML = html;
+}
 
     function calculateAll() {
         const temp = parseFloat(document.getElementById('ti_temp').value) || 23;
@@ -1150,22 +1186,57 @@ const error = ((K_dm * i2_do) - i1_tn) / i1_tn * 100;
 }
 
 
+// [ĐÃ SỬA] Phần tính Tgδ - Đánh giá theo tiêu chuẩn
+const num = parseInt(document.getElementById('ti_num_windings').value) || 4;
 
-        ['A', 'B', 'C'].forEach(pha => {
-            for(let idx=0; idx<3; idx++) {
-                const cmfg = parseFloat(document.getElementById(`ti_cmfg_${pha}_${idx}`)?.value);
-                const cmeas = parseFloat(document.getElementById(`ti_cmeas_${pha}_${idx}`)?.value);
-                if(!isNaN(cmfg) && !isNaN(cmeas) && cmfg > 0) {
-                    const cerr = ((cmeas - cmfg) / cmfg) * 100;
-                    const errCell = document.getElementById(`ti_cerr_${pha}_${idx}`);
-                    if(errCell) {
-                        errCell.innerText = cerr.toFixed(2) + '%';
-                        errCell.className = (cerr >= -5.0 && cerr <= 10.0) ? 'pass' : 'fail';
-                    }
-                }
-            }
-        });
-    }
+// Xác định giới hạn Tgδ theo vật liệu và chế độ
+const insulation = document.getElementById('ti_insulation').value;
+const mode = document.getElementById('ti_mode').value;
+const isNew = (mode === 'new');
+
+let tgLimit = 0.5; // Mặc định cho loại giấy (mới)
+switch(insulation) {
+    case 'paper':
+        tgLimit = isNew ? 0.5 : 0.8;
+        break;
+    case 'paper_film_paper':
+    case 'film_paper_film':
+        tgLimit = isNew ? 0.2 : 0.3;
+        break;
+    case 'film':
+        tgLimit = isNew ? 0.1 : 0.15;
+        break;
+    default:
+        tgLimit = isNew ? 0.5 : 0.8;
+}
+
+// Đánh giá từng pha
+for(let i = 1; i <= num; i++) {
+    ['A', 'B', 'C'].forEach(pha => {
+        const tgVal = parseFloat(document.getElementById(`ti_tg_${i}_${pha}`)?.value);
+        const cVal = parseFloat(document.getElementById(`ti_c_${i}_${pha}`)?.value);
+        
+        // Đánh giá Tgδ
+        const tgCell = document.getElementById(`ti_tg_${i}_${pha}`);
+        if(tgCell && !isNaN(tgVal) && tgVal > 0) {
+            const pass = tgVal <= tgLimit;
+            tgCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
+            tgCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
+            tgCell.title = pass ? `✔ ĐẠT (≤ ${tgLimit}%)` : `✘ LỖI (> ${tgLimit}%)`;
+        }
+        
+        // Đánh giá C (nếu có giá trị chuẩn)
+        const cCell = document.getElementById(`ti_c_${i}_${pha}`);
+        const cStandard = parseFloat(document.getElementById('ti_ddung')?.value);
+        if(cCell && !isNaN(cVal) && cVal > 0 && !isNaN(cStandard) && cStandard > 0) {
+            const err = ((cVal - cStandard) / cStandard) * 100;
+            const pass = (err >= -5 && err <= 10);
+            cCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
+            cCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
+            cCell.title = pass ? `✔ ĐẠT (sai số ${err.toFixed(2)}%)` : `✘ LỖI (sai số ${err.toFixed(2)}%)`;
+        }
+    });
+}
 
     function saveDraftManually() {
         const draftData = captureCurrentInputValues();
@@ -1492,6 +1563,81 @@ function handleRcdTab(event, currentWinding, colType, isPri) {
     if (nextEl) {
         nextEl.focus();
         nextEl.select(); // [BỔ SUNG] Bôi đen toàn bộ
+    }
+}
+
+// HÀM XỬ LÝ TANG DELTA
+
+// [BỔ SUNG] Hàm điều hướng Tab/Enter cho bảng Tgδ (đơn giản)
+function handleTgTab(event, cuon, pha, fieldType) {
+    if (event.key === 'Enter' || event.key === 'Tab') {
+        event.preventDefault();
+        
+        const num = parseInt(document.getElementById('ti_num_windings').value) || 4;
+        const phas = ['A', 'B', 'C'];
+        const fields = ['tg', 'c'];
+        
+        let nextCuon = cuon;
+        let nextPha = pha;
+        let nextField = fieldType;
+        
+        if (event.key === 'Enter' || !event.shiftKey) {
+            // Đi tới
+            if (fieldType === 'tg') {
+                // Từ Tgδ -> C (cùng hàng)
+                nextField = 'c';
+            } else {
+                // Từ C -> qua pha tiếp theo
+                const phaIndex = phas.indexOf(pha);
+                if (phaIndex < 2) {
+                    nextPha = phas[phaIndex + 1];
+                    nextField = 'tg';
+                } else {
+                    // Hết pha của cuộn này -> qua cuộn tiếp theo
+                    if (cuon < num) {
+                        nextCuon++;
+                        nextPha = 'A';
+                        nextField = 'tg';
+                    } else {
+                        event.target.blur();
+                        return;
+                    }
+                }
+            }
+        } else {
+            // Shift + Tab: Đi lùi
+            if (fieldType === 'c') {
+                // Từ C -> Tgδ
+                nextField = 'tg';
+            } else {
+                // Từ Tgδ -> qua pha trước
+                const phaIndex = phas.indexOf(pha);
+                if (phaIndex > 0) {
+                    nextPha = phas[phaIndex - 1];
+                    nextField = 'c';
+                } else {
+                    // Hết pha của cuộn này -> qua cuộn trước
+                    if (cuon > 1) {
+                        nextCuon--;
+                        nextPha = 'C';
+                        nextField = 'c';
+                    } else {
+                        event.target.blur();
+                        return;
+                    }
+                }
+            }
+        }
+        
+        const nextId = nextField === 'tg' 
+            ? `ti_tg_${nextCuon}_${nextPha}`
+            : `ti_c_${nextCuon}_${nextPha}`;
+        
+        const nextEl = document.getElementById(nextId);
+        if (nextEl) {
+            nextEl.focus();
+            nextEl.select();
+        }
     }
 }
 	
