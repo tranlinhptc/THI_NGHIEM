@@ -1355,7 +1355,7 @@ function getVal(id) {
 }
 // HÀM ĐIỀU HƯỚNG PHÍM TAB THEO CỘT DỌC (DÀNH RIÊNG CHO BẢNG TỈ SỐ BIẾN)
 function handleRatioTab(event, currentWinding, pha) {
-    if (event.key === 'Tab') {
+    if (event.key !== 'Tab' && event.key !== 'Enter') return;
         const select = document.getElementById('ti_num_windings');
         const numWindings = parseInt(select?.value) || 4;
         
@@ -1396,9 +1396,7 @@ function handleRatioTab(event, currentWinding, pha) {
 
 // 1. ĐIỀU HƯỚNG PHÍM TAB CHO BẢNG RDC (Điện trở 1 chiều)
 function handleRdcTab(event, currentWinding, colType) {
-    if (event.key === 'Tab') {
-        event.preventDefault(); // Chặn hành vi mặc định của trình duyệt
-        
+        if (event.key !== 'Tab' && event.key !== 'Enter') return;
         const select = document.getElementById('ti_num_windings');
         const numWindings = parseInt(select?.value) || 4;
         
@@ -1449,10 +1447,10 @@ function handleRdcTab(event, currentWinding, colType) {
 
 
 // 2. ĐIỀU HƯỚNG PHÍM TAB CHO BẢNG RCD (Điện trở cách điện)
-
 function handleRcdTab(event, currentWinding, colType, isPri) {
 
-    if (event.key !== 'Tab') return;
+    // Chấp nhận cả TAB và ENTER
+    if (event.key !== 'Tab' && event.key !== 'Enter') return;
 
     event.preventDefault();
 
@@ -1463,9 +1461,9 @@ function handleRcdTab(event, currentWinding, colType, isPri) {
 
     let colIndex = cols.indexOf(colType);
 
-    // ==========================================
-    // TAB ĐI TỚI
-    // ==========================================
+    // =====================================================
+    // ENTER hoặc TAB ĐI TỚI
+    // =====================================================
     if (!event.shiftKey) {
 
         // Sơ cấp -> Cuộn 1 cùng pha
@@ -1476,70 +1474,70 @@ function handleRcdTab(event, currentWinding, colType, isPri) {
 
         }
 
-        // Cuộn 1 -> ... -> Cuộn cuối
+        // Cuộn 1 -> 2 -> 3 -> ... -> N
         else if (currentWinding < numWindings) {
 
             currentWinding++;
 
         }
 
-        // Đã hết cuộn của pha hiện tại
+        // Đã tới Cuộn N -> sang pha kế tiếp
         else {
 
-            // Sang pha kế tiếp
             colIndex++;
 
-            // Hết pha C -> cho Tab ra ngoài bảng
+            // Hết Pha C
             if (colIndex >= cols.length) {
-
                 event.target.blur();
                 return;
             }
 
-            // Vào Sơ cấp của pha mới
+            // Sang Sơ cấp pha mới
             currentWinding = 0;
             isPri = true;
         }
 
     }
 
-    // ==========================================
+    // =====================================================
     // SHIFT + TAB ĐI LÙI
-    // ==========================================
+    // =====================================================
     else {
 
         // Đang ở Sơ cấp
         if (isPri) {
 
-            // Pha A -> cho phép quay ra ngoài
+            // Đang ở Sơ cấp A -> ra ngoài
             if (colIndex <= 0) {
-
                 event.target.blur();
                 return;
             }
 
-            // Sang pha trước
+            // Sơ cấp B -> Cuộn N pha A
+            // Sơ cấp C -> Cuộn N pha B
             colIndex--;
-
-            // Về Cuộn cuối của pha trước
             currentWinding = numWindings;
             isPri = false;
         }
 
-        // Đang ở Cuộn > 1
+        // Cuộn > 1 -> lùi 1 cuộn
         else if (currentWinding > 1) {
 
             currentWinding--;
 
         }
 
-        // Đang ở Cuộn 1 -> Sơ cấp cùng pha
+        // Cuộn 1 -> Sơ cấp cùng pha
         else {
 
             currentWinding = 0;
             isPri = true;
         }
     }
+
+    // =====================================================
+    // TẠO ID Ô TIẾP THEO
+    // =====================================================
 
     const nextCol = cols[colIndex];
 
@@ -1551,9 +1549,11 @@ function handleRcdTab(event, currentWinding, colType, isPri) {
 
     if (nextEl) {
 
-        nextEl.focus();
-        nextEl.select();
-
+        // Delay rất ngắn giúp iPhone/iPad xử lý Enter ổn định hơn
+        setTimeout(() => {
+            nextEl.focus();
+            nextEl.select();
+        }, 10);
     }
 }
 
