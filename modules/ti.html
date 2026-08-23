@@ -945,7 +945,7 @@ function renderRatioTable() {
 
     // [ĐÃ SỬA] Bảng Tgδ - Đơn giản mỗi pha 1 giá trị Tgδ và C
 // [ĐÃ SỬA] Bảng Tgδ - KHÔNG phụ thuộc số cuộn, chỉ 3 pha A,B,C
-// [ĐÃ SỬA] Bảng Tgδ - KHÔNG phụ thuộc số cuộn, chỉ 3 pha A,B,C
+// [ĐÃ SỬA] Bảng Tgδ - Mỗi pha có 2 chế độ đo UST và GST
 function renderTgTable() {
     const container = document.getElementById('table_tg_container');
     if (!container) return;
@@ -954,8 +954,13 @@ function renderTgTable() {
     <table>
         <thead>
             <tr>
-                <th>Pha</th>
-                <th>Sơ đồ đo</th>
+                <th rowspan="2">Pha</th>
+                <th colspan="2">UST</th>
+                <th colspan="2">GST</th>
+            </tr>
+            <tr>
+                <th>Tgδ (%)</th>
+                <th>C (pF)</th>
                 <th>Tgδ (%)</th>
                 <th>C (pF)</th>
             </tr>
@@ -963,22 +968,24 @@ function renderTgTable() {
         <tbody>
     `;
     
-    // Chỉ 3 pha A, B, C - KHÔNG phụ thuộc số cuộn
+    // Chỉ 3 pha A, B, C
     ['A', 'B', 'C'].forEach(pha => {
         html += `
         <tr>
             <td><b>${pha}</b></td>
+            <!-- UST -->
             <td>
-                <select id="ti_tg_schema_${pha}" onchange="calculateAll()" style="font-size:10px;width:100%;">
-                    <option value="UST">UST</option>
-                    <option value="GST" selected>GST</option>
-                </select>
+                <input type="number" id="ti_tg_ust_${pha}" step="0.001" placeholder="Tgδ" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'ust_tg')" onkeypress="handleEnterToNext(event)" style="width:100%;">
             </td>
             <td>
-                <input type="number" id="ti_tg_${pha}" step="0.001" placeholder="Tgδ" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'tg')" onkeypress="handleEnterToNext(event)" style="width:100%;">
+                <input type="number" id="ti_c_ust_${pha}" step="0.01" placeholder="C (pF)" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'ust_c')" onkeypress="handleEnterToNext(event)" style="width:100%;">
+            </td>
+            <!-- GST -->
+            <td>
+                <input type="number" id="ti_tg_gst_${pha}" step="0.001" placeholder="Tgδ" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'gst_tg')" onkeypress="handleEnterToNext(event)" style="width:100%;">
             </td>
             <td>
-                <input type="number" id="ti_c_${pha}" step="0.01" placeholder="C (pF)" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'c')" onkeypress="handleEnterToNext(event)" style="width:100%;">
+                <input type="number" id="ti_c_gst_${pha}" step="0.01" placeholder="C (pF)" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'gst_c')" onkeypress="handleEnterToNext(event)" style="width:100%;">
             </td>
         </tr>
         `;
@@ -1185,6 +1192,7 @@ const error = ((K_dm * i2_do) - i1_tn) / i1_tn * 100;
 
 // Xác định giới hạn Tgδ theo vật liệu và chế độ
 // PHẦN TÍNH Tgδ - KHÔNG dùng num, chỉ 3 pha A,B,C
+// PHẦN TÍNH Tgδ - Đánh giá cho cả UST và GST
 const insulation = document.getElementById('ti_insulation').value;
 const mode = document.getElementById('ti_mode').value;
 const isNew = (mode === 'new');
@@ -1198,29 +1206,49 @@ switch(insulation) {
     default: tgLimit = isNew ? 0.5 : 0.8;
 }
 
-// Chỉ 3 pha A, B, C - KHÔNG phụ thuộc số cuộn
+// Đánh giá cho từng pha và từng chế độ đo
 ['A', 'B', 'C'].forEach(pha => {
-    const tgVal = parseFloat(document.getElementById(`ti_tg_${pha}`)?.value);
-    const cVal = parseFloat(document.getElementById(`ti_c_${pha}`)?.value);
+    // Đánh giá UST
+    const tgUst = parseFloat(document.getElementById(`ti_tg_ust_${pha}`)?.value);
+    const cUst = parseFloat(document.getElementById(`ti_c_ust_${pha}`)?.value);
     
-    // Đánh giá Tgδ
-    const tgCell = document.getElementById(`ti_tg_${pha}`);
-    if(tgCell && !isNaN(tgVal) && tgVal > 0) {
-        const pass = tgVal <= tgLimit;
-        tgCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
-        tgCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
-        tgCell.title = pass ? `✔ ĐẠT (≤ ${tgLimit}%)` : `✘ LỖI (> ${tgLimit}%)`;
+    const tgUstCell = document.getElementById(`ti_tg_ust_${pha}`);
+    if(tgUstCell && !isNaN(tgUst) && tgUst > 0) {
+        const pass = tgUst <= tgLimit;
+        tgUstCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
+        tgUstCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
+        tgUstCell.title = pass ? `✔ ĐẠT (≤ ${tgLimit}%)` : `✘ LỖI (> ${tgLimit}%)`;
     }
     
-    // Đánh giá C (nếu có giá trị chuẩn)
-    const cCell = document.getElementById(`ti_c_${pha}`);
+    const cUstCell = document.getElementById(`ti_c_ust_${pha}`);
     const cStandard = parseFloat(document.getElementById('ti_ddung')?.value);
-    if(cCell && !isNaN(cVal) && cVal > 0 && !isNaN(cStandard) && cStandard > 0) {
-        const err = ((cVal - cStandard) / cStandard) * 100;
+    if(cUstCell && !isNaN(cUst) && cUst > 0 && !isNaN(cStandard) && cStandard > 0) {
+        const err = ((cUst - cStandard) / cStandard) * 100;
         const pass = (err >= -5 && err <= 10);
-        cCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
-        cCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
-        cCell.title = pass ? `✔ ĐẠT (sai số ${err.toFixed(2)}%)` : `✘ LỖI (sai số ${err.toFixed(2)}%)`;
+        cUstCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
+        cUstCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
+        cUstCell.title = pass ? `✔ ĐẠT (sai số ${err.toFixed(2)}%)` : `✘ LỖI (sai số ${err.toFixed(2)}%)`;
+    }
+    
+    // Đánh giá GST
+    const tgGst = parseFloat(document.getElementById(`ti_tg_gst_${pha}`)?.value);
+    const cGst = parseFloat(document.getElementById(`ti_c_gst_${pha}`)?.value);
+    
+    const tgGstCell = document.getElementById(`ti_tg_gst_${pha}`);
+    if(tgGstCell && !isNaN(tgGst) && tgGst > 0) {
+        const pass = tgGst <= tgLimit;
+        tgGstCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
+        tgGstCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
+        tgGstCell.title = pass ? `✔ ĐẠT (≤ ${tgLimit}%)` : `✘ LỖI (> ${tgLimit}%)`;
+    }
+    
+    const cGstCell = document.getElementById(`ti_c_gst_${pha}`);
+    if(cGstCell && !isNaN(cGst) && cGst > 0 && !isNaN(cStandard) && cStandard > 0) {
+        const err = ((cGst - cStandard) / cStandard) * 100;
+        const pass = (err >= -5 && err <= 10);
+        cGstCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
+        cGstCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
+        cGstCell.title = pass ? `✔ ĐẠT (sai số ${err.toFixed(2)}%)` : `✘ LỖI (sai số ${err.toFixed(2)}%)`;
     }
 });
 }
@@ -1557,28 +1585,30 @@ function handleRcdTab(event, currentWinding, colType, isPri) {
 // HÀM XỬ LÝ TANG DELTA
 
 // [BỔ SUNG] Hàm điều hướng Tab/Enter cho bảng Tgδ (đơn giản)
-// [ĐÃ SỬA] Hàm điều hướng Tab/Enter cho bảng Tgδ - Chỉ 3 pha
+// [ĐÃ SỬA] Hàm điều hướng Tab/Enter cho bảng Tgδ - 4 cột/phụ
 function handleTgTab(event, pha, fieldType) {
     if (event.key === 'Enter' || event.key === 'Tab') {
         event.preventDefault();
         
         const phas = ['A', 'B', 'C'];
-        const fields = ['tg', 'c'];
+        // Thứ tự các cột: ust_tg -> ust_c -> gst_tg -> gst_c
+        const fields = ['ust_tg', 'ust_c', 'gst_tg', 'gst_c'];
         
         let nextPha = pha;
         let nextField = fieldType;
+        let currentFieldIndex = fields.indexOf(fieldType);
         
         if (event.key === 'Enter' || !event.shiftKey) {
             // Đi tới
-            if (fieldType === 'tg') {
-                // Từ Tgδ -> C (cùng hàng)
-                nextField = 'c';
+            if (currentFieldIndex < 3) {
+                // Cùng pha, sang cột tiếp theo
+                nextField = fields[currentFieldIndex + 1];
             } else {
-                // Từ C -> qua pha tiếp theo
+                // Hết cột của pha này -> sang pha tiếp theo
                 const phaIndex = phas.indexOf(pha);
                 if (phaIndex < 2) {
                     nextPha = phas[phaIndex + 1];
-                    nextField = 'tg';
+                    nextField = fields[0]; // Quay lại cột UST Tgδ
                 } else {
                     // Hết pha C -> thoát
                     event.target.blur();
@@ -1587,15 +1617,15 @@ function handleTgTab(event, pha, fieldType) {
             }
         } else {
             // Shift + Tab: Đi lùi
-            if (fieldType === 'c') {
-                // Từ C -> Tgδ
-                nextField = 'tg';
+            if (currentFieldIndex > 0) {
+                // Cùng pha, sang cột trước
+                nextField = fields[currentFieldIndex - 1];
             } else {
-                // Từ Tgδ -> qua pha trước
+                // Hết cột của pha này -> sang pha trước
                 const phaIndex = phas.indexOf(pha);
                 if (phaIndex > 0) {
                     nextPha = phas[phaIndex - 1];
-                    nextField = 'c';
+                    nextField = fields[3]; // Quay lại cột GST C
                 } else {
                     // Hết pha A -> thoát
                     event.target.blur();
@@ -1604,9 +1634,8 @@ function handleTgTab(event, pha, fieldType) {
             }
         }
         
-        const nextId = nextField === 'tg' 
-            ? `ti_tg_${nextPha}`
-            : `ti_c_${nextPha}`;
+        // Tạo ID theo format: ti_tg_ust_A, ti_c_ust_A, ti_tg_gst_A, ti_c_gst_A
+        const nextId = `ti_${nextField === 'ust_tg' ? 'tg_ust' : nextField === 'ust_c' ? 'c_ust' : nextField === 'gst_tg' ? 'tg_gst' : 'c_gst'}_${nextPha}`;
         
         const nextEl = document.getElementById(nextId);
         if (nextEl) {
