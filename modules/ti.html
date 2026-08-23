@@ -707,45 +707,37 @@ function getInterpolatedPriRcd(temp, u1Str) {
     }
 
 
+// [ĐÃ SỬA] Bảng RDC - Bỏ cột Số cũ, thêm cột Đầu dây, bỏ đánh giá
 function renderRdcTable() {
-        const container = document.getElementById('table_rdc_container');
-        if (!container) return;
+    const container = document.getElementById('table_rdc_container');
+    if (!container) return;
 
-        const num = parseInt(document.getElementById('ti_num_windings').value);
-        let html = `<table><thead><tr><th>Stt Cuộn</th><th>Số cũ (75°C) </th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
-        
-        for(let i=1; i<=num; i++) {
-            html += `<tr>
-                <td><b>Cuộn ${i}</b></td>
-                
-                <!-- Gài phím Tab cho cột Số cũ -->
-                <td><input type="number" id="ti_rdc_ref_${i}" value="" oninput="calculateAll()" onkeydown="handleRdcTab(event, ${i}, 'ref')"></td>
-                
-                <!-- Gài phím Tab cho cột Pha A -->
-                <td>
-                    <input type="number" id="ti_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A" onkeydown="handleRdcTab(event, ${i}, 'a')">
-                    <span class="sub-val" id="ti_rdc_75_${i}_a">75°C: -</span>
-                    <span class="sub-val" id="ti_rdc_status_${i}_a"></span>
-                </td>
-                
-                <!-- Gài phím Tab cho cột Pha B -->
-                <td>
-                    <input type="number" id="ti_rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B" onkeydown="handleRdcTab(event, ${i}, 'b')">
-                    <span class="sub-val" id="ti_rdc_75_${i}_b">75°C: -</span>
-                    <span class="sub-val" id="ti_rdc_status_${i}_b"></span>
-                </td>
-                
-                <!-- Gài phím Tab cho cột Pha C -->
-                <td>
-                    <input type="number" id="ti_rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C" onkeydown="handleRdcTab(event, ${i}, 'c')">
-                    <span class="sub-val" id="ti_rdc_75_${i}_c">75°C: -</span>
-                    <span class="sub-val" id="ti_rdc_status_${i}_c"></span>
-                </td>
-            </tr>`;
-        }
-        html += `</tbody></table>`;
-        container.innerHTML = html;
+    const num = parseInt(document.getElementById('ti_num_windings').value);
+    let html = `<table><thead><tr><th>Stt Cuộn</th><th>Đầu dây</th><th>Pha A</th><th>Pha B</th><th>Pha C</th></tr></thead><tbody>`;
+    
+    for(let i=1; i<=num; i++) {
+        html += `<tr>
+            <td><b>Cuộn ${i}</b></td>
+            <!-- [SỬA] Thay cột Số cũ thành Đầu dây -->
+            <td><input type="text" id="ti_rdc_terminal_${i}" placeholder="VD: 1S1-1S2" onkeydown="handleRdcTab(event, ${i}, 'terminal')" onkeypress="handleEnterToNext(event)"></td>
+            <td>
+                <input type="number" id="ti_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A" onkeydown="handleRdcTab(event, ${i}, 'a')" onkeypress="handleEnterToNext(event)">
+                <span class="sub-val" id="ti_rdc_75_${i}_a">75°C: -</span>
+                <!-- [SỬA] Xóa span đánh giá ĐẠT/LỖI -->
+            </td>
+            <td>
+                <input type="number" id="ti_rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B" onkeydown="handleRdcTab(event, ${i}, 'b')" onkeypress="handleEnterToNext(event)">
+                <span class="sub-val" id="ti_rdc_75_${i}_b">75°C: -</span>
+            </td>
+            <td>
+                <input type="number" id="ti_rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C" onkeydown="handleRdcTab(event, ${i}, 'c')" onkeypress="handleEnterToNext(event)">
+                <span class="sub-val" id="ti_rdc_75_${i}_c">75°C: -</span>
+            </td>
+        </tr>`;
     }
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+}
 
 
 function renderRcdTable() {
@@ -1006,25 +998,20 @@ function renderRatioTable() {
             });
         }
 
-        for(let i=1; i<=num; i++) {
-            const ref = parseFloat(document.getElementById(`ti_rdc_ref_${i}`)?.value) || 0;
-            ['a', 'b', 'c'].forEach(p => {
-                const mVal = parseFloat(document.getElementById(`ti_rdc_m_${i}_${p}`)?.value) || 0;
-                const el75 = document.getElementById(`ti_rdc_75_${i}_${p}`);
-                const elStatus = document.getElementById(`ti_rdc_status_${i}_${p}`);
-                if(mVal > 0) {
-                    const r75 = mVal * ((235 + 75) / (235 + temp));
-                    if(el75) el75.innerText = `75°C: ${r75.toFixed(2)}`;
-                    let passPha = true;
-                    if(ref > 0) passPha = Math.abs(r75 - ref) / ref * 100 <= 5.0;
-                    if(elStatus) {
-                        elStatus.innerText = passPha ? "✔ ĐẠT" : "✘ LỖI";
-                        elStatus.className = passPha ? "sub-val pass" : "sub-val fail";
-                    }
-                } else {
-                    if(el75) el75.innerText = `75°C: -`;
-                    if(elStatus) elStatus.innerText = ``;
-                }
+        // [ĐÃ SỬA] Phần tính RDC trong calculateAll() - Bỏ đánh giá, chỉ hiển thị quy đổi
+for(let i=1; i<=num; i++) {
+    ['a', 'b', 'c'].forEach(p => {
+        const mVal = parseFloat(document.getElementById(`ti_rdc_m_${i}_${p}`)?.value) || 0;
+        const el75 = document.getElementById(`ti_rdc_75_${i}_${p}`);
+        
+        if(mVal > 0) {
+            const r75 = mVal * ((235 + 75) / (235 + temp));
+            if(el75) el75.innerText = `75°C: ${r75.toFixed(4)} Ω`;
+        } else {
+            if(el75) el75.innerText = `75°C: -`;
+        }
+    });
+}
             });
         }
 
@@ -1393,14 +1380,17 @@ function handleRatioTab(event, currentWinding, pha) {
 }
 
 // 1. ĐIỀU HƯỚNG PHÍM TAB CHO BẢNG RDC (Điện trở 1 chiều)
+// [ĐÃ SỬA] Hàm điều hướng Tab cho bảng RDC - Bổ sung cột 'terminal'
 function handleRdcTab(event, currentWinding, colType) {
-    // [BỔ SUNG] Thêm xử lý Enter
     if (event.key === 'Enter' || event.key === 'Tab') {
         event.preventDefault();
         
         const select = document.getElementById('ti_num_windings');
         const numWindings = parseInt(select?.value) || 4;
         
+        // [SỬA] Thêm 'terminal' vào danh sách cột
+        const cols = ['terminal', 'a', 'b', 'c'];
+        let colIndex = cols.indexOf(colType);
         let nextWinding = currentWinding;
         let nextCol = colType;
 
@@ -1409,26 +1399,31 @@ function handleRdcTab(event, currentWinding, colType) {
                 nextWinding++;
             } else {
                 nextWinding = 1;
-                if (nextCol === 'ref') { nextCol = 'a'; }
-                else if (nextCol === 'a') { nextCol = 'b'; }
-                else if (nextCol === 'b') { nextCol = 'c'; }
-                else if (nextCol === 'c') { return; }
+                colIndex = (colIndex + 1) % cols.length;
+                nextCol = cols[colIndex];
+                if (colIndex === 0) {
+                    event.target.blur();
+                    return;
+                }
             }
         } else {
             if (currentWinding > 1) {
                 nextWinding--;
             } else {
                 nextWinding = numWindings;
-                if (nextCol === 'c') { nextCol = 'b'; }
-                else if (nextCol === 'b') { nextCol = 'a'; }
-                else if (nextCol === 'a') { nextCol = 'ref'; }
-                else if (nextCol === 'ref') { return; }
+                colIndex = (colIndex - 1 + cols.length) % cols.length;
+                nextCol = cols[colIndex];
+                if (colIndex === cols.length - 1) {
+                    event.target.blur();
+                    return;
+                }
             }
         }
 
+        // [SỬA] Tạo ID cho cột terminal
         let nextId = '';
-        if (nextCol === 'ref') {
-            nextId = `ti_rdc_ref_${nextWinding}`;
+        if (nextCol === 'terminal') {
+            nextId = `ti_rdc_terminal_${nextWinding}`;
         } else {
             nextId = `ti_rdc_m_${nextWinding}_${nextCol}`;
         }
@@ -1436,7 +1431,7 @@ function handleRdcTab(event, currentWinding, colType) {
         const nextEl = document.getElementById(nextId);
         if (nextEl) {
             nextEl.focus();
-            nextEl.select(); // [BỔ SUNG] Bôi đen toàn bộ
+            nextEl.select();
         }
     }
 }
