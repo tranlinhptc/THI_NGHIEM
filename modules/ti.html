@@ -1355,41 +1355,38 @@ function getVal(id) {
 }
 // HÀM ĐIỀU HƯỚNG PHÍM TAB THEO CỘT DỌC (DÀNH RIÊNG CHO BẢNG TỈ SỐ BIẾN)
 function handleRatioTab(event, currentWinding, pha) {
-    if (event.key === 'Tab') {
+    // [BỔ SUNG] Thêm xử lý Enter
+    if (event.key === 'Tab' || event.key === 'Enter') {
         const select = document.getElementById('ti_num_windings');
         const numWindings = parseInt(select?.value) || 4;
         
         let nextWinding = currentWinding;
         let nextPha = pha;
 
-        if (!event.shiftKey) {
-            // Bấm Tab (Đi tới)
+        if (event.key === 'Enter' || !event.shiftKey) {
             if (currentWinding < numWindings) {
-                nextWinding++; // Đi xuống cuộn tiếp theo cùng pha
+                nextWinding++;
             } else {
-                // Đã đến cuộn cuối của pha -> Nhảy sang cuộn 1 của Pha tiếp theo
                 if (pha === 'A') { nextPha = 'B'; nextWinding = 1; }
                 else if (pha === 'B') { nextPha = 'C'; nextWinding = 1; }
-                else { return; } // Đang ở cuộn cuối pha C -> Buông cho trình duyệt đi tiếp tới mục khác
+                else { return; }
             }
         } else {
-            // Bấm Shift + Tab (Đi lùi lên trên)
             if (currentWinding > 1) {
-                nextWinding--; // Đi ngược lên cuộn trước cùng pha
+                nextWinding--;
             } else {
-                // Đang ở cuộn 1 -> Lùi về cuộn cuối của Pha trước đó
                 if (pha === 'C') { nextPha = 'B'; nextWinding = numWindings; }
                 else if (pha === 'B') { nextPha = 'A'; nextWinding = numWindings; }
-                else { return; } // Pha A cuộn 1 -> Buông cho trình duyệt lùi tự do
+                else { return; }
             }
         }
 
         const nextId = `ti_i2_w${nextWinding}_${nextPha}`;
         const nextEl = document.getElementById(nextId);
         if (nextEl) {
-            event.preventDefault(); // Chặn không cho Tab chạy ngang theo mặc định
-            nextEl.focus();         // Nhảy chuột tới ô đích
-            nextEl.select();        // Bôi đen sẵn số cũ (nếu có) để anh gõ số mới đè lên luôn
+            event.preventDefault();
+            nextEl.focus();
+            nextEl.select(); // [BỔ SUNG] Bôi đen toàn bộ
         }
     }
 }
