@@ -788,8 +788,6 @@ function renderRcdTable() {
 
 
 function renderRatioTable() {
-
-
     const select = document.getElementById('ti_num_windings');
     const num = parseInt(select?.value) || 4;
 
@@ -862,9 +860,6 @@ function renderRatioTable() {
     html += `</tbody></table>`;
     document.getElementById('table_ratio_container').innerHTML = html;
 }
-
-
-
 
 
 
@@ -1274,7 +1269,7 @@ function getVal(id) {
     // Riêng Nhiệt độ, độ ẩm hoặc các kết quả đo thông thường: Chỉ lấy giá trị mới nhập
     return el.value || "";
 }
-// HÀM ĐIỀU HƯỚNG PHÍM TAB THEO CỘT DỌC (DÀNH RIÊNG CHO BẢNG TỈ SỐ BIẾN)
+// HÀM ĐIỀU HƯỚNG PHÍM TAB THEO CỘT DỌC (DÀNH RIÊNG CHO BẢNG TỈ SỐ BIẾN)=============================
 function handleRatioTab(event, currentWinding, pha) {
     if (event.key === 'Tab') {
         const select = document.getElementById('ti_num_windings');
