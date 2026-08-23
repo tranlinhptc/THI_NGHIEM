@@ -1355,7 +1355,7 @@ function getVal(id) {
 }
 // HÀM ĐIỀU HƯỚNG PHÍM TAB THEO CỘT DỌC (DÀNH RIÊNG CHO BẢNG TỈ SỐ BIẾN)
 function handleRatioTab(event, currentWinding, pha) {
-    if (event.key !== 'Tab' && event.key !== 'Enter') return;
+    if (event.key === 'Tab') {
         const select = document.getElementById('ti_num_windings');
         const numWindings = parseInt(select?.value) || 4;
         
@@ -1396,27 +1396,27 @@ function handleRatioTab(event, currentWinding, pha) {
 
 // 1. ĐIỀU HƯỚNG PHÍM TAB CHO BẢNG RDC (Điện trở 1 chiều)
 function handleRdcTab(event, currentWinding, colType) {
-        if (event.key !== 'Tab' && event.key !== 'Enter') return;
+    // [BỔ SUNG] Thêm xử lý Enter
+    if (event.key === 'Enter' || event.key === 'Tab') {
+        event.preventDefault();
+        
         const select = document.getElementById('ti_num_windings');
         const numWindings = parseInt(select?.value) || 4;
         
         let nextWinding = currentWinding;
-        let nextCol = colType; // 'ref', 'a', 'b', 'c'
+        let nextCol = colType;
 
-        if (!event.shiftKey) {
-            // CHIỀU ĐI TỚI (Bấm Tab): Ưu tiên chạy dọc xuống dưới theo từng cột
+        if (event.key === 'Enter' || !event.shiftKey) {
             if (currentWinding < numWindings) {
-                nextWinding++; // Vẫn ở cột đó, xuống cuộn tiếp theo
+                nextWinding++;
             } else {
-                // Đã hết cuộn của cột này -> Chuyển sang cột tiếp theo, quay về cuộn 1
                 nextWinding = 1;
                 if (nextCol === 'ref') { nextCol = 'a'; }
                 else if (nextCol === 'a') { nextCol = 'b'; }
                 else if (nextCol === 'b') { nextCol = 'c'; }
-                else if (nextCol === 'c') { return; } // Hết cột C cuộn cuối -> Cho phép Tab ra ngoài
+                else if (nextCol === 'c') { return; }
             }
         } else {
-            // CHIỀU ĐI LÙI (Bấm Shift + Tab)
             if (currentWinding > 1) {
                 nextWinding--;
             } else {
@@ -1428,7 +1428,6 @@ function handleRdcTab(event, currentWinding, colType) {
             }
         }
 
-        // Tạo ID tiếp theo
         let nextId = '';
         if (nextCol === 'ref') {
             nextId = `ti_rdc_ref_${nextWinding}`;
@@ -1439,123 +1438,83 @@ function handleRdcTab(event, currentWinding, colType) {
         const nextEl = document.getElementById(nextId);
         if (nextEl) {
             nextEl.focus();
-            nextEl.select();
+            nextEl.select(); // [BỔ SUNG] Bôi đen toàn bộ
         }
     }
 }
 
 
-
 // 2. ĐIỀU HƯỚNG PHÍM TAB CHO BẢNG RCD (Điện trở cách điện)
+
 function handleRcdTab(event, currentWinding, colType, isPri) {
-
-    // Chấp nhận cả TAB và ENTER
+    // [BỔ SUNG] Thêm xử lý Enter
     if (event.key !== 'Tab' && event.key !== 'Enter') return;
-
     event.preventDefault();
 
-    const numWindings =
-        parseInt(document.getElementById('ti_num_windings')?.value) || 4;
-
+    const numWindings = parseInt(document.getElementById('ti_num_windings')?.value) || 4;
     const cols = ['a', 'b', 'c'];
-
     let colIndex = cols.indexOf(colType);
+    let nextWinding = currentWinding;
+    let nextIsPri = isPri;
+    let nextCol = colType;
 
-    // =====================================================
-    // ENTER hoặc TAB ĐI TỚI
-    // =====================================================
-    if (!event.shiftKey) {
-
-        // Sơ cấp -> Cuộn 1 cùng pha
+    if (event.key === 'Enter' || !event.shiftKey) {
         if (isPri) {
-
-            currentWinding = 1;
-            isPri = false;
-
-        }
-
-        // Cuộn 1 -> 2 -> 3 -> ... -> N
-        else if (currentWinding < numWindings) {
-
-            currentWinding++;
-
-        }
-
-        // Đã tới Cuộn N -> sang pha kế tiếp
-        else {
-
-            colIndex++;
-
-            // Hết Pha C
-            if (colIndex >= cols.length) {
+            nextWinding = 1;
+            nextIsPri = false;
+        } else if (currentWinding < numWindings) {
+            nextWinding++;
+        } else {
+            colIndex = (colIndex + 1) % cols.length;
+            nextCol = cols[colIndex];
+            if (colIndex === 0) {
                 event.target.blur();
                 return;
             }
-
-            // Sang Sơ cấp pha mới
-            currentWinding = 0;
-            isPri = true;
+            nextWinding = 0;
+            nextIsPri = true;
         }
-
-    }
-
-    // =====================================================
-    // SHIFT + TAB ĐI LÙI
-    // =====================================================
-    else {
-
-        // Đang ở Sơ cấp
+    } else {
         if (isPri) {
-
-            // Đang ở Sơ cấp A -> ra ngoài
             if (colIndex <= 0) {
                 event.target.blur();
                 return;
             }
-
-            // Sơ cấp B -> Cuộn N pha A
-            // Sơ cấp C -> Cuộn N pha B
             colIndex--;
-            currentWinding = numWindings;
-            isPri = false;
-        }
-
-        // Cuộn > 1 -> lùi 1 cuộn
-        else if (currentWinding > 1) {
-
-            currentWinding--;
-
-        }
-
-        // Cuộn 1 -> Sơ cấp cùng pha
-        else {
-
-            currentWinding = 0;
-            isPri = true;
+            nextCol = cols[colIndex];
+            nextWinding = numWindings;
+            nextIsPri = false;
+        } else if (currentWinding > 1) {
+            nextWinding--;
+        } else {
+            nextWinding = 0;
+            nextIsPri = true;
         }
     }
 
-    // =====================================================
-    // TẠO ID Ô TIẾP THEO
-    // =====================================================
-
-    const nextCol = cols[colIndex];
-
-    const nextId = isPri
+    const nextId = nextIsPri
         ? `ti_rcd_pri_${nextCol}`
-        : `ti_rcd_sec${currentWinding}_${nextCol}`;
+        : `ti_rcd_sec${nextWinding}_${nextCol}`;
 
     const nextEl = document.getElementById(nextId);
-
     if (nextEl) {
-
-        // Delay rất ngắn giúp iPhone/iPad xử lý Enter ổn định hơn
-        setTimeout(() => {
-            nextEl.focus();
-            nextEl.select();
-        }, 10);
+        nextEl.focus();
+        nextEl.select(); // [BỔ SUNG] Bôi đen toàn bộ
     }
 }
+	
+// [BỔ SUNG] HÀM XỬ LÝ ENTER - NHẢY SANG Ô TIẾP THEO
+function handleEnterToNext(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        const inputs = document.querySelectorAll('input[type="number"], input[type="text"]');
+        const currentIndex = Array.from(inputs).indexOf(event.target);
+        if (currentIndex < inputs.length - 1) {
+            inputs[currentIndex + 1].focus();
+            inputs[currentIndex + 1].select(); // Bôi đen toàn bộ
+        }
+    }
+}	
 
 </script>
 </body>
