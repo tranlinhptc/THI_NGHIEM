@@ -944,19 +944,17 @@ function renderRatioTable() {
 
 
     // [ĐÃ SỬA] Bảng Tgδ - Đơn giản mỗi pha 1 giá trị Tgδ và C
+// [ĐÃ SỬA] Bảng Tgδ - KHÔNG phụ thuộc số cuộn, chỉ 3 pha A,B,C
 function renderTgTable() {
-    const num = parseInt(document.getElementById('ti_num_windings').value) || 4;
+    const container = document.getElementById('table_tg_container');
+    if (!container) return;
     
     let html = `
     <table>
         <thead>
             <tr>
-                <th rowspan="2">Cuộn</th>
-                <th rowspan="2">Pha</th>
-                <th rowspan="2">Sơ đồ đo</th>
-                <th colspan="2">Kết quả đo</th>
-            </tr>
-            <tr>
+                <th>Pha</th>
+                <th>Sơ đồ đo</th>
                 <th>Tgδ (%)</th>
                 <th>C (pF)</th>
             </tr>
@@ -964,35 +962,32 @@ function renderTgTable() {
         <tbody>
     `;
     
-    // Lặp qua từng cuộn
-    for(let i = 1; i <= num; i++) {
-        // Lặp qua 3 pha
-        ['A', 'B', 'C'].forEach(pha => {
-            html += `
-            <tr>
-                <td><b>Cuộn ${i}</b></td>
-                <td><b>${pha}</b></td>
-                <td>
-                    <select id="ti_tg_schema_${i}_${pha}" onchange="calculateAll()" style="font-size:10px;width:100%;">
-                        <option value="UST">UST</option>
-                        <option value="GST" selected>GST</option>
-                    </select>
-                </td>
-                <td>
-                    <input type="number" id="ti_tg_${i}_${pha}" step="0.001" placeholder="Tgδ" oninput="calculateAll()" onkeydown="handleTgTab(event, ${i}, '${pha}', 'tg')" onkeypress="handleEnterToNext(event)" style="width:100%;">
-                </td>
-                <td>
-                    <input type="number" id="ti_c_${i}_${pha}" step="0.01" placeholder="C (pF)" oninput="calculateAll()" onkeydown="handleTgTab(event, ${i}, '${pha}', 'c')" onkeypress="handleEnterToNext(event)" style="width:100%;">
-                </td>
-            </tr>
-            `;
-        });
-    }
+    // Chỉ 3 pha A, B, C - KHÔNG phụ thuộc số cuộn
+    ['A', 'B', 'C'].forEach(pha => {
+        html += `
+        <tr>
+            <td><b>${pha}</b></td>
+            <td>
+                <select id="ti_tg_schema_${pha}" onchange="calculateAll()" style="font-size:10px;width:100%;">
+                    <option value="UST">UST</option>
+                    <option value="GST" selected>GST</option>
+                </select>
+            </td>
+            <td>
+                <input type="number" id="ti_tg_${pha}" step="0.001" placeholder="Tgδ" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'tg')" onkeypress="handleEnterToNext(event)" style="width:100%;">
+            </td>
+            <td>
+                <input type="number" id="ti_c_${pha}" step="0.01" placeholder="C (pF)" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'c')" onkeypress="handleEnterToNext(event)" style="width:100%;">
+            </td>
+        </tr>
+        `;
+    });
     
     html += `</tbody></table>`;
-    document.getElementById('table_tg_container').innerHTML = html;
+    container.innerHTML = html;
 }
 
+	
     function calculateAll() {
         const temp = parseFloat(document.getElementById('ti_temp').value) || 23;
         const i1_dm_str = document.getElementById('ti_udm').value;
