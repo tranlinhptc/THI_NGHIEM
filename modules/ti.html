@@ -1034,8 +1034,8 @@ function renderRatioTable() {
                     <div style="display:flex;flex-direction:column;gap:3px;align-items:center;padding:4px 0;">
                         <b style="font-size:13px;color:#d84315;">Cuộn ${i}</b>
                         <select id="ti_i2_dm_w${i}" onchange="calculateRatio(${i})" style="font-size:10px;width:100%;padding:3px 4px;border-radius:3px;border:1px solid var(--border);">
-                            <option value="1">Thứ cấp 1A</option>
-                            <option value="5" selected>Thứ cấp 5A</option>
+                            <option value="1"selected>Thứ cấp 1A</option>
+                            <option value="5">Thứ cấp 5A</option>
                         </select>
                         <select id="ti_acc_w${i}" onchange="calculateRatio(${i})" style="font-size:10px;width:100%;padding:3px 4px;border-radius:3px;border:1px solid var(--border);">
                             <option value="0.2">Cấp 0.2</option>
@@ -1103,7 +1103,7 @@ function renderRatioTable() {
                             </div>
                         </div>
                         <div class="ratio-info">
-                            <span class="kdo" id="ti_kdo_w${i}_${pha}">TSB: -</span>
+                            <span class="TSB_đo" id="ti_kdo_w${i}_${pha}">TSB: -</span>
                             <span class="err-display empty" id="ti_err_display_w${i}_${pha}">-</span>
                         </div>
                     </div>
@@ -1632,16 +1632,15 @@ function handleRatioTab(event, currentWinding, pha, fieldType) {
             // Cùng pha, chuyển từ I₂ sang Sai số
             nextField = fields[fieldIndex + 1];
         } else {
-            // Đã ở Sai số, chuyển sang pha tiếp theo
-            if (phaIndex < phases.length - 1) {
-                // Sang pha tiếp theo, quay lại I₂
-                nextPha = phases[phaIndex + 1];
-                nextField = 'i2';
+            // Đã ở Sai số, chuyển xuống cuộn tiếp theo cùng pha
+            if (currentWinding < numWindings) {
+                nextWinding = currentWinding + 1;
+                nextField = 'i2'; // Quay lại I₂ của cuộn tiếp theo
             } else {
-                // Đã hết 3 pha, chuyển sang cuộn tiếp theo
-                if (currentWinding < numWindings) {
-                    nextWinding = currentWinding + 1;
-                    nextPha = 'A';
+                // Đã hết cuộn của pha này, chuyển sang pha tiếp theo
+                if (phaIndex < phases.length - 1) {
+                    nextPha = phases[phaIndex + 1];
+                    nextWinding = 1; // Về cuộn 1 của pha mới
                     nextField = 'i2';
                 } else {
                     // Đã hết tất cả -> thoát
@@ -1656,16 +1655,15 @@ function handleRatioTab(event, currentWinding, pha, fieldType) {
             // Cùng pha, chuyển từ Sai số về I₂
             nextField = fields[fieldIndex - 1];
         } else {
-            // Đã ở I₂, chuyển về pha trước
-            if (phaIndex > 0) {
-                // Về pha trước, vào Sai số
-                nextPha = phases[phaIndex - 1];
-                nextField = 'err';
+            // Đã ở I₂, chuyển lên cuộn trước cùng pha
+            if (currentWinding > 1) {
+                nextWinding = currentWinding - 1;
+                nextField = 'err'; // Vào Sai số của cuộn trước
             } else {
-                // Đã ở Pha A I₂, chuyển về cuộn trước
-                if (currentWinding > 1) {
-                    nextWinding = currentWinding - 1;
-                    nextPha = 'C';
+                // Đã ở cuộn 1, chuyển về pha trước
+                if (phaIndex > 0) {
+                    nextPha = phases[phaIndex - 1];
+                    nextWinding = numWindings; // Về cuộn cuối của pha trước
                     nextField = 'err';
                 } else {
                     // Đã ở đầu -> thoát
@@ -1690,7 +1688,6 @@ function handleRatioTab(event, currentWinding, pha, fieldType) {
         nextEl.select();
     }
 }
-
 // 1. ĐIỀU HƯỚNG PHÍM TAB CHO BẢNG RDC (Điện trở 1 chiều)
 // [ĐÃ SỬA] Hàm điều hướng Tab cho bảng RDC - Bổ sung cột 'terminal'
 function handleRdcTab(event, currentWinding, colType) {
