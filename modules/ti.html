@@ -1007,20 +1007,19 @@ function renderRatioTable() {
                 <tr>
                     <th style="min-width:60px;padding:4px 2px;background:#ffebee;border-left:3px solid #ef5350;">
                         <div style="display:flex;flex-direction:column;gap:1px;">
-                            <span style="font-weight:700;">I₂ (mA)</span>
-                            <span style="font-size:9px;color:#666;">Nhập đo</span>
+
                         </div>
                     </th>
                     <th style="min-width:60px;padding:4px 2px;background:#ffebee;">
                         <div style="display:flex;flex-direction:column;gap:1px;">
-                            <span style="font-weight:700;">Sai số (%)</span>
-                            <span style="font-size:9px;color:#666;">Nhập hoặc tự tính</span>
+
+
                         </div>
                     </th>
                     <th style="min-width:50px;padding:4px 2px;background:#ffebee;border-right:3px solid #ef5350;">
                         <div style="display:flex;flex-direction:column;gap:1px;">
-                            <span style="font-weight:700;">TSB</span>
-                            <span style="font-size:9px;color:#666;">Kđo</span>
+
+
                         </div>
                     </th>
                 </tr>
@@ -1045,7 +1044,7 @@ function renderRatioTable() {
                             <option value="10P">Cấp 10P</option>
                         </select>
                         <span style="font-size:10px;color:#1565c0;font-weight:600;background:#e3f2fd;padding:2px 8px;border-radius:3px;width:100%;text-align:center;">
-                            Kđm: <span id="ti_kdm_w${i}">-</span>
+                            Ratio: <span id="ti_kdm_w${i}">-</span>
                         </span>
                     </div>
                 </td>
@@ -1083,7 +1082,7 @@ function renderRatioTable() {
                             <div class="input-row">
                                 <input type="number" step="any" 
                                     id="ti_i2_w${i}_${pha}" 
-                                    placeholder="mA"
+                                    placeholder="I2_đo"
                                     oninput="calculateRatio(${i}, '${pha}')" 
                                     onfocus="this.select()"
                                     onkeydown="handleRatioTab(event, ${i}, '${pha}', 'i2')"
@@ -1094,7 +1093,7 @@ function renderRatioTable() {
                             <div class="input-row">
                                 <input type="number" step="any" 
                                     id="ti_err_w${i}_${pha}" 
-                                    placeholder="%"
+                                    placeholder="Sai số"
                                     oninput="calculateRatioFromError(${i}, '${pha}')" 
                                     onfocus="this.select()"
                                     onkeydown="handleRatioTab(event, ${i}, '${pha}', 'err')"
