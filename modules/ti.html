@@ -95,24 +95,52 @@
             margin-top: 8px;
             font-style: italic;
         }
-		    .ratio-cell {
+    /* ========== CSS CHO BẢNG TỈ SỐ BIẾN ========== */
+    .ratio-cell {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 2px;
-        min-width: 80px;
+        gap: 3px;
+        min-width: 90px;
+        padding: 2px;
     }
-    .ratio-cell input {
+    .ratio-cell .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
         width: 100%;
-        padding: 4px 6px;
+    }
+    .ratio-cell .input-row {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        width: 100%;
+    }
+    .ratio-cell .input-row input {
+        flex: 1;
+        padding: 4px 4px;
         font-size: 11px;
         border: 1px solid var(--border);
         border-radius: 3px;
         text-align: center;
+        min-width: 50px;
+        width: 100%;
     }
-    .ratio-cell input:focus {
+    .ratio-cell .input-row input:focus {
         border-color: var(--primary);
         outline: none;
+        box-shadow: 0 0 0 2px rgba(216, 67, 21, 0.1);
+    }
+    .ratio-cell .input-row .unit {
+        font-size: 9px;
+        color: #666;
+        min-width: 14px;
+        font-weight: 600;
+    }
+    .ratio-cell .input-row .label {
+        font-size: 9px;
+        color: #888;
+        min-width: 12px;
     }
     .ratio-info {
         font-size: 9px;
@@ -127,82 +155,71 @@
     .ratio-info .kdo {
         color: #1565c0;
         font-weight: 600;
+        font-size: 10px;
     }
-    .ratio-info .err {
+    .ratio-info .err-display {
         font-weight: 600;
-        padding: 1px 4px;
+        padding: 1px 6px;
         border-radius: 3px;
-        background: #f5f5f5;
+        font-size: 10px;
         width: 100%;
         text-align: center;
     }
-    .ratio-info .err.pass {
+    .ratio-info .err-display.pass {
         color: #2e7d32;
         background: #e8f5e9;
     }
-    .ratio-info .err.fail {
+    .ratio-info .err-display.fail {
         color: #c62828;
         background: #ffebee;
     }
-    .ratio-input-group {
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-        width: 100%;
-    }
-    .ratio-input-group .input-row {
-        display: flex;
-        gap: 4px;
-        align-items: center;
-        width: 100%;
-    }
-    .ratio-input-group .input-row input {
-        flex: 1;
-        min-width: 60px;
-        padding: 4px 6px;
-        font-size: 11px;
-        border: 1px solid var(--border);
-        border-radius: 3px;
-        text-align: center;
-    }
-    .ratio-input-group .input-row input:focus {
-        border-color: var(--primary);
-        outline: none;
-    }
-    .ratio-input-group .input-row .label {
-        font-size: 9px;
-        color: #666;
-        min-width: 12px;
-    }
-    .ratio-toggle {
-        font-size: 10px;
-        color: #0288d1;
-        cursor: pointer;
-        text-decoration: underline;
-        background: none;
-        border: none;
-        padding: 2px 4px;
-    }
-    .ratio-toggle:hover {
-        color: #d84315;
+    .ratio-info .err-display.empty {
+        color: #999;
+        background: #f5f5f5;
     }
     
-    /* Responsive cho mobile */
-    @media (max-width: 600px) {
+    /* Responsive mobile */
+    @media (max-width: 768px) {
+        .ratio-cell {
+            min-width: 70px;
+            padding: 1px;
+        }
+        .ratio-cell .input-row input {
+            font-size: 10px;
+            padding: 3px 3px;
+            min-width: 40px;
+        }
+        .ratio-cell .input-row .unit {
+            font-size: 8px;
+            min-width: 12px;
+        }
+        .ratio-info .kdo {
+            font-size: 9px;
+        }
+        .ratio-info .err-display {
+            font-size: 9px;
+            padding: 1px 4px;
+        }
+        table {
+            font-size: 10px;
+        }
+        th, td {
+            padding: 3px 2px;
+        }
+    }
+    
+    @media (max-width: 480px) {
         .ratio-cell {
             min-width: 60px;
         }
-        .ratio-cell input {
-            font-size: 10px;
-            padding: 3px 4px;
+        .ratio-cell .input-row input {
+            font-size: 9px;
+            padding: 2px 2px;
+            min-width: 30px;
         }
-        .ratio-input-group .input-row input {
-            font-size: 10px;
-            padding: 3px 4px;
-            min-width: 40px;
-        }
-        .ratio-info {
-            font-size: 8px;
+        .ratio-cell .input-row .unit {
+            font-size: 7px;
+            min-width: 10px;
         }
     }
     </style>
@@ -971,7 +988,6 @@ function renderRcdTable() {
 }
 
 // ==================== BẢNG TỈ SỐ BIẾN CẢI TIẾN ====================
-
 function renderRatioTable() {
     const num = parseInt(document.getElementById('ti_num_windings')?.value) || 4;
     const tsBienStr = document.getElementById('ti_tsbien')?.value || "400:1";
@@ -981,21 +997,21 @@ function renderRatioTable() {
         <table>
             <thead>
                 <tr>
-                    <th rowspan="2" style="min-width:100px;">Cuộn / Pha</th>
-                    <th colspan="3" style="background: #e3f2fd;">Pha A</th>
-                    <th colspan="3" style="background: #e3f2fd;">Pha B</th>
-                    <th colspan="3" style="background: #e3f2fd;">Pha C</th>
+                    <th rowspan="2" style="min-width:90px;vertical-align:middle;">Cuộn / Pha</th>
+                    <th colspan="3" style="background:#e3f2fd;min-width:160px;">Pha A</th>
+                    <th colspan="3" style="background:#e3f2fd;min-width:160px;">Pha B</th>
+                    <th colspan="3" style="background:#e3f2fd;min-width:160px;">Pha C</th>
                 </tr>
                 <tr>
-                    <th style="min-width:80px;">I₂ đo (A)</th>
-                    <th style="min-width:80px;">Sai số (%)</th>
-                    <th style="min-width:60px;">Kđo</th>
-                    <th style="min-width:80px;">I₂ đo (A)</th>
-                    <th style="min-width:80px;">Sai số (%)</th>
-                    <th style="min-width:60px;">Kđo</th>
-                    <th style="min-width:80px;">I₂ đo (A)</th>
-                    <th style="min-width:80px;">Sai số (%)</th>
-                    <th style="min-width:60px;">Kđo</th>
+                    <th style="min-width:70px;">I₂ đo</th>
+                    <th style="min-width:70px;">Sai số</th>
+                    <th style="min-width:50px;">Kđo</th>
+                    <th style="min-width:70px;">I₂ đo</th>
+                    <th style="min-width:70px;">Sai số</th>
+                    <th style="min-width:50px;">Kđo</th>
+                    <th style="min-width:70px;">I₂ đo</th>
+                    <th style="min-width:70px;">Sai số</th>
+                    <th style="min-width:50px;">Kđo</th>
                 </tr>
             </thead>
             <tbody>
@@ -1004,19 +1020,21 @@ function renderRatioTable() {
     for (let i = 1; i <= num; i++) {
         html += `
             <tr>
-                <td style="min-width:90px;">
-                    <b>Cuộn ${i}</b>
-                    <select id="ti_i2_dm_w${i}" onchange="calculateRatio(${i})" style="font-size:10px;margin-top:3px;width:100%;">
-                        <option value="1">Thứ cấp 1A</option>
-                        <option value="5" selected>Thứ cấp 5A</option>
-                    </select>
-                    <select id="ti_acc_w${i}" onchange="calculateRatio(${i})" style="font-size:10px;margin-top:2px;width:100%;">
-                        <option value="0.2">Đo lường 0.2</option>
-                        <option value="0.5" selected>Đo lường 0.5</option>
-                        <option value="5P">Bảo vệ 5P</option>
-                        <option value="10P">Bảo vệ 10P</option>
-                    </select>
-                    <span style="font-size:9px;color:#1565c0;display:block;margin-top:2px;">Kđm: <span id="ti_kdm_w${i}">-</span></span>
+                <td style="min-width:90px;vertical-align:middle;">
+                    <div style="display:flex;flex-direction:column;gap:2px;align-items:center;">
+                        <b style="font-size:12px;">Cuộn ${i}</b>
+                        <select id="ti_i2_dm_w${i}" onchange="calculateRatio(${i})" style="font-size:10px;width:100%;padding:2px 4px;">
+                            <option value="1">1A</option>
+                            <option value="5" selected>5A</option>
+                        </select>
+                        <select id="ti_acc_w${i}" onchange="calculateRatio(${i})" style="font-size:10px;width:100%;padding:2px 4px;">
+                            <option value="0.2">0.2</option>
+                            <option value="0.5" selected>0.5</option>
+                            <option value="5P">5P</option>
+                            <option value="10P">10P</option>
+                        </select>
+                        <span style="font-size:9px;color:#1565c0;font-weight:600;">Kđm: <span id="ti_kdm_w${i}">-</span></span>
+                    </div>
                 </td>
         `;
 
@@ -1024,29 +1042,31 @@ function renderRatioTable() {
             html += `
                 <td>
                     <div class="ratio-cell">
-                        <div class="ratio-input-group">
+                        <div class="input-group">
                             <div class="input-row">
                                 <input type="number" step="any" 
                                     id="ti_i2_w${i}_${pha}" 
-                                    placeholder="I₂ đo"
+                                    placeholder="mA"
                                     oninput="calculateRatio(${i}, '${pha}')" 
                                     onfocus="this.select()"
                                     style="font-size:12px;"
                                 >
+                                <span class="unit">mA</span>
                             </div>
                             <div class="input-row">
                                 <input type="number" step="any" 
                                     id="ti_err_w${i}_${pha}" 
-                                    placeholder="Sai số %"
+                                    placeholder="%"
                                     oninput="calculateRatioFromError(${i}, '${pha}')" 
                                     onfocus="this.select()"
                                     style="font-size:12px;"
                                 >
-                                <span style="font-size:9px;color:#666;">%</span>
+                                <span class="unit">%</span>
                             </div>
                         </div>
                         <div class="ratio-info">
                             <span class="kdo" id="ti_kdo_w${i}_${pha}">Kđo: -</span>
+                            <span class="err-display empty" id="ti_err_display_w${i}_${pha}">-</span>
                         </div>
                     </div>
                 </td>
@@ -1059,14 +1079,15 @@ function renderRatioTable() {
     html += `</tbody></table>`;
     document.getElementById('table_ratio_container').innerHTML = html;
     
-    // Sau khi render, tính toán lại
+    // Tính toán lại sau khi render
     setTimeout(() => {
         for (let i = 1; i <= num; i++) {
             calculateRatio(i);
         }
     }, 100);
 }
-	// ==================== TÍNH TOÁN TỈ SỐ BIẾN ====================
+
+// ==================== TÍNH TOÁN TỈ SỐ BIẾN ====================
 
 function calculateRatio(winding, pha) {
     const i1_tn = parseFloat(document.getElementById('ti_i1_tn')?.value) || 10;
@@ -1090,9 +1111,12 @@ function calculateRatio(winding, pha) {
         const i2El = document.getElementById(`ti_i2_w${winding}_${pha}`);
         const errEl = document.getElementById(`ti_err_w${winding}_${pha}`);
         const kdoEl = document.getElementById(`ti_kdo_w${winding}_${pha}`);
+        const errDisplayEl = document.getElementById(`ti_err_display_w${winding}_${pha}`);
         
-        if (i2El && errEl && kdoEl) {
-            const i2_do = parseFloat(i2El.value);
+        if (i2El && errEl && kdoEl && errDisplayEl) {
+            // Lấy giá trị I₂ đo (mA) và chuyển sang A
+            const i2_mA = parseFloat(i2El.value);
+            const i2_do = !isNaN(i2_mA) && i2_mA > 0 ? i2_mA / 1000 : NaN;
             
             if (!isNaN(i2_do) && i2_do > 0) {
                 // Tính Kđo và sai số từ I₂ đo
@@ -1102,20 +1126,26 @@ function calculateRatio(winding, pha) {
                 // Hiển thị Kđo
                 kdoEl.textContent = `Kđo: ${K_do.toFixed(2)}`;
                 
-                // Hiển thị sai số
+                // Hiển thị sai số vào ô input
                 errEl.value = error.toFixed(3);
                 
-                // Đánh giá kết quả
+                // Hiển thị đánh giá
                 const isPass = Math.abs(error) <= accLimit;
+                errDisplayEl.textContent = isPass ? '✔ ĐẠT' : '✘ KHÔNG ĐẠT';
+                errDisplayEl.className = `err-display ${isPass ? 'pass' : 'fail'}`;
+                
+                // Đổi màu ô input sai số
                 errEl.style.color = isPass ? '#2e7d32' : '#c62828';
                 errEl.style.fontWeight = 'bold';
                 
             } else {
-                // Nếu không có giá trị I₂, xóa sai số
+                // Nếu không có giá trị I₂, reset
                 errEl.value = '';
                 errEl.style.color = '';
                 errEl.style.fontWeight = '';
                 kdoEl.textContent = 'Kđo: -';
+                errDisplayEl.textContent = '-';
+                errDisplayEl.className = 'err-display empty';
             }
         }
     } else {
@@ -1133,50 +1163,57 @@ function calculateRatioFromError(winding, pha) {
     const tsBienStr = document.getElementById('ti_tsbien')?.value || "400:1";
     const i1_dm = parseFloat(tsBienStr.split(':')[0]) || 400;
     const i2_dm = parseFloat(document.getElementById(`ti_i2_dm_w${winding}`)?.value) || 5;
+    const accStr = document.getElementById(`ti_acc_w${winding}`)?.value || "0.5";
+    
+    // Xác định sai số cho phép
+    let accLimit = parseFloat(accStr) || 0.5;
+    if (accStr === "5P") accLimit = 5.0;
+    else if (accStr === "10P") accLimit = 10.0;
     
     const errEl = document.getElementById(`ti_err_w${winding}_${pha}`);
     const i2El = document.getElementById(`ti_i2_w${winding}_${pha}`);
     const kdoEl = document.getElementById(`ti_kdo_w${winding}_${pha}`);
+    const errDisplayEl = document.getElementById(`ti_err_display_w${winding}_${pha}`);
     
-    if (errEl && i2El && kdoEl) {
+    if (errEl && i2El && kdoEl && errDisplayEl) {
         const error = parseFloat(errEl.value);
         
         if (!isNaN(error)) {
             // Tính Kđm
             const K_dm = i1_dm / i2_dm;
             
-            // Từ sai số tính ra I₂ đo
+            // Từ sai số tính ra I₂ đo (A)
             // error = ((K_dm * I2) - I1) / I1 * 100
             // => I2 = I1 * (1 + error/100) / K_dm
             const i2_do = i1_tn * (1 + error / 100) / K_dm;
             
-            // Hiển thị I₂ đo
-            i2El.value = i2_do.toFixed(6);
+            // Chuyển sang mA và hiển thị
+            const i2_mA = i2_do * 1000;
+            i2El.value = i2_mA.toFixed(3);
             
             // Tính Kđo
             const K_do = i1_tn / i2_do;
             kdoEl.textContent = `Kđo: ${K_do.toFixed(2)}`;
             
             // Đánh giá kết quả
-            const accStr = document.getElementById(`ti_acc_w${winding}`)?.value || "0.5";
-            let accLimit = parseFloat(accStr) || 0.5;
-            if (accStr === "5P") accLimit = 5.0;
-            else if (accStr === "10P") accLimit = 10.0;
-            
             const isPass = Math.abs(error) <= accLimit;
+            errDisplayEl.textContent = isPass ? '✔ ĐẠT' : '✘ KHÔNG ĐẠT';
+            errDisplayEl.className = `err-display ${isPass ? 'pass' : 'fail'}`;
+            
             errEl.style.color = isPass ? '#2e7d32' : '#c62828';
             errEl.style.fontWeight = 'bold';
             
         } else {
-            // Nếu xóa sai số, xóa cả I₂
+            // Nếu xóa sai số, reset
             i2El.value = '';
             kdoEl.textContent = 'Kđo: -';
+            errDisplayEl.textContent = '-';
+            errDisplayEl.className = 'err-display empty';
             errEl.style.color = '';
             errEl.style.fontWeight = '';
         }
     }
 }
-
 
     // [ĐÃ SỬA] Bảng Tgδ - Đơn giản mỗi pha 1 giá trị Tgδ và C
 // [ĐÃ SỬA] Bảng Tgδ - KHÔNG phụ thuộc số cuộn, chỉ 3 pha A,B,C
@@ -1292,14 +1329,10 @@ for(let i=1; i<=num; i++) {
 // ==========================================================
 // TÍNH TỈ SỐ BIẾN - CHẠY ĐỘNG 2 → 8 CUỘN
 // ==========================================================
-// TÍNH TỈ SỐ BIẾN - SỬ DỤNG HÀM MỚI
-// ==========================================================
-const numW = parseInt(document.getElementById('ti_num_windings')?.value) || 4;
-for (let i = 1; i <= numW; i++) {
-    // Tính cho cả 3 pha A, B, C
-    ['A', 'B', 'C'].forEach(pha => {
-        calculateRatio(i, pha);
-    });
+// ===== TÍNH TỈ SỐ BIẾN =====
+const numWindings = parseInt(document.getElementById('ti_num_windings')?.value) || 4;
+for (let i = 1; i <= numWindings; i++) {
+    calculateRatio(i);
 }
 // Xác định giới hạn Tgδ theo vật liệu và chế độ
 // PHẦN TÍNH Tgδ - KHÔNG dùng num, chỉ 3 pha A,B,C
