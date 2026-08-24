@@ -1156,11 +1156,11 @@ function calculateRatio(winding, pha) {
             const i2_do = !isNaN(i2_mA) && i2_mA > 0 ? i2_mA / 1000 : NaN;
             
             if (!isNaN(i2_do) && i2_do > 0) {
-                // Tính Kđo và sai số từ I₂ đo
+                // Tính TSB_đo và sai số từ I₂ đo
                 const K_do = i1_tn / i2_do;
                 const error = ((K_dm * i2_do) - i1_tn) / i1_tn * 100;
                 
-                // Hiển thị Kđo
+                // Hiển thị TSB_đo
                 kdoEl.textContent = `TSB_đo: ${K_do.toFixed(2)}`;
                 
                 // Hiển thị sai số vào ô input
@@ -1180,7 +1180,7 @@ function calculateRatio(winding, pha) {
                 errEl.value = '';
                 errEl.style.color = '';
                 errEl.style.fontWeight = '';
-                kdoEl.textContent = 'Kđo: -';
+                kdoEl.textContent = 'TSB_đo: -';
                 errDisplayEl.textContent = '-';
                 errDisplayEl.className = 'err-display empty';
             }
@@ -1228,9 +1228,9 @@ function calculateRatioFromError(winding, pha) {
             const i2_mA = i2_do * 1000;
             i2El.value = i2_mA.toFixed(3);
             
-            // Tính Kđo
+            // Tính TSB_đo
             const K_do = i1_tn / i2_do;
-            kdoEl.textContent = `Kđo: ${K_do.toFixed(2)}`;
+            kdoEl.textContent = `TSB_đo: ${K_do.toFixed(2)}`;
             
             // Đánh giá kết quả
             const isPass = Math.abs(error) <= accLimit;
@@ -1243,7 +1243,7 @@ function calculateRatioFromError(winding, pha) {
         } else {
             // Nếu xóa sai số, reset
             i2El.value = '';
-            kdoEl.textContent = 'Kđo: -';
+            kdoEl.textContent = 'TSB_đo: -';
             errDisplayEl.textContent = '-';
             errDisplayEl.className = 'err-display empty';
             errEl.style.color = '';
