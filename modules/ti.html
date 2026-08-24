@@ -990,15 +990,13 @@ function renderRcdTable() {
 // ==================== BẢNG TỈ SỐ BIẾN CẢI TIẾN ====================
 function renderRatioTable() {
     const num = parseInt(document.getElementById('ti_num_windings')?.value) || 4;
-    const tsBienStr = document.getElementById('ti_tsbien')?.value || "400:1";
-    const i1_dm = parseFloat(tsBienStr.split(':')[0]) || 400;
 
     let html = `
         <table>
             <thead>
                 <tr>
                     <th rowspan="2" style="min-width:90px;vertical-align:middle;">Cuộn /<br>Thông số</th>
-                    <th colspan="3" style="background:#e3f2fd;min-width:180px;padding:6px 4px;">
+                    <th colspan="3" style="background:#ffebee;min-width:180px;padding:6px 4px;border-left:3px solid #ef5350;">
                         <div style="display:flex;justify-content:space-between;align-items:center;gap:4px;">
                             <span style="flex:1;text-align:center;font-size:12px;color:#d84315;font-weight:700;">🔴 Pha A</span>
                             <span style="flex:1;text-align:center;font-size:12px;color:#2e7d32;font-weight:700;">🟢 Pha B</span>
@@ -1007,19 +1005,19 @@ function renderRatioTable() {
                     </th>
                 </tr>
                 <tr>
-                    <th style="min-width:60px;padding:4px 2px;">
+                    <th style="min-width:60px;padding:4px 2px;background:#ffebee;border-left:3px solid #ef5350;">
                         <div style="display:flex;flex-direction:column;gap:1px;">
                             <span style="font-weight:700;">I₂ (mA)</span>
                             <span style="font-size:9px;color:#666;">Nhập đo</span>
                         </div>
                     </th>
-                    <th style="min-width:60px;padding:4px 2px;">
+                    <th style="min-width:60px;padding:4px 2px;background:#ffebee;">
                         <div style="display:flex;flex-direction:column;gap:1px;">
                             <span style="font-weight:700;">Sai số (%)</span>
                             <span style="font-size:9px;color:#666;">Nhập hoặc tự tính</span>
                         </div>
                     </th>
-                    <th style="min-width:50px;padding:4px 2px;">
+                    <th style="min-width:50px;padding:4px 2px;background:#ffebee;border-right:3px solid #ef5350;">
                         <div style="display:flex;flex-direction:column;gap:1px;">
                             <span style="font-weight:700;">TSB</span>
                             <span style="font-size:9px;color:#666;">Kđo</span>
@@ -1055,15 +1053,31 @@ function renderRatioTable() {
 
         // Tạo 3 cột cho 3 pha A, B, C
         ['A', 'B', 'C'].forEach(pha => {
-            // Màu nền khác nhau cho từng pha
             let bgColor = '';
             let borderColor = '';
-            if (pha === 'A') { bgColor = '#ffebee'; borderColor = '#ef5350'; }
-            else if (pha === 'B') { bgColor = '#e8f5e9'; borderColor = '#66bb6a'; }
-            else if (pha === 'C') { bgColor = '#e3f2fd'; borderColor = '#42a5f5'; }
+            let borderLeft = '';
+            let borderRight = '';
+            if (pha === 'A') { 
+                bgColor = '#ffebee'; 
+                borderColor = '#ef5350';
+                borderLeft = '3px solid #ef5350';
+                borderRight = '1px solid #ef5350';
+            }
+            else if (pha === 'B') { 
+                bgColor = '#e8f5e9'; 
+                borderColor = '#66bb6a';
+                borderLeft = '1px solid #66bb6a';
+                borderRight = '1px solid #66bb6a';
+            }
+            else if (pha === 'C') { 
+                bgColor = '#e3f2fd'; 
+                borderColor = '#42a5f5';
+                borderLeft = '1px solid #42a5f5';
+                borderRight = '3px solid #42a5f5';
+            }
             
             html += `
-                <td style="background:${bgColor};border-left:2px solid ${borderColor};padding:4px 2px;">
+                <td style="background:${bgColor};border-left:${borderLeft};border-right:${borderRight};padding:4px 2px;">
                     <div class="ratio-cell">
                         <div class="input-group">
                             <div class="input-row">
@@ -1072,7 +1086,8 @@ function renderRatioTable() {
                                     placeholder="mA"
                                     oninput="calculateRatio(${i}, '${pha}')" 
                                     onfocus="this.select()"
-                                    style="font-size:12px;background:#fff;"
+                                    onkeydown="handleRatioTab(event, ${i}, '${pha}', 'i2')"
+                                    style="font-size:12px;background:#fff;width:100%;"
                                 >
                                 <span class="unit">mA</span>
                             </div>
@@ -1082,7 +1097,8 @@ function renderRatioTable() {
                                     placeholder="%"
                                     oninput="calculateRatioFromError(${i}, '${pha}')" 
                                     onfocus="this.select()"
-                                    style="font-size:12px;background:#fff;"
+                                    onkeydown="handleRatioTab(event, ${i}, '${pha}', 'err')"
+                                    style="font-size:12px;background:#fff;width:100%;"
                                 >
                                 <span class="unit">%</span>
                             </div>
@@ -1109,7 +1125,6 @@ function renderRatioTable() {
         }
     }, 100);
 }
-
 // ==================== TÍNH TOÁN TỈ SỐ BIẾN ====================
 
 function calculateRatio(winding, pha) {
@@ -1595,40 +1610,85 @@ function getVal(id) {
 }
 // HÀM ĐIỀU HƯỚNG PHÍM TAB THEO CỘT DỌC (DÀNH RIÊNG CHO BẢNG TỈ SỐ BIẾN)
 
-function handleRatioTab(event, currentWinding, pha) {
-    // [BỔ SUNG] Thêm xử lý Enter
-    if (event.key === 'Tab' || event.key === 'Enter') {
-        const select = document.getElementById('ti_num_windings');
-        const numWindings = parseInt(select?.value) || 4;
-        
-        let nextWinding = currentWinding;
-        let nextPha = pha;
+// ==================== ĐIỀU HƯỚNG TAB CHO BẢNG TỈ SỐ BIẾN MỚI ====================
 
-        if (event.key === 'Enter' || !event.shiftKey) {
-            if (currentWinding < numWindings) {
-                nextWinding++;
-            } else {
-                if (pha === 'A') { nextPha = 'B'; nextWinding = 1; }
-                else if (pha === 'B') { nextPha = 'C'; nextWinding = 1; }
-                else { return; }
-            }
+function handleRatioTab(event, currentWinding, pha, fieldType) {
+    // fieldType: 'i2' cho ô I₂, 'err' cho ô Sai số
+    if (event.key !== 'Tab' && event.key !== 'Enter') return;
+    event.preventDefault();
+    
+    const numWindings = parseInt(document.getElementById('ti_num_windings')?.value) || 4;
+    const phases = ['A', 'B', 'C'];
+    const fields = ['i2', 'err']; // Thứ tự: I₂ → Sai số
+    
+    let phaIndex = phases.indexOf(pha);
+    let fieldIndex = fields.indexOf(fieldType);
+    let nextWinding = currentWinding;
+    let nextPha = pha;
+    let nextField = fieldType;
+
+    if (!event.shiftKey) {
+        // Bấm Tab/Next: đi tới
+        if (fieldIndex < fields.length - 1) {
+            // Cùng pha, chuyển từ I₂ sang Sai số
+            nextField = fields[fieldIndex + 1];
         } else {
-            if (currentWinding > 1) {
-                nextWinding--;
+            // Đã ở Sai số, chuyển sang pha tiếp theo
+            if (phaIndex < phases.length - 1) {
+                // Sang pha tiếp theo, quay lại I₂
+                nextPha = phases[phaIndex + 1];
+                nextField = 'i2';
             } else {
-                if (pha === 'C') { nextPha = 'B'; nextWinding = numWindings; }
-                else if (pha === 'B') { nextPha = 'A'; nextWinding = numWindings; }
-                else { return; }
+                // Đã hết 3 pha, chuyển sang cuộn tiếp theo
+                if (currentWinding < numWindings) {
+                    nextWinding = currentWinding + 1;
+                    nextPha = 'A';
+                    nextField = 'i2';
+                } else {
+                    // Đã hết tất cả -> thoát
+                    event.target.blur();
+                    return;
+                }
             }
         }
-
-        const nextId = `ti_i2_w${nextWinding}_${nextPha}`;
-        const nextEl = document.getElementById(nextId);
-        if (nextEl) {
-            event.preventDefault();
-            nextEl.focus();
-            nextEl.select(); // [BỔ SUNG] Bôi đen toàn bộ
+    } else {
+        // Bấm Shift+Tab: đi lùi
+        if (fieldIndex > 0) {
+            // Cùng pha, chuyển từ Sai số về I₂
+            nextField = fields[fieldIndex - 1];
+        } else {
+            // Đã ở I₂, chuyển về pha trước
+            if (phaIndex > 0) {
+                // Về pha trước, vào Sai số
+                nextPha = phases[phaIndex - 1];
+                nextField = 'err';
+            } else {
+                // Đã ở Pha A I₂, chuyển về cuộn trước
+                if (currentWinding > 1) {
+                    nextWinding = currentWinding - 1;
+                    nextPha = 'C';
+                    nextField = 'err';
+                } else {
+                    // Đã ở đầu -> thoát
+                    event.target.blur();
+                    return;
+                }
+            }
         }
+    }
+
+    // Tạo ID của ô tiếp theo
+    let nextId = '';
+    if (nextField === 'i2') {
+        nextId = `ti_i2_w${nextWinding}_${nextPha}`;
+    } else {
+        nextId = `ti_err_w${nextWinding}_${nextPha}`;
+    }
+    
+    const nextEl = document.getElementById(nextId);
+    if (nextEl) {
+        nextEl.focus();
+        nextEl.select();
     }
 }
 
