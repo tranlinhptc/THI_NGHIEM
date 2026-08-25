@@ -1168,6 +1168,9 @@ function renderRcdTable() {
 // ============================================================
 // PHẦN 5: renderRatioTable - Bỏ err-display, chỉ dùng màu
 // ============================================================
+// ============================================================
+// PHẦN 5: renderRatioTable - Hỗ trợ nhập 2 chiều
+// ============================================================
 function renderRatioTable() {
     const num = parseInt(document.getElementById('ti_num_windings')?.value) || 4;
 
@@ -1186,13 +1189,22 @@ function renderRatioTable() {
                 </tr>
                 <tr>
                     <th style="min-width:60px;padding:4px 2px;background:#fff9c4;border-left:3px solid #fbc02d;">
-
+                        <div style="display:flex;flex-direction:column;gap:1px;">
+                            <span style="font-weight:700;">I₂ (mA)</span>
+                            <span style="font-size:9px;color:#666;">Nhập đo</span>
+                        </div>
                     </th>
                     <th style="min-width:60px;padding:4px 2px;background:#fff9c4;">
-
+                        <div style="display:flex;flex-direction:column;gap:1px;">
+                            <span style="font-weight:700;">Sai số (%)</span>
+                            <span style="font-size:9px;color:#666;">Nhập hoặc tự tính</span>
+                        </div>
                     </th>
                     <th style="min-width:50px;padding:4px 2px;background:#fff9c4;border-right:3px solid #fbc02d;">
-
+                        <div style="display:flex;flex-direction:column;gap:1px;">
+                            <span style="font-weight:700;">TSB</span>
+                            <span style="font-size:9px;color:#666;">Kđo</span>
+                        </div>
                     </th>
                 </tr>
             </thead>
@@ -1224,29 +1236,33 @@ function renderRatioTable() {
 
         ['A', 'B', 'C'].forEach(pha => {
             let bgColor = '', borderLeft = '', borderRight = '';
+            let phaseClass = '';
             if (pha === 'A') {
                 bgColor = '#fff9c4';
                 borderLeft = '3px solid #fbc02d';
                 borderRight = '1px solid #fbc02d';
+                phaseClass = 'phase-a';
             } else if (pha === 'B') {
                 bgColor = '#ffebee';
                 borderLeft = '1px solid #ef5350';
                 borderRight = '1px solid #ef5350';
+                phaseClass = 'phase-b';
             } else if (pha === 'C') {
                 bgColor = '#e3f2fd';
                 borderLeft = '1px solid #42a5f5';
                 borderRight = '3px solid #42a5f5';
+                phaseClass = 'phase-c';
             }
             
             html += `
                 <td style="background:${bgColor};border-left:${borderLeft};border-right:${borderRight};padding:4px 2px;">
                     <div class="ratio-cell">
                         <div class="input-group">
+                            <!-- [SỬA] Ô I₂ - có thể nhập -->
                             <div class="input-row">
-                                <!-- [SỬA] Thêm class phase-a/b/c -->
                                 <input type="number" step="any" 
                                     id="ti_i2_w${i}_${pha}" 
-                                    class="${pha === 'A' ? 'phase-a' : pha === 'B' ? 'phase-b' : 'phase-c'}"
+                                    class="${phaseClass}"
                                     placeholder="I2_đo"
                                     oninput="handleNewInput(event); calculateRatio(${i}, '${pha}')" 
                                     onfocus="this.select()"
@@ -1255,11 +1271,13 @@ function renderRatioTable() {
                                 >
                                 <span class="unit">mA</span>
                             </div>
-   <div class="input-row">
+                            <!-- [SỬA] Ô Sai số - có thể nhập để tính ngược I₂ -->
+                            <div class="input-row">
                                 <input type="number" step="any" 
                                     id="ti_err_w${i}_${pha}" 
+                                    class="${phaseClass}"
                                     placeholder="Sai số"
-                                    oninput="calculateRatioFromError(${i}; calculateRatio(${i}, '${pha}')" 
+                                    oninput="handleNewInput(event); calculateRatioFromError(${i}, '${pha}')" 
                                     onfocus="this.select()"
                                     onkeydown="handleRatioTab(event, ${i}, '${pha}', 'err')"
                                     style="font-size:12px;background:#fff;width:100%;"
