@@ -1255,17 +1255,14 @@ function renderRatioTable() {
                                 >
                                 <span class="unit">mA</span>
                             </div>
-                            <div class="input-row">
-                                <!-- [SỬA] Ô sai số - readonly, chỉ hiển thị -->
+   <div class="input-row">
                                 <input type="number" step="any" 
                                     id="ti_err_w${i}_${pha}" 
                                     placeholder="Sai số"
-                                   <!-- readonly-->
-									oninput="handleNewInput(event); calculateRatio(${i}, '${pha}')" 
+                                    oninput="calculateRatioFromError(${i}, '${pha}')" 
                                     onfocus="this.select()"
-                                    onkeydown="handleRatioTab(event, ${i}, '${pha}', 'i2')"
-									
-                                    style="font-size:12px;background:#f5f5f5;width:100%;cursor:default;"
+                                    onkeydown="handleRatioTab(event, ${i}, '${pha}', 'err')"
+                                    style="font-size:12px;background:#fff;width:100%;"
                                 >
                                 <span class="unit">%</span>
                             </div>
