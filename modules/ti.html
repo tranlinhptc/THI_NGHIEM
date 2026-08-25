@@ -1308,7 +1308,9 @@ function renderRatioTable() {
 // ==================== TÍNH TOÁN TỈ SỐ BIẾN ====================
 
 // ============================================================
-// PHẦN 8: calculateRatio - Đánh giá qua màu sắc
+// PHẦN 8: calculateRatio - Đánh giá qua màu sắc I2 ra sai số
+// ============================================================
+// PHẦN 8A: calculateRatio - Từ I₂ đo → Sai số
 // ============================================================
 function calculateRatio(winding, pha) {
     const i1_tn = parseFloat(document.getElementById('ti_i1_tn')?.value) || 10;
@@ -1331,9 +1333,11 @@ function calculateRatio(winding, pha) {
         const kdoEl = document.getElementById(`ti_kdo_w${winding}_${pha}`);
 
         if (i2El && errEl && kdoEl) {
+            // [SỬA] Lấy giá trị I₂ đo (mA) và chuyển sang A
             const i2_mA = parseFloat(i2El.value);
             const i2_do = !isNaN(i2_mA) && i2_mA > 0 ? i2_mA / 1000 : NaN;
 
+            // [SỬA] Chỉ tính nếu có I₂ hợp lệ
             if (!isNaN(i2_do) && i2_do > 0) {
                 const K_do = i1_tn / i2_do;
                 const error = ((K_dm * i2_do) - i1_tn) / i1_tn * 100;
@@ -1341,16 +1345,21 @@ function calculateRatio(winding, pha) {
                 kdoEl.textContent = `TSB_đo: ${K_do.toFixed(2)}`;
                 errEl.value = error.toFixed(3);
 
-                // [SỬA] Đánh giá qua màu sắc
+                // Đánh giá qua màu sắc
                 const isPass = Math.abs(error) <= accLimit;
                 errEl.style.color = isPass ? '#1565c0' : '#c62828';
                 errEl.style.fontWeight = 'bold';
+                errEl.style.background = '#fff';
 
             } else {
-                errEl.value = '';
-                errEl.style.color = '';
-                errEl.style.fontWeight = '';
-                kdoEl.textContent = 'TSB_đo: -';
+                // [SỬA] Nếu không có I₂, không xóa err (để giữ nếu người dùng nhập thủ công)
+                // Chỉ xóa nếu err đang trống
+                if (!errEl.value || errEl.value === '') {
+                    kdoEl.textContent = 'TSB_đo: -';
+                    errEl.style.color = '';
+                    errEl.style.fontWeight = '';
+                    errEl.style.background = '#fff';
+                }
             }
         }
     } else {
@@ -1359,30 +1368,33 @@ function calculateRatio(winding, pha) {
         });
     }
 }
+
+
 // ==================== TÍNH TỪ SAI SỐ → I₂ ĐO ====================
 
+// ============================================================
+// PHẦN 8B: calculateRatioFromError - Từ Sai số → I₂
+// ============================================================
 function calculateRatioFromError(winding, pha) {
     const i1_tn = parseFloat(document.getElementById('ti_i1_tn')?.value) || 10;
     const tsBienStr = document.getElementById('ti_tsbien')?.value || "400:1";
     const i1_dm = parseFloat(tsBienStr.split(':')[0]) || 400;
     const i2_dm = parseFloat(document.getElementById(`ti_i2_dm_w${winding}`)?.value) || 5;
     const accStr = document.getElementById(`ti_acc_w${winding}`)?.value || "0.5";
-    
-    // Xác định sai số cho phép
+
     let accLimit = parseFloat(accStr) || 0.5;
     if (accStr === "5P") accLimit = 5.0;
     else if (accStr === "10P") accLimit = 10.0;
-    
+
     const errEl = document.getElementById(`ti_err_w${winding}_${pha}`);
     const i2El = document.getElementById(`ti_i2_w${winding}_${pha}`);
     const kdoEl = document.getElementById(`ti_kdo_w${winding}_${pha}`);
-    const errDisplayEl = document.getElementById(`ti_err_display_w${winding}_${pha}`);
-    
-    if (errEl && i2El && kdoEl && errDisplayEl) {
+
+    if (errEl && i2El && kdoEl) {
         const error = parseFloat(errEl.value);
-        
+
+        // [SỬA] Nếu có sai số hợp lệ → tính I₂
         if (!isNaN(error)) {
-            // Tính Kđm
             const K_dm = i1_dm / i2_dm;
             
             // Từ sai số tính ra I₂ đo (A)
@@ -1398,29 +1410,23 @@ function calculateRatioFromError(winding, pha) {
             const K_do = i1_tn / i2_do;
             kdoEl.textContent = `TSB_đo: ${K_do.toFixed(2)}`;
             
-            // Đánh giá kết quả
+            // Đánh giá qua màu sắc
             const isPass = Math.abs(error) <= accLimit;
-            errDisplayEl.textContent = isPass ? '✔ ĐẠT' : '✘ KHÔNG ĐẠT';
-            errDisplayEl.className = `err-display ${isPass ? 'pass' : 'fail'}`;
-            
-            errEl.style.color = isPass ? '#2e7d32' : '#c62828';
+            errEl.style.color = isPass ? '#1565c0' : '#c62828';
             errEl.style.fontWeight = 'bold';
+            errEl.style.background = '#fff';
             
         } else {
-            // Nếu xóa sai số, reset
+            // [SỬA] Nếu xóa sai số, xóa cả I₂ và TSB
             i2El.value = '';
             kdoEl.textContent = 'TSB_đo: -';
-            errDisplayEl.textContent = '-';
-            errDisplayEl.className = 'err-display empty';
             errEl.style.color = '';
             errEl.style.fontWeight = '';
+            errEl.style.background = '#fff';
         }
     }
 }
 
-    // [ĐÃ SỬA] Bảng Tgδ - Đơn giản mỗi pha 1 giá trị Tgδ và C
-// [ĐÃ SỬA] Bảng Tgδ - KHÔNG phụ thuộc số cuộn, chỉ 3 pha A,B,C
-// [ĐÃ SỬA] Bảng Tgδ - Mỗi pha có 2 chế độ đo UST và GST
 // ============================================================
 // PHẦN 6: renderTgTable - Thêm màu nền phân biệt pha
 // ============================================================
