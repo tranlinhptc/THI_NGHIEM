@@ -227,9 +227,9 @@
    ============================================================ */
 
 /* ---------- MÀU NỀN PHÂN BIỆT PHA ---------- */
-.phase-a { background-color: #fff9c4 !important; } /* Vàng */
-.phase-b { background-color: #ffebee !important; } /* Đỏ nhạt */
-.phase-c { background-color: #e3f2fd !important; } /* Xanh dương */
+/*.phase-a { background-color: #fff9c4 !important; } /* Vàng */
+/*.phase-b { background-color: #ffebee !important; } /* Đỏ nhạt */
+/*.phase-c { background-color: #e3f2fd !important; } /* Xanh dương */
 
 /* ---------- MÀU SẮC DỮ LIỆU CŨ ---------- */
 /* Dữ liệu cũ từ Latest - xanh lá đậm, mờ */
@@ -1002,9 +1002,9 @@ function renderRcdTable() {
             <tr>
                 <th>Phép Đo</th>
                 <th>Tiêu Chuẩn</th>
-                <th>Pha A</th>
-                <th>Pha B</th>
-                <th>Pha C</th>
+                <th>🟡Pha A</th>
+                <th>🔴Pha B</th>
+                <th>🔵Pha C</th>
             </tr>
         </thead>
         <tbody>
@@ -1060,9 +1060,9 @@ function renderRcdTable() {
             <tr>
                 <th>Phép Đo</th>
                 <th>Tiêu Chuẩn</th>
-                <th>Pha A</th>
-                <th>Pha B</th>
-                <th>Pha C</th>
+                <th>🟡Pha A</th>
+                <th>🔴Pha B</th>
+                <th>🔵Pha C</th>
             </tr>
         </thead>
         <tbody>
@@ -1438,9 +1438,9 @@ function renderTgTable() {
     
     ['A', 'B', 'C'].forEach(pha => {
         let phaseClass = '';
-        if (pha === 'A') phaseClass = 'phase-a';
-        else if (pha === 'B') phaseClass = 'phase-b';
-        else if (pha === 'C') phaseClass = 'phase-c';
+        if (pha === '🟡A') phaseClass = 'phase-a';
+        else if (pha === '🔴B') phaseClass = 'phase-b';
+        else if (pha === '🔵C') phaseClass = 'phase-c';
         
         html += `
         <tr>
@@ -2087,8 +2087,8 @@ function handleNewInput(event) {
             el.placeholder = '';
         }
         // Xóa dataset
-        delete el.dataset.dataType;
-        delete el.dataset.oldval;
+         // delete el.dataset.dataType;
+        // delete el.dataset.oldval;
         // Xóa các cảnh báo
         el.classList.remove('warning-degradation', 'warning-increase');
         el.title = '';
