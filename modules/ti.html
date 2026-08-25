@@ -1166,10 +1166,7 @@ function renderRcdTable() {
 
 // ==================== BẢNG TỈ SỐ BIẾN CẢI TIẾN ====================
 // ============================================================
-// PHẦN 5: renderRatioTable - Bỏ err-display, chỉ dùng màu
-// ============================================================
-// ============================================================
-// PHẦN 5: renderRatioTable - Hỗ trợ nhập 2 chiều
+// PHẦN 5: renderRatioTable - Bảng tỉ số biến (2 chiều linh hoạt)
 // ============================================================
 function renderRatioTable() {
     const num = parseInt(document.getElementById('ti_num_windings')?.value) || 4;
@@ -1312,6 +1309,8 @@ function renderRatioTable() {
 // ============================================================
 // PHẦN 8A: calculateRatio - Từ I₂ đo → Sai số
 // ============================================================
+// PHẦN 8A: calculateRatio - Từ I₂ đo → Sai số (KHÔNG GHI ĐÈ)
+// ============================================================
 function calculateRatio(winding, pha) {
     const i1_tn = parseFloat(document.getElementById('ti_i1_tn')?.value) || 10;
     const tsBienStr = document.getElementById('ti_tsbien')?.value || "400:1";
@@ -1333,29 +1332,37 @@ function calculateRatio(winding, pha) {
         const kdoEl = document.getElementById(`ti_kdo_w${winding}_${pha}`);
 
         if (i2El && errEl && kdoEl) {
-            // [SỬA] Lấy giá trị I₂ đo (mA) và chuyển sang A
             const i2_mA = parseFloat(i2El.value);
             const i2_do = !isNaN(i2_mA) && i2_mA > 0 ? i2_mA / 1000 : NaN;
 
-            // [SỬA] Chỉ tính nếu có I₂ hợp lệ
+            // [SỬA] Chỉ tính khi có I₂ hợp lệ
             if (!isNaN(i2_do) && i2_do > 0) {
                 const K_do = i1_tn / i2_do;
                 const error = ((K_dm * i2_do) - i1_tn) / i1_tn * 100;
 
                 kdoEl.textContent = `TSB_đo: ${K_do.toFixed(2)}`;
-                errEl.value = error.toFixed(3);
-
-                // Đánh giá qua màu sắc
+                
+                // [SỬA QUAN TRỌNG] Chỉ ghi đè sai số nếu ô sai số đang trống
+                // hoặc nếu giá trị hiện tại khác với giá trị tính toán
+                const currentErr = errEl.value;
+                const calculatedErr = error.toFixed(3);
+                
+                if (currentErr === '' || currentErr === null) {
+                    errEl.value = calculatedErr;
+                }
+                
+                // Vẫn cập nhật màu sắc đánh giá
                 const isPass = Math.abs(error) <= accLimit;
                 errEl.style.color = isPass ? '#1565c0' : '#c62828';
                 errEl.style.fontWeight = 'bold';
                 errEl.style.background = '#fff';
 
             } else {
-                // [SỬA] Nếu không có I₂, không xóa err (để giữ nếu người dùng nhập thủ công)
-                // Chỉ xóa nếu err đang trống
+                // [SỬA] Nếu I₂ bị xóa, chỉ xóa TSB, không xóa sai số
+                kdoEl.textContent = 'TSB_đo: -';
+                
+                // Chỉ xóa màu nếu không có giá trị nào
                 if (!errEl.value || errEl.value === '') {
-                    kdoEl.textContent = 'TSB_đo: -';
                     errEl.style.color = '';
                     errEl.style.fontWeight = '';
                     errEl.style.background = '#fff';
@@ -1373,7 +1380,7 @@ function calculateRatio(winding, pha) {
 // ==================== TÍNH TỪ SAI SỐ → I₂ ĐO ====================
 
 // ============================================================
-// PHẦN 8B: calculateRatioFromError - Từ Sai số → I₂
+// PHẦN 8B: calculateRatioFromError - Từ Sai số → I₂ (KHÔNG GHI ĐÈ)
 // ============================================================
 function calculateRatioFromError(winding, pha) {
     const i1_tn = parseFloat(document.getElementById('ti_i1_tn')?.value) || 10;
@@ -1398,13 +1405,19 @@ function calculateRatioFromError(winding, pha) {
             const K_dm = i1_dm / i2_dm;
             
             // Từ sai số tính ra I₂ đo (A)
-            // error = ((K_dm * I2) - I1) / I1 * 100
-            // => I2 = I1 * (1 + error/100) / K_dm
             const i2_do = i1_tn * (1 + error / 100) / K_dm;
             
             // Chuyển sang mA và hiển thị
             const i2_mA = i2_do * 1000;
-            i2El.value = i2_mA.toFixed(3);
+            
+            // [SỬA QUAN TRỌNG] Chỉ ghi đè I₂ nếu ô I₂ đang trống
+            // hoặc nếu giá trị hiện tại khác với giá trị tính toán
+            const currentI2 = i2El.value;
+            const calculatedI2 = i2_mA.toFixed(3);
+            
+            if (currentI2 === '' || currentI2 === null) {
+                i2El.value = calculatedI2;
+            }
             
             // Tính TSB_đo
             const K_do = i1_tn / i2_do;
@@ -2091,7 +2104,7 @@ function handleEnterToNext(event) {
 	// ============================================================
 // PHẦN 2C: HÀM handleNewInput - Xử lý khi nhập mới
 // ============================================================
-function handleNewInput(event) {
+function cuhandleNewInput(event) {
     const el = event.target;
     if (el.value && el.value.trim() !== '') {
         // Xóa class dữ liệu cũ
@@ -2114,6 +2127,37 @@ function handleNewInput(event) {
         el.style.color = '';
         el.style.fontWeight = '';
     }
+    calculateAll();
+}
+
+
+
+	// ============================================================
+// PHẦN 8C: handleNewInput - Xử lý khi nhập mới
+// ============================================================
+function handleNewInput(event) {
+    const el = event.target;
+    
+    // [SỬA] Xóa class dữ liệu cũ
+    if (el.value && el.value.trim() !== '') {
+        el.classList.remove('old-data-latest', 'old-data-history', 'old-data');
+        el.classList.add('new-data');
+        if (el.placeholder) {
+            el.placeholder = '';
+        }
+        delete el.dataset.dataType;
+        delete el.dataset.oldval;
+        el.classList.remove('warning-degradation', 'warning-increase');
+        el.title = '';
+    } else {
+        // [SỬA] Nếu xóa hết, quay lại trạng thái bình thường
+        el.classList.remove('new-data');
+        el.style.color = '';
+        el.style.fontWeight = '';
+        el.style.background = '#fff';
+    }
+    
+    // [SỬA] Gọi calculateAll để cập nhật đánh giá
     calculateAll();
 }
 
