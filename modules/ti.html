@@ -1259,7 +1259,7 @@ function renderRatioTable() {
                                 <input type="number" step="any" 
                                     id="ti_err_w${i}_${pha}" 
                                     placeholder="Sai số"
-                                    oninput="calculateRatioFromError(${i}, '${pha}')" 
+                                    oninput="calculateRatioFromError(${i}; calculateRatio(${i}, '${pha}')" 
                                     onfocus="this.select()"
                                     onkeydown="handleRatioTab(event, ${i}, '${pha}', 'err')"
                                     style="font-size:12px;background:#fff;width:100%;"
