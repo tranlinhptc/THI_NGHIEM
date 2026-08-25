@@ -222,6 +222,95 @@
             min-width: 10px;
         }
     }
+		/* ============================================================
+   PHẦN 1: CSS MỚI - THÊM VÀO CUỐI THẺ <style>
+   ============================================================ */
+
+/* ---------- MÀU NỀN PHÂN BIỆT PHA ---------- */
+.phase-a { background-color: #fff9c4 !important; } /* Vàng */
+.phase-b { background-color: #ffebee !important; } /* Đỏ nhạt */
+.phase-c { background-color: #e3f2fd !important; } /* Xanh dương */
+
+/* ---------- MÀU SẮC DỮ LIỆU CŨ ---------- */
+/* Dữ liệu cũ từ Latest - xanh lá đậm, mờ */
+.old-data-latest {
+    color: #2e7d32 !important;
+    opacity: 0.6 !important;
+    font-weight: bold !important;
+    font-style: italic !important;
+}
+.old-data-latest::placeholder {
+    color: #2e7d32 !important;
+    opacity: 0.6 !important;
+    font-weight: bold !important;
+}
+
+/* Dữ liệu cũ từ Lịch sử - đen, mờ */
+.old-data-history {
+    color: #333333 !important;
+    opacity: 0.6 !important;
+    font-weight: bold !important;
+    font-style: italic !important;
+}
+.old-data-history::placeholder {
+    color: #333333 !important;
+    opacity: 0.6 !important;
+    font-weight: bold !important;
+}
+
+/* ---------- DỮ LIỆU MỚI NHẬP ---------- */
+.new-data {
+    color: #000000 !important;
+    font-weight: bold !important;
+}
+
+/* ---------- ĐÁNH GIÁ QUA MÀU SẮC ---------- */
+/* ĐẠT: Xanh dương */
+.pass-color {
+    color: #1565c0 !important;
+    font-weight: bold !important;
+}
+/* KHÔNG ĐẠT: Đỏ đậm */
+.fail-color {
+    color: #c62828 !important;
+    font-weight: bold !important;
+}
+
+/* ---------- CẢNH BÁO SUY GIẢM RCD ---------- */
+/* Cảnh báo suy giảm >30% so với giá trị cũ - nền vàng */
+.warning-degradation {
+    background-color: #fff9c4 !important;
+    border: 2px solid #f57f17 !important;
+    color: #e65100 !important;
+    font-weight: bold !important;
+}
+/* Cảnh báo tăng >0.7% so với giá trị cũ - viền cam */
+.warning-increase {
+    border: 2px solid #ff6f00 !important;
+    background-color: #fff3e0 !important;
+    color: #e65100 !important;
+    font-weight: bold !important;
+}
+
+/* ---------- TOOLTIP CHO CẢNH BÁO ---------- */
+.warning-tooltip {
+    position: relative;
+    cursor: help;
+}
+.warning-tooltip:hover::after {
+    content: attr(data-warning);
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    white-space: nowrap;
+    z-index: 1000;
+}
     </style>
 
 </head>
@@ -644,42 +733,50 @@
         }).catch(err => { hideLoading(); alert("❌ Lỗi mạng: " + err); });
     }
 // HÀM MỚI: Rải dữ liệu mờ (Placeholder) vào form (Bỏ qua bước chọn Popup)
-    function applyLatestData(data) {
-        // Áp dụng cấu hình
-        ['ti_num_windings'].forEach(id => {
-            if(data[id] !== undefined) { const el = document.getElementById(id); if(el) el.value = data[id]; }
-        });
-        refreshTables();
+	// ============================================================
+// PHẦN 2A: HÀM applyLatestData - Dữ liệu mới nhất (xanh lá)
+// ============================================================
+function applyLatestData(data) {
+    // Áp dụng cấu hình
+    ['ti_num_windings'].forEach(id => {
+        if(data[id] !== undefined) { 
+            const el = document.getElementById(id); 
+            if(el) el.value = data[id]; 
+        }
+    });
+    refreshTables();
 
-        // Rải dữ liệu vào placeholder
-        for (let key in data) {
-            const el = document.getElementById(key);
-            if (el && data[key] !== undefined && data[key] !== '') {
-                if (el.tagName === 'INPUT' && !['ti_temp', 'ti_nsx', 'ti_no', 'ti_namsx', 'ti_udm', 'ti_idm', 'ti_inm', 'ti_kieu', 'ti_ghichu', 'info_ngay', 'info_tram', 'info_nganlo'].includes(key)) {
-                    el.value = ""; 
-                    el.placeholder = data[key];
-                    el.classList.add('old-data');
-                    el.dataset.oldval = data[key]; 
-                } else if (el.tagName === 'SELECT' && key !== 'info_tram') { 
-                    el.value = data[key]; 
-                } else if (['ti_temp', 'ti_nsx', 'ti_no', 'ti_namsx', 'ti_udm', 'ti_idm', 'ti_inm', 'ti_kieu', 'ti_ghichu'].includes(key)) {
-                    // Mấy ô thông tin thiết bị tĩnh thì rải thẳng vào value luôn cho khỏe
-                    el.value = data[key];
-                }
+    // Rải dữ liệu vào placeholder với class old-data-latest
+    for (let key in data) {
+        const el = document.getElementById(key);
+        if (el && data[key] !== undefined && data[key] !== '') {
+            if (el.tagName === 'INPUT' && !['ti_temp', 'ti_nsx', 'ti_no', 'ti_namsx', 'ti_udm', 'ti_idm', 'ti_inm', 'ti_kieu', 'ti_ghichu', 'info_ngay', 'info_tram', 'info_nganlo'].includes(key)) {
+                el.value = ""; 
+                el.placeholder = data[key];
+                el.classList.remove('old-data-history', 'old-data', 'new-data');
+                el.classList.add('old-data-latest');
+                el.dataset.oldval = data[key];
+                el.dataset.dataType = 'latest';
+            } else if (el.tagName === 'SELECT' && key !== 'info_tram') { 
+                el.value = data[key]; 
+            } else if (['ti_temp', 'ti_nsx', 'ti_no', 'ti_namsx', 'ti_udm', 'ti_idm', 'ti_inm', 'ti_kieu', 'ti_ghichu'].includes(key)) {
+                el.value = data[key];
             }
         }
-
-        // Tự động bung các bảng nhập liệu ra
-        ['chk_sec1', 'chk_sec2', 'chk_sec3', 'chk_sec4', 'chk_sec5'].forEach(id => {
-            const chk = document.getElementById(id);
-            if(chk) {
-                chk.checked = true;
-                toggleSection(id.replace('chk', 'body'), chk);
-            }
-        });
-
-        alert(`⚡ Đã nhập các số liệu mới nhất của các lần thí nghiệm trước!`);
     }
+
+    // Tự động bung các bảng nhập liệu ra
+    ['chk_sec1', 'chk_sec2', 'chk_sec3', 'chk_sec4', 'chk_sec5'].forEach(id => {
+        const chk = document.getElementById(id);
+        if(chk) {
+            chk.checked = true;
+            toggleSection(id.replace('chk', 'body'), chk);
+        }
+    });
+
+    calculateAll();
+    alert(`⚡ Đã nhập các số liệu mới nhất của các lần thí nghiệm trước!`);
+}
 
 
 
@@ -711,41 +808,58 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
 
 
     
-    function applyHistoryData(index) {
-        closeHistoryModal();
-        const data = globalHistoryData[index];
-        let warnCount = 0;
+// ============================================================
+// PHẦN 2B: HÀM applyHistoryData - Dữ liệu lịch sử (đen mờ)
+// ============================================================
+function applyHistoryData(index) {
+    closeHistoryModal();
+    const data = globalHistoryData[index];
+    let warnCount = 0;
 
-        for (let key in data) {
-            const el = document.getElementById(key);
-            if (el && data[key] !== undefined && data[key] !== '') {
-                if (el.tagName === 'INPUT') {
-                    el.placeholder = data[key]; 
+    for (let key in data) {
+        const el = document.getElementById(key);
+        if (el && data[key] !== undefined && data[key] !== '') {
+            if (el.tagName === 'INPUT') {
+                // Xóa các class cũ
+                el.classList.remove('old-data-latest', 'old-data', 'new-data');
+                el.classList.add('old-data-history');
+                el.placeholder = data[key];
+                el.dataset.oldval = data[key];
+                el.dataset.dataType = 'history';
+                
+                // Cảnh báo suy giảm RCD
+                if (el.value !== "" && key.includes("rcd")) {
+                    const oldVal = parseFloat(String(data[key]).replace(',', '.'));
+                    const newVal = parseFloat(el.value);
                     
-                    if (el.value !== "" && key.includes("rcd")) {
-                        const oldVal = parseFloat(String(data[key]).replace(',', '.'));
-                        const newVal = parseFloat(el.value);
-                        
-                        if (!isNaN(oldVal) && !isNaN(newVal) && oldVal > 0) {
-                            const suyGiam = (oldVal - newVal) / oldVal;
-                            if (suyGiam >= 0.30) {
-                                el.classList.add("bg-warning");
-                                el.title = `Năm cũ: ${data[key]} MΩ. Đã giảm ${(suyGiam*100).toFixed(1)}%!`;
-                                warnCount++;
-                            } else {
-                                el.classList.remove("bg-warning");
-                                el.title = "";
-                            }
+                    if (!isNaN(oldVal) && !isNaN(newVal) && oldVal > 0) {
+                        const suyGiam = (oldVal - newVal) / oldVal;
+                        // Cảnh báo suy giảm > 30%
+                        if (suyGiam >= 0.30) {
+                            el.classList.add("warning-degradation");
+                            el.title = `⚠️ CẢNH BÁO: Giảm ${(suyGiam*100).toFixed(1)}% so với giá trị cũ (${oldVal} MΩ)!`;
+                            warnCount++;
+                        } 
+                        // Cảnh báo tăng > 0.7%
+                        else if (suyGiam < -0.007) {
+                            el.classList.add("warning-increase");
+                            el.title = `⚠️ CẢNH BÁO: Tăng ${(Math.abs(suyGiam)*100).toFixed(1)}% so với giá trị cũ (${oldVal} MΩ)!`;
+                            warnCount++;
+                        } else {
+                            el.classList.remove("warning-degradation", "warning-increase");
+                            el.title = "";
                         }
                     }
                 }
             }
         }
-        calculateAll();
-        let msg = `⚡ Đã tải xong kết quả ngày ${data.ngayTN || ''} để đối chiếu!`;
-        if (warnCount > 0) msg += `\n⚠️ CẢNH BÁO: Phát hiện ${warnCount} vị trí có cách điện suy giảm > 30% (Được bôi Vàng)!`;
-        alert(msg);
     }
+    calculateAll();
+    let msg = `⚡ Đã tải xong kết quả ngày ${data.ngayTN || ''} để đối chiếu!`;
+    if (warnCount > 0) msg += `\n⚠️ CẢNH BÁO: Phát hiện ${warnCount} vị trí có sự thay đổi bất thường!`;
+    alert(msg);
+}
+	
 
     function captureInputs() {
         const data = {};
@@ -839,6 +953,9 @@ function getInterpolatedPriRcd(temp, u1Str) {
 
 
 // [ĐÃ SỬA] Bảng RDC - Bỏ cột Số cũ, thêm cột Đầu dây, bỏ đánh giá
+// ============================================================
+// PHẦN 3: renderRdcTable - Thêm màu nền phân biệt pha
+// ============================================================
 function renderRdcTable() {
     const container = document.getElementById('table_rdc_container');
     if (!container) return;
@@ -849,19 +966,20 @@ function renderRdcTable() {
     for(let i=1; i<=num; i++) {
         html += `<tr>
             <td><b>Cuộn ${i}</b></td>
-            <!-- [SỬA] Thay cột Số cũ thành Đầu dây -->
-            <td><input type="text" id="ti_rdc_terminal_${i}" placeholder="VD: 1S1-1S2" onkeydown="handleRdcTab(event, ${i}, 'terminal')" onkeypress="handleEnterToNext(event)"></td>
+            <td><input type="text" id="ti_rdc_terminal_${i}" placeholder="VD: 1S1-1S2" onkeydown="handleRdcTab(event, ${i}, 'terminal')" oninput="handleNewInput(event)"></td>
             <td>
-                <input type="number" id="ti_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A" onkeydown="handleRdcTab(event, ${i}, 'a')" onkeypress="handleEnterToNext(event)">
+                <!-- [SỬA] Thêm class phase-a -->
+                <input type="number" id="ti_rdc_m_${i}_a" class="phase-a" oninput="handleNewInput(event)" placeholder="Đo A" onkeydown="handleRdcTab(event, ${i}, 'a')">
                 <span class="sub-val" id="ti_rdc_75_${i}_a">75°C: -</span>
-                <!-- [SỬA] Xóa span đánh giá ĐẠT/LỖI -->
             </td>
             <td>
-                <input type="number" id="ti_rdc_m_${i}_b" oninput="calculateAll()" placeholder="Đo B" onkeydown="handleRdcTab(event, ${i}, 'b')" onkeypress="handleEnterToNext(event)">
+                <!-- [SỬA] Thêm class phase-b -->
+                <input type="number" id="ti_rdc_m_${i}_b" class="phase-b" oninput="handleNewInput(event)" placeholder="Đo B" onkeydown="handleRdcTab(event, ${i}, 'b')">
                 <span class="sub-val" id="ti_rdc_75_${i}_b">75°C: -</span>
             </td>
             <td>
-                <input type="number" id="ti_rdc_m_${i}_c" oninput="calculateAll()" placeholder="Đo C" onkeydown="handleRdcTab(event, ${i}, 'c')" onkeypress="handleEnterToNext(event)">
+                <!-- [SỬA] Thêm class phase-c -->
+                <input type="number" id="ti_rdc_m_${i}_c" class="phase-c" oninput="handleNewInput(event)" placeholder="Đo C" onkeydown="handleRdcTab(event, ${i}, 'c')">
                 <span class="sub-val" id="ti_rdc_75_${i}_c">75°C: -</span>
             </td>
         </tr>`;
@@ -869,9 +987,68 @@ function renderRdcTable() {
     html += `</tbody></table>`;
     container.innerHTML = html;
 }
-
-
+// ============================================================
+// PHẦN 4: renderRcdTable - Thêm màu nền, xóa span đánh giá
+// ============================================================
 function renderRcdTable() {
+    const container = document.getElementById('table_rcd_container');
+    if (!container) return;
+
+    const num = parseInt(document.getElementById('ti_num_windings').value) || 4;
+
+    let html = `
+    <table>
+        <thead>
+            <tr>
+                <th>Phép Đo</th>
+                <th>Tiêu Chuẩn</th>
+                <th>Pha A</th>
+                <th>Pha B</th>
+                <th>Pha C</th>
+            </tr>
+        </thead>
+        <tbody>
+    `;
+
+    // =========================
+    // SƠ CẤP
+    // =========================
+    html += `
+    <tr>
+        <td><b>Sơ cấp - ∑</b></td>
+        <td id="ti_std_rcd_pri">-</td>
+        <!-- [SỬA] Thêm class phase-a, xóa span đánh giá -->
+        <td><input type="number" id="ti_rcd_pri_a" class="phase-a" oninput="handleNewInput(event)" onkeydown="handleRcdTab(event, 0, 'a', true)"></td>
+        <!-- [SỬA] Thêm class phase-b, xóa span đánh giá -->
+        <td><input type="number" id="ti_rcd_pri_b" class="phase-b" oninput="handleNewInput(event)" onkeydown="handleRcdTab(event, 0, 'b', true)"></td>
+        <!-- [SỬA] Thêm class phase-c, xóa span đánh giá -->
+        <td><input type="number" id="ti_rcd_pri_c" class="phase-c" oninput="handleNewInput(event)" onkeydown="handleRcdTab(event, 0, 'c', true)"></td>
+    </tr>
+    `;
+
+    // =========================
+    // NHỊ THỨ
+    // =========================
+    for (let i = 1; i <= num; i++) {
+        html += `
+        <tr>
+            <td><b>Cuộn ${i} - ∑</b></td>
+            <td id="ti_std_rcd_sec${i}">-</td>
+            <!-- [SỬA] Thêm class phase-a, xóa span đánh giá -->
+            <td><input type="number" id="ti_rcd_sec${i}_a" class="phase-a" oninput="handleNewInput(event)" onkeydown="handleRcdTab(event, ${i}, 'a', false)"></td>
+            <!-- [SỬA] Thêm class phase-b, xóa span đánh giá -->
+            <td><input type="number" id="ti_rcd_sec${i}_b" class="phase-b" oninput="handleNewInput(event)" onkeydown="handleRcdTab(event, ${i}, 'b', false)"></td>
+            <!-- [SỬA] Thêm class phase-c, xóa span đánh giá -->
+            <td><input type="number" id="ti_rcd_sec${i}_c" class="phase-c" oninput="handleNewInput(event)" onkeydown="handleRcdTab(event, ${i}, 'c', false)"></td>
+        </tr>
+        `;
+    }
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+}
+
+	function renderRcdTable() {
     const container = document.getElementById('table_rcd_container');
     if (!container) return;
 
@@ -988,6 +1165,9 @@ function renderRcdTable() {
 }
 
 // ==================== BẢNG TỈ SỐ BIẾN CẢI TIẾN ====================
+// ============================================================
+// PHẦN 5: renderRatioTable - Bỏ err-display, chỉ dùng màu
+// ============================================================
 function renderRatioTable() {
     const num = parseInt(document.getElementById('ti_num_windings')?.value) || 4;
 
@@ -996,30 +1176,31 @@ function renderRatioTable() {
             <thead>
                 <tr>
                     <th rowspan="2" style="min-width:90px;vertical-align:middle;">Cuộn /<br>Thông số</th>
-                    <th colspan="3" style="background:#ffebee;min-width:180px;padding:6px 4px;border-left:3px solid #ef5350;">
+                    <th colspan="3" style="background:#fff9c4;min-width:180px;padding:6px 4px;border-left:3px solid #fbc02d;">
                         <div style="display:flex;justify-content:space-between;align-items:center;gap:4px;">
-                            <span style="flex:1;text-align:center;font-size:12px;color:#d84315;font-weight:700;">🔴 Pha A</span>
-                            <span style="flex:1;text-align:center;font-size:12px;color:#2e7d32;font-weight:700;">🟢 Pha B</span>
-                            <span style="flex:1;text-align:center;font-size:12px;color:#1565c0;font-weight:700;">🔵 Pha C</span>
+                            <span style="flex:1;text-align:center;font-size:12px;color:#f57f17;font-weight:700;">🟡 Pha A</span>
+                            <span style="flex:1;text-align:center;font-size:12px;color:#c62828;font-weight:700;">🔴 Pha B</span>
+                            <span style="flex:1;text-align:center;font-size:12px;color:#0d47a1;font-weight:700;">🔵 Pha C</span>
                         </div>
                     </th>
                 </tr>
                 <tr>
-                    <th style="min-width:60px;padding:4px 2px;background:#ffebee;border-left:3px solid #ef5350;">
+                    <th style="min-width:60px;padding:4px 2px;background:#fff9c4;border-left:3px solid #fbc02d;">
                         <div style="display:flex;flex-direction:column;gap:1px;">
-
+                            <span style="font-weight:700;">I₂ (mA)</span>
+                            <span style="font-size:9px;color:#666;">Nhập đo</span>
                         </div>
                     </th>
-                    <th style="min-width:60px;padding:4px 2px;background:#ffebee;">
+                    <th style="min-width:60px;padding:4px 2px;background:#fff9c4;">
                         <div style="display:flex;flex-direction:column;gap:1px;">
-
-
+                            <span style="font-weight:700;">Sai số (%)</span>
+                            <span style="font-size:9px;color:#666;">Tự tính</span>
                         </div>
                     </th>
-                    <th style="min-width:50px;padding:4px 2px;background:#ffebee;border-right:3px solid #ef5350;">
+                    <th style="min-width:50px;padding:4px 2px;background:#fff9c4;border-right:3px solid #fbc02d;">
                         <div style="display:flex;flex-direction:column;gap:1px;">
-
-
+                            <span style="font-weight:700;">TSB</span>
+                            <span style="font-size:9px;color:#666;">Kđo</span>
                         </div>
                     </th>
                 </tr>
@@ -1034,7 +1215,7 @@ function renderRatioTable() {
                     <div style="display:flex;flex-direction:column;gap:3px;align-items:center;padding:4px 0;">
                         <b style="font-size:13px;color:#d84315;">Cuộn ${i}</b>
                         <select id="ti_i2_dm_w${i}" onchange="calculateRatio(${i})" style="font-size:10px;width:100%;padding:3px 4px;border-radius:3px;border:1px solid var(--border);">
-                            <option value="1"selected>Thứ cấp 1A</option>
+                            <option value="1" selected>Thứ cấp 1A</option>
                             <option value="5">Thứ cấp 5A</option>
                         </select>
                         <select id="ti_acc_w${i}" onchange="calculateRatio(${i})" style="font-size:10px;width:100%;padding:3px 4px;border-radius:3px;border:1px solid var(--border);">
@@ -1050,27 +1231,18 @@ function renderRatioTable() {
                 </td>
         `;
 
-        // Tạo 3 cột cho 3 pha A, B, C
         ['A', 'B', 'C'].forEach(pha => {
-            let bgColor = '';
-            let borderColor = '';
-            let borderLeft = '';
-            let borderRight = '';
-            if (pha === 'A') { 
-                bgColor = '#ffebee'; 
-                borderColor = '#ef5350';
-                borderLeft = '3px solid #ef5350';
+            let bgColor = '', borderLeft = '', borderRight = '';
+            if (pha === 'A') {
+                bgColor = '#fff9c4';
+                borderLeft = '3px solid #fbc02d';
+                borderRight = '1px solid #fbc02d';
+            } else if (pha === 'B') {
+                bgColor = '#ffebee';
+                borderLeft = '1px solid #ef5350';
                 borderRight = '1px solid #ef5350';
-            }
-            else if (pha === 'B') { 
-                bgColor = '#e8f5e9'; 
-                borderColor = '#66bb6a';
-                borderLeft = '1px solid #66bb6a';
-                borderRight = '1px solid #66bb6a';
-            }
-            else if (pha === 'C') { 
-                bgColor = '#e3f2fd'; 
-                borderColor = '#42a5f5';
+            } else if (pha === 'C') {
+                bgColor = '#e3f2fd';
                 borderLeft = '1px solid #42a5f5';
                 borderRight = '3px solid #42a5f5';
             }
@@ -1080,10 +1252,12 @@ function renderRatioTable() {
                     <div class="ratio-cell">
                         <div class="input-group">
                             <div class="input-row">
+                                <!-- [SỬA] Thêm class phase-a/b/c -->
                                 <input type="number" step="any" 
                                     id="ti_i2_w${i}_${pha}" 
+                                    class="${pha === 'A' ? 'phase-a' : pha === 'B' ? 'phase-b' : 'phase-c'}"
                                     placeholder="I2_đo"
-                                    oninput="calculateRatio(${i}, '${pha}')" 
+                                    oninput="handleNewInput(event); calculateRatio(${i}, '${pha}')" 
                                     onfocus="this.select()"
                                     onkeydown="handleRatioTab(event, ${i}, '${pha}', 'i2')"
                                     style="font-size:12px;background:#fff;width:100%;"
@@ -1091,20 +1265,18 @@ function renderRatioTable() {
                                 <span class="unit">mA</span>
                             </div>
                             <div class="input-row">
+                                <!-- [SỬA] Ô sai số - readonly, chỉ hiển thị -->
                                 <input type="number" step="any" 
                                     id="ti_err_w${i}_${pha}" 
                                     placeholder="Sai số"
-                                    oninput="calculateRatioFromError(${i}, '${pha}')" 
-                                    onfocus="this.select()"
-                                    onkeydown="handleRatioTab(event, ${i}, '${pha}', 'err')"
-                                    style="font-size:12px;background:#fff;width:100%;"
+                                    readonly
+                                    style="font-size:12px;background:#f5f5f5;width:100%;cursor:default;"
                                 >
                                 <span class="unit">%</span>
                             </div>
                         </div>
                         <div class="ratio-info">
-                            <span class="TSB_đo" id="ti_kdo_w${i}_${pha}">TSB: -</span>
-                            <span class="err-display empty" id="ti_err_display_w${i}_${pha}">-</span>
+                            <span class="kdo" id="ti_kdo_w${i}_${pha}">TSB_đo: -</span>
                         </div>
                     </div>
                 </td>
@@ -1117,7 +1289,6 @@ function renderRatioTable() {
     html += `</tbody></table>`;
     document.getElementById('table_ratio_container').innerHTML = html;
     
-    // Tính toán lại sau khi render
     setTimeout(() => {
         for (let i = 1; i <= num; i++) {
             calculateRatio(i);
@@ -1126,73 +1297,58 @@ function renderRatioTable() {
 }
 // ==================== TÍNH TOÁN TỈ SỐ BIẾN ====================
 
+// ============================================================
+// PHẦN 8: calculateRatio - Đánh giá qua màu sắc
+// ============================================================
 function calculateRatio(winding, pha) {
     const i1_tn = parseFloat(document.getElementById('ti_i1_tn')?.value) || 10;
     const tsBienStr = document.getElementById('ti_tsbien')?.value || "400:1";
     const i1_dm = parseFloat(tsBienStr.split(':')[0]) || 400;
     const i2_dm = parseFloat(document.getElementById(`ti_i2_dm_w${winding}`)?.value) || 5;
     const accStr = document.getElementById(`ti_acc_w${winding}`)?.value || "0.5";
-    
-    // Xác định sai số cho phép
+
     let accLimit = parseFloat(accStr) || 0.5;
     if (accStr === "5P") accLimit = 5.0;
     else if (accStr === "10P") accLimit = 10.0;
-    
-    // Tính Kđm
+
     const K_dm = i1_dm / i2_dm;
     const kdmEl = document.getElementById(`ti_kdm_w${winding}`);
     if (kdmEl) kdmEl.textContent = K_dm.toFixed(2);
-    
-    // Nếu có pha cụ thể
+
     if (pha) {
         const i2El = document.getElementById(`ti_i2_w${winding}_${pha}`);
         const errEl = document.getElementById(`ti_err_w${winding}_${pha}`);
         const kdoEl = document.getElementById(`ti_kdo_w${winding}_${pha}`);
-        const errDisplayEl = document.getElementById(`ti_err_display_w${winding}_${pha}`);
-        
-        if (i2El && errEl && kdoEl && errDisplayEl) {
-            // Lấy giá trị I₂ đo (mA) và chuyển sang A
+
+        if (i2El && errEl && kdoEl) {
             const i2_mA = parseFloat(i2El.value);
             const i2_do = !isNaN(i2_mA) && i2_mA > 0 ? i2_mA / 1000 : NaN;
-            
+
             if (!isNaN(i2_do) && i2_do > 0) {
-                // Tính TSB_đo và sai số từ I₂ đo
                 const K_do = i1_tn / i2_do;
                 const error = ((K_dm * i2_do) - i1_tn) / i1_tn * 100;
-                
-                // Hiển thị TSB_đo
+
                 kdoEl.textContent = `TSB_đo: ${K_do.toFixed(2)}`;
-                
-                // Hiển thị sai số vào ô input
                 errEl.value = error.toFixed(3);
-                
-                // Hiển thị đánh giá
+
+                // [SỬA] Đánh giá qua màu sắc
                 const isPass = Math.abs(error) <= accLimit;
-                errDisplayEl.textContent = isPass ? '✔ ĐẠT' : '✘ KHÔNG ĐẠT';
-                errDisplayEl.className = `err-display ${isPass ? 'pass' : 'fail'}`;
-                
-                // Đổi màu ô input sai số
-                errEl.style.color = isPass ? '#2e7d32' : '#c62828';
+                errEl.style.color = isPass ? '#1565c0' : '#c62828';
                 errEl.style.fontWeight = 'bold';
-                
+
             } else {
-                // Nếu không có giá trị I₂, reset
                 errEl.value = '';
                 errEl.style.color = '';
                 errEl.style.fontWeight = '';
                 kdoEl.textContent = 'TSB_đo: -';
-                errDisplayEl.textContent = '-';
-                errDisplayEl.className = 'err-display empty';
             }
         }
     } else {
-        // Tính cho tất cả các pha
         ['A', 'B', 'C'].forEach(p => {
             calculateRatio(winding, p);
         });
     }
 }
-
 // ==================== TÍNH TỪ SAI SỐ → I₂ ĐO ====================
 
 function calculateRatioFromError(winding, pha) {
@@ -1255,6 +1411,9 @@ function calculateRatioFromError(winding, pha) {
     // [ĐÃ SỬA] Bảng Tgδ - Đơn giản mỗi pha 1 giá trị Tgδ và C
 // [ĐÃ SỬA] Bảng Tgδ - KHÔNG phụ thuộc số cuộn, chỉ 3 pha A,B,C
 // [ĐÃ SỬA] Bảng Tgδ - Mỗi pha có 2 chế độ đo UST và GST
+// ============================================================
+// PHẦN 6: renderTgTable - Thêm màu nền phân biệt pha
+// ============================================================
 function renderTgTable() {
     const container = document.getElementById('table_tg_container');
     if (!container) return;
@@ -1277,25 +1436,20 @@ function renderTgTable() {
         <tbody>
     `;
     
-    // Chỉ 3 pha A, B, C
     ['A', 'B', 'C'].forEach(pha => {
+        let phaseClass = '';
+        if (pha === 'A') phaseClass = 'phase-a';
+        else if (pha === 'B') phaseClass = 'phase-b';
+        else if (pha === 'C') phaseClass = 'phase-c';
+        
         html += `
         <tr>
             <td><b>${pha}</b></td>
-            <!-- UST -->
-            <td>
-                <input type="number" id="ti_tg_ust_${pha}" step="0.001" placeholder="Tgδ" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'ust_tg')" onkeypress="handleEnterToNext(event)" style="width:100%;">
-            </td>
-            <td>
-                <input type="number" id="ti_c_ust_${pha}" step="0.01" placeholder="C (pF)" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'ust_c')" onkeypress="handleEnterToNext(event)" style="width:100%;">
-            </td>
-            <!-- GST -->
-            <td>
-                <input type="number" id="ti_tg_gst_${pha}" step="0.001" placeholder="Tgδ" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'gst_tg')" onkeypress="handleEnterToNext(event)" style="width:100%;">
-            </td>
-            <td>
-                <input type="number" id="ti_c_gst_${pha}" step="0.01" placeholder="C (pF)" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'gst_c')" onkeypress="handleEnterToNext(event)" style="width:100%;">
-            </td>
+            <!-- [SỬA] Thêm class phase-a/b/c -->
+            <td><input type="number" id="ti_tg_ust_${pha}" class="${phaseClass}" step="0.001" placeholder="Tgδ" oninput="handleNewInput(event); calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'ust_tg')" style="width:100%;"></td>
+            <td><input type="number" id="ti_c_ust_${pha}" class="${phaseClass}" step="0.01" placeholder="C (pF)" oninput="handleNewInput(event); calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'ust_c')" style="width:100%;"></td>
+            <td><input type="number" id="ti_tg_gst_${pha}" class="${phaseClass}" step="0.001" placeholder="Tgδ" oninput="handleNewInput(event); calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'gst_tg')" style="width:100%;"></td>
+            <td><input type="number" id="ti_c_gst_${pha}" class="${phaseClass}" step="0.01" placeholder="C (pF)" oninput="handleNewInput(event); calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'gst_c')" style="width:100%;"></td>
         </tr>
         `;
     });
@@ -1306,132 +1460,170 @@ function renderTgTable() {
 
 	
 	
-    function calculateAll() {
-        const temp = parseFloat(document.getElementById('ti_temp').value) || 23;
-        const i1_dm_str = document.getElementById('ti_udm').value;
-        const mfg = document.getElementById('ti_mfg').value;
-        const num = parseInt(document.getElementById('ti_num_windings').value);
+// ============================================================
+// PHẦN 7: calculateAll - Đánh giá qua màu sắc input
+// ============================================================
+function calculateAll() {
+    const temp = parseFloat(document.getElementById('ti_temp').value) || 23;
+    const i1_dm_str = document.getElementById('ti_udm').value;
+    const mfg = document.getElementById('ti_mfg').value;
+    const num = parseInt(document.getElementById('ti_num_windings').value);
 
-        const stdPriRcd = getInterpolatedPriRcd(temp, i1_dm_str);
-        const stdPriEl = document.getElementById('ti_std_rcd_pri');
-        if(stdPriEl) stdPriEl.innerText = `≥ ${stdPriRcd.toFixed(0)} MΩ (${temp}°C)`;
+    // =========================================
+    // 7A: RCD SƠ CẤP - Đánh giá qua màu sắc
+    // =========================================
+    const stdPriRcd = getInterpolatedPriRcd(temp, i1_dm_str);
+    const stdPriEl = document.getElementById('ti_std_rcd_pri');
+    if (stdPriEl) stdPriEl.innerText = `≥ ${stdPriRcd.toFixed(0)} MΩ (${temp}°C)`;
 
-        ['a', 'b', 'c'].forEach(p => {
-            const val = parseFloat(document.getElementById(`ti_rcd_pri_${p}`)?.value) || 0;
-            const el = document.getElementById(`ti_rcd_eval_pri_${p}`);
-            if(val > 0 && el) {
-                const pass = val >= stdPriRcd;
-                el.innerText = pass ? "✔ ĐẠT" : "✘ LỖI";
-                el.className = pass ? "sub-val pass" : "sub-val fail";
-            }
-        });
-
-        let stdSecRcd = 200;
-        if (mfg === 'ABB') stdSecRcd = 5;
-        else if (mfg === 'Sieyun') stdSecRcd = 1000;
-        else if (mfg === 'Areva' || mfg === 'GE') stdSecRcd = 50;
-        else if (mfg === 'Alstom') stdSecRcd = 25;
-
-        for(let i=1; i<=num; i++) {
-            const stdEl = document.getElementById(`ti_std_rcd_sec${i}`);
-            if(stdEl) stdEl.innerText = `≥ ${stdSecRcd} MΩ`;
-            
-            ['a', 'b', 'c'].forEach(p => {
-                const val = parseFloat(document.getElementById(`ti_rcd_sec${i}_${p}`)?.value) || 0;
-                const el = document.getElementById(`ti_rcd_eval_sec${i}_${p}`);
-                if(val > 0 && el) {
-                    const pass = val >= stdSecRcd;
-                    el.innerText = pass ? "✔ ĐẠT" : "✘ LỖi";
-                    el.className = pass ? "sub-val pass" : "sub-val fail";
-                }
-            });
-        }
-
-        // [ĐÃ SỬA] Phần tính RDC trong calculateAll() - Bỏ đánh giá, chỉ hiển thị quy đổi
-for(let i=1; i<=num; i++) {
     ['a', 'b', 'c'].forEach(p => {
-        const mVal = parseFloat(document.getElementById(`ti_rdc_m_${i}_${p}`)?.value) || 0;
-        const el75 = document.getElementById(`ti_rdc_75_${i}_${p}`);
-        
-        if(mVal > 0) {
-            const r75 = mVal * ((235 + 75) / (235 + temp));
-            if(el75) el75.innerText = `75°C: ${r75.toFixed(4)} Ω`;
-        } else {
-            if(el75) el75.innerText = `75°C: -`;
+        const el = document.getElementById(`ti_rcd_pri_${p}`);
+        if (el) {
+            const val = parseFloat(el.value) || 0;
+            // [SỬA] Chỉ đánh giá khi có giá trị nhập
+            if (val > 0) {
+                const pass = val >= stdPriRcd;
+                el.style.color = pass ? '#1565c0' : '#c62828';
+                el.style.fontWeight = 'bold';
+            } else {
+                el.style.color = '';
+                el.style.fontWeight = '';
+            }
         }
     });
-}
 
+    // =========================================
+    // 7B: RCD NHỊ THỨ - Đánh giá qua màu sắc
+    // =========================================
+    let stdSecRcd = 200;
+    if (mfg === 'ABB') stdSecRcd = 5;
+    else if (mfg === 'Sieyun') stdSecRcd = 1000;
+    else if (mfg === 'Areva' || mfg === 'GE') stdSecRcd = 50;
+    else if (mfg === 'Alstom') stdSecRcd = 25;
 
-// ==========================================================
-// TÍNH TỈ SỐ BIẾN - CHẠY ĐỘNG 2 → 8 CUỘN
-// ==========================================================
-// ===== TÍNH TỈ SỐ BIẾN =====
-const numWindings = parseInt(document.getElementById('ti_num_windings')?.value) || 4;
-for (let i = 1; i <= numWindings; i++) {
-    calculateRatio(i);
-}
-// Xác định giới hạn Tgδ theo vật liệu và chế độ
-// PHẦN TÍNH Tgδ - KHÔNG dùng num, chỉ 3 pha A,B,C
-// PHẦN TÍNH Tgδ - Đánh giá cho cả UST và GST
-const insulation = document.getElementById('ti_insulation').value;
-const mode = document.getElementById('ti_mode').value;
-const isNew = (mode === 'new');
+    for (let i = 1; i <= num; i++) {
+        const stdEl = document.getElementById(`ti_std_rcd_sec${i}`);
+        if (stdEl) stdEl.innerText = `≥ ${stdSecRcd} MΩ`;
 
-let tgLimit = 0.5;
-switch(insulation) {
-    case 'paper': tgLimit = isNew ? 0.5 : 0.8; break;
-    case 'paper_film_paper':
-    case 'film_paper_film': tgLimit = isNew ? 0.2 : 0.3; break;
-    case 'film': tgLimit = isNew ? 0.1 : 0.15; break;
-    default: tgLimit = isNew ? 0.5 : 0.8;
-}
-
-// Đánh giá cho từng pha và từng chế độ đo
-['A', 'B', 'C'].forEach(pha => {
-    // Đánh giá UST
-    const tgUst = parseFloat(document.getElementById(`ti_tg_ust_${pha}`)?.value);
-    const cUst = parseFloat(document.getElementById(`ti_c_ust_${pha}`)?.value);
-    
-    const tgUstCell = document.getElementById(`ti_tg_ust_${pha}`);
-    if(tgUstCell && !isNaN(tgUst) && tgUst > 0) {
-        const pass = tgUst <= tgLimit;
-        tgUstCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
-        tgUstCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
-        tgUstCell.title = pass ? `✔ ĐẠT (≤ ${tgLimit}%)` : `✘ LỖI (> ${tgLimit}%)`;
+        ['a', 'b', 'c'].forEach(p => {
+            const el = document.getElementById(`ti_rcd_sec${i}_${p}`);
+            if (el) {
+                const val = parseFloat(el.value) || 0;
+                // [SỬA] Chỉ đánh giá khi có giá trị nhập
+                if (val > 0) {
+                    const pass = val >= stdSecRcd;
+                    el.style.color = pass ? '#1565c0' : '#c62828';
+                    el.style.fontWeight = 'bold';
+                } else {
+                    el.style.color = '';
+                    el.style.fontWeight = '';
+                }
+            }
+        });
     }
-    
-    const cUstCell = document.getElementById(`ti_c_ust_${pha}`);
+
+    // =========================================
+    // 7C: RDC - Quy đổi về 75°C
+    // =========================================
+    for (let i = 1; i <= num; i++) {
+        ['a', 'b', 'c'].forEach(p => {
+            const mVal = parseFloat(document.getElementById(`ti_rdc_m_${i}_${p}`)?.value) || 0;
+            const el75 = document.getElementById(`ti_rdc_75_${i}_${p}`);
+            if (mVal > 0) {
+                const r75 = mVal * ((235 + 75) / (235 + temp));
+                if (el75) el75.innerText = `75°C: ${r75.toFixed(4)} Ω`;
+            } else {
+                if (el75) el75.innerText = `75°C: -`;
+            }
+        });
+    }
+
+    // =========================================
+    // 7D: TỈ SỐ BIẾN
+    // =========================================
+    const numWindings = parseInt(document.getElementById('ti_num_windings')?.value) || 4;
+    for (let i = 1; i <= numWindings; i++) {
+        calculateRatio(i);
+    }
+
+    // =========================================
+    // 7E: Tgδ - Đánh giá qua màu sắc
+    // =========================================
+    const insulation = document.getElementById('ti_insulation').value;
+    const mode = document.getElementById('ti_mode').value;
+    const isNew = (mode === 'new');
+
+    let tgLimit = 0.5;
+    switch (insulation) {
+        case 'paper': tgLimit = isNew ? 0.5 : 0.8; break;
+        case 'paper_film_paper':
+        case 'film_paper_film': tgLimit = isNew ? 0.2 : 0.3; break;
+        case 'film': tgLimit = isNew ? 0.1 : 0.15; break;
+        default: tgLimit = isNew ? 0.5 : 0.8;
+    }
+
     const cStandard = parseFloat(document.getElementById('ti_ddung')?.value);
-    if(cUstCell && !isNaN(cUst) && cUst > 0 && !isNaN(cStandard) && cStandard > 0) {
-        const err = ((cUst - cStandard) / cStandard) * 100;
-        const pass = (err >= -5 && err <= 10);
-        cUstCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
-        cUstCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
-        cUstCell.title = pass ? `✔ ĐẠT (sai số ${err.toFixed(2)}%)` : `✘ LỖI (sai số ${err.toFixed(2)}%)`;
-    }
-    
-    // Đánh giá GST
-    const tgGst = parseFloat(document.getElementById(`ti_tg_gst_${pha}`)?.value);
-    const cGst = parseFloat(document.getElementById(`ti_c_gst_${pha}`)?.value);
-    
-    const tgGstCell = document.getElementById(`ti_tg_gst_${pha}`);
-    if(tgGstCell && !isNaN(tgGst) && tgGst > 0) {
-        const pass = tgGst <= tgLimit;
-        tgGstCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
-        tgGstCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
-        tgGstCell.title = pass ? `✔ ĐẠT (≤ ${tgLimit}%)` : `✘ LỖI (> ${tgLimit}%)`;
-    }
-    
-    const cGstCell = document.getElementById(`ti_c_gst_${pha}`);
-    if(cGstCell && !isNaN(cGst) && cGst > 0 && !isNaN(cStandard) && cStandard > 0) {
-        const err = ((cGst - cStandard) / cStandard) * 100;
-        const pass = (err >= -5 && err <= 10);
-        cGstCell.style.borderColor = pass ? '#2e7d32' : '#c62828';
-        cGstCell.style.backgroundColor = pass ? '#e8f5e9' : '#ffebee';
-        cGstCell.title = pass ? `✔ ĐẠT (sai số ${err.toFixed(2)}%)` : `✘ LỖI (sai số ${err.toFixed(2)}%)`;
-    }
-});
+
+    ['A', 'B', 'C'].forEach(pha => {
+        // UST Tgδ
+        const tgUstEl = document.getElementById(`ti_tg_ust_${pha}`);
+        if (tgUstEl) {
+            const val = parseFloat(tgUstEl.value) || 0;
+            // [SỬA] Chỉ đánh giá khi có giá trị nhập
+            if (val > 0) {
+                const pass = val <= tgLimit;
+                tgUstEl.style.color = pass ? '#1565c0' : '#c62828';
+                tgUstEl.style.fontWeight = 'bold';
+            } else {
+                tgUstEl.style.color = '';
+                tgUstEl.style.fontWeight = '';
+            }
+        }
+        
+        // UST C
+        const cUstEl = document.getElementById(`ti_c_ust_${pha}`);
+        if (cUstEl && cStandard > 0) {
+            const val = parseFloat(cUstEl.value) || 0;
+            if (val > 0) {
+                const err = ((val - cStandard) / cStandard) * 100;
+                const pass = (err >= -5 && err <= 10);
+                cUstEl.style.color = pass ? '#1565c0' : '#c62828';
+                cUstEl.style.fontWeight = 'bold';
+            } else {
+                cUstEl.style.color = '';
+                cUstEl.style.fontWeight = '';
+            }
+        }
+        
+        // GST Tgδ
+        const tgGstEl = document.getElementById(`ti_tg_gst_${pha}`);
+        if (tgGstEl) {
+            const val = parseFloat(tgGstEl.value) || 0;
+            if (val > 0) {
+                const pass = val <= tgLimit;
+                tgGstEl.style.color = pass ? '#1565c0' : '#c62828';
+                tgGstEl.style.fontWeight = 'bold';
+            } else {
+                tgGstEl.style.color = '';
+                tgGstEl.style.fontWeight = '';
+            }
+        }
+        
+        // GST C
+        const cGstEl = document.getElementById(`ti_c_gst_${pha}`);
+        if (cGstEl && cStandard > 0) {
+            const val = parseFloat(cGstEl.value) || 0;
+            if (val > 0) {
+                const err = ((val - cStandard) / cStandard) * 100;
+                const pass = (err >= -5 && err <= 10);
+                cGstEl.style.color = pass ? '#1565c0' : '#c62828';
+                cGstEl.style.fontWeight = 'bold';
+            } else {
+                cGstEl.style.color = '';
+                cGstEl.style.fontWeight = '';
+            }
+        }
+    });
 }
 	
 
@@ -1880,6 +2072,34 @@ function handleEnterToNext(event) {
         }
     }
 }	
+	// ============================================================
+// PHẦN 2C: HÀM handleNewInput - Xử lý khi nhập mới
+// ============================================================
+function handleNewInput(event) {
+    const el = event.target;
+    if (el.value && el.value.trim() !== '') {
+        // Xóa class dữ liệu cũ
+        el.classList.remove('old-data-latest', 'old-data-history', 'old-data');
+        // Thêm class dữ liệu mới
+        el.classList.add('new-data');
+        // Xóa placeholder
+        if (el.placeholder) {
+            el.placeholder = '';
+        }
+        // Xóa dataset
+        delete el.dataset.dataType;
+        delete el.dataset.oldval;
+        // Xóa các cảnh báo
+        el.classList.remove('warning-degradation', 'warning-increase');
+        el.title = '';
+    } else {
+        // Nếu xóa hết giá trị, quay lại trạng thái bình thường
+        el.classList.remove('new-data');
+        el.style.color = '';
+        el.style.fontWeight = '';
+    }
+    calculateAll();
+}
 
 </script>
 </body>
