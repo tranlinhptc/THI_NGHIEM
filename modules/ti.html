@@ -258,8 +258,6 @@
             </div>
 			<div class="form-group"><label>Kiểu (Type):</label><input type="text" 	id="ti_kieu" placeholder="LTB145"></div>
 
-			<div class="form-group"><label>Cấp chính xác:</label><input type="text" 	id="ti_ccx" placeholder="0.3/0.5"></div>
-
 			<div class="form-group"><label>Năm SX:</label><input type="number" 	id="ti_namsx" placeholder="2020"></div>
 
             <div class="form-group"><label>Uđm (kV):</label><input type="number" 	id="ti_udm" placeholder="245"></div>
@@ -270,20 +268,7 @@
 			
 			<div class="form-group"><label>Điện dung (pF) (Type):</label><input 		type="number" id="ti_ddung" placeholder="4400"></div>
 			
-			<div class="form-group">
-                <label>Tỉ số biến:</label>
-                <select id="ti_tsbien" >
-                    <option value="200:1">200</option>
-                    <option value="400:1" selected>400</option>
-                    <option value="600:1">600</option>
-                    <option value="800:1">800</option>
-                    <option value="1000:1">1.000</option>
-                    <option value="1200:1">1.200</option>
-                    <option value="1500:1">1.500</option>
-                    <option value="2000:1">2.000</option>
-                    <option value="3000:1">3.000</option>
-                </select>
-            </div>
+
 			
 			<div class="form-group">
                 <label>Vật Liệu Cách Điện:</label>
@@ -804,7 +789,7 @@ function renderRdcTable() {
         html += `<tr>
             <td><b>Cuộn ${i}</b></td>
             <!-- [SỬA] Thay cột Số cũ thành Đầu dây -->
-            <td><input type="text" id="ti_rdc_terminal_${i}" placeholder="VD: 1S1-1S2" onkeydown="handleRdcTab(event, ${i}, 'terminal')" onkeypress="handleEnterToNext(event)"></td>
+            <td><input type="text" id="ti_rdc_terminal_${i}" value="${i}S1-${i}S" onkeydown="handleRdcTab(event, ${i}, 'terminal')" onkeypress="handleEnterToNext(event)"></td>
             <td>
                 <input type="number" id="ti_rdc_m_${i}_a" oninput="calculateAll()" placeholder="Đo A" onkeydown="handleRdcTab(event, ${i}, 'a')" onkeypress="handleEnterToNext(event)">
                 <span class="sub-val" id="ti_rdc_75_${i}_a">75°C: -</span>
@@ -1117,9 +1102,7 @@ function calculateRatio(winding, pha, source = null) {
 
 
 
-    // [ĐÃ SỬA] Bảng Tgδ - Đơn giản mỗi pha 1 giá trị Tgδ và C
-// [ĐÃ SỬA] Bảng Tgδ - KHÔNG phụ thuộc số cuộn, chỉ 3 pha A,B,C
-// [ĐÃ SỬA] Bảng Tgδ - Mỗi pha có 2 chế độ đo UST và GST
+// 5. TANG=================================================
 function renderTgTable() {
     const container = document.getElementById('table_tg_container');
     if (!container) return;
@@ -1146,24 +1129,35 @@ function renderTgTable() {
 
 
 
-    // Chỉ 3 pha A, B, C
-    ['🟡 Pha A', '🔴Pha B', '🔵Pha C'].forEach(pha => {
+        // Chỉ 3 pha A, B, C
+      ['A', 'B', 'C'].forEach(pha => {
+        let phaseClass = '';
+        if (pha === 'A') phaseClass = 'phase-a';
+        else if (pha === 'B') phaseClass = 'phase-b';
+        else if (pha === 'C') phaseClass = 'phase-c';
+        
+        // [SỬA] Hiển thị emoji trong thẻ <td>, không dùng làm tên pha
+        let displayName = '';
+        if (pha === 'A') displayName = '🟡 Pha A';
+        else if (pha === 'B') displayName = '🔴 Pha B';
+        else if (pha === 'C') displayName = '🔵 Pha C';
+        
         html += `
-        <tr>
-            <td><b>${pha}</b></td>
+       <tr>
+            <td><b>${displayName}</b></td>
             <!-- UST -->
             <td>
-                <input type="number" id="ti_tg_ust_${pha}" step="0.001" placeholder="Tgδ" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'ust_tg')" onkeypress="handleEnterToNext(event)" style="width:100%;">
+                <input type="number" id="ti_tg_ust_${pha}" class="${phaseClass}" step="0.001" placeholder="Tgδ" oninput="handleNewInput(event); calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'ust_tg')" style="width:100%;">
             </td>
             <td>
-                <input type="number" id="ti_c_ust_${pha}" step="0.01" placeholder="C (pF)" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'ust_c')" onkeypress="handleEnterToNext(event)" style="width:100%;">
+                <input type="number" id="ti_c_ust_${pha}" class="${phaseClass}" step="0.01" placeholder="C (pF)" oninput="handleNewInput(event); calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'ust_c')" style="width:100%;">
             </td>
             <!-- GST -->
             <td>
-                <input type="number" id="ti_tg_gst_${pha}" step="0.001" placeholder="Tgδ" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'gst_tg')" onkeypress="handleEnterToNext(event)" style="width:100%;">
+                <input type="number" id="ti_tg_gst_${pha}" class="${phaseClass}" step="0.001" placeholder="Tgδ" oninput="handleNewInput(event); calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'gst_tg')" style="width:100%;">
             </td>
             <td>
-                <input type="number" id="ti_c_gst_${pha}" step="0.01" placeholder="C (pF)" oninput="calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'gst_c')" onkeypress="handleEnterToNext(event)" style="width:100%;">
+                <input type="number" id="ti_c_gst_${pha}" class="${phaseClass}" step="0.01" placeholder="C (pF)" oninput="handleNewInput(event); calculateAll()" onkeydown="handleTgTab(event, '${pha}', 'gst_c')" style="width:100%;">
             </td>
         </tr>
         `;
@@ -1670,10 +1664,8 @@ function handleRcdTab(event, currentWinding, colType, isPri) {
     }
 }
 
-// HÀM XỬ LÝ TANG DELTA
+//==================== HÀM XỬ LÝ TANG DELTA
 
-// [BỔ SUNG] Hàm điều hướng Tab/Enter cho bảng Tgδ (đơn giản)
-// [ĐÃ SỬA] Hàm điều hướng Tab/Enter cho bảng Tgδ - 4 cột/phụ
 function handleTgTab(event, pha, fieldType) {
     if (event.key === 'Enter' || event.key === 'Tab') {
         event.preventDefault();
