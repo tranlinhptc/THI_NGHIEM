@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -337,7 +338,7 @@
 
 		
     <!-- 1. KIỂM TRA BÊN NGOÀI -->
-	<div class="card">
+	<div class="card" style="display:none">
      		<div class="card-title">
             	<span>1. Kiểm Tra Bên Ngoài</span>
                 <label class="chk-disable"><input type="checkbox" id="chk_sec1" onchange="toggleSection('body_sec1', this)"> ✏️ Nhập</label>
@@ -351,7 +352,7 @@
     <!-- 2. ĐIỆN TRỞ MỘT CHIỀU NHỊ THỨ -->
     <div class="card">
         <div class="card-title">
-            <span>2. R Một Chiều[Ω]</span>
+            <span>1. R Một Chiều[Ω]</span>
                 <label class="chk-disable"><input type="checkbox" id="chk_sec2" onchange="toggleSection('body_sec2', this)"> ✏️ Nhập</label>
         </div>
             	<div id="body_sec2" class="table-responsive hidden-section">
@@ -367,7 +368,7 @@
     <!-- 3. ĐO ĐIỆN TRỞ CÁCH ĐIỆN -->
     <div class="card">
         <div class="card-title">
-            <span>3. Cách Điện [MΩ]</span>
+            <span>2. Cách Điện [MΩ]</span>
                 <label class="chk-disable"><input type="checkbox" id="chk_sec3" onchange="toggleSection('body_sec3', this)"> ✏️ Nhập</label>
         </div>
             	<div id="body_sec3" class="table-responsive hidden-section">
@@ -383,7 +384,7 @@
 <!-- 4. TỈ SỐ BIẾN -->
     <div class="card">
         <div class="card-title">
-            <span>4. Tỉ Số Biến</span>
+            <span>3. Tỉ Số Biến</span>
                 <label class="chk-disable"><input type="checkbox" id="chk_sec4" onchange="toggleSection('body_sec4', this)"> ✏️ Nhập</label>
         </div>
             	<div id="body_sec4" class="table-responsive hidden-section">
@@ -396,11 +397,6 @@
             <div class="table-responsive" id="table_ratio_container"></div>
 	</div>
     	</div>
-
-
-
-
-
 
 
 
@@ -945,9 +941,8 @@ function renderRcdTable() {
     container.innerHTML = html;
 }
 
-// ==================== BẢNG TỈ SỐ BIẾN CẢI TIẾN ====================
 // ============================================================
-// PHẦN 9A: renderRatioTable - Bảng tỉ số biến (2 chiều + màu sắc)
+// PHẦN 9A: renderRatioTable - MỖI CUỘN CÓ TỈ SỐ BIẾN RIÊNG
 // ============================================================
 function renderRatioTable() {
     const num = parseInt(document.getElementById('ti_num_windings')?.value) || 4;
@@ -957,7 +952,7 @@ function renderRatioTable() {
             <thead>
                 <tr>
                     <th rowspan="2" style="min-width:90px;vertical-align:middle;">Cuộn /<br>Thông số</th>
-                    <th colspan="3" min-width:180px;padding:6px 4px;">
+                    <th colspan="3" style="min-width:180px;padding:6px 4px;">
                         <div style="display:flex;justify-content:space-between;align-items:center;gap:4px;">
                             <span style="flex:1;text-align:center;font-size:12px;color:#f57f17;font-weight:700;">🟡 Pha A</span>
                             <span style="flex:1;text-align:center;font-size:12px;color:#c62828;font-weight:700;">🔴 Pha B</span>
@@ -965,7 +960,6 @@ function renderRatioTable() {
                         </div>
                     </th>
                 </tr>
-
             </thead>
             <tbody>
     `;
@@ -976,19 +970,33 @@ function renderRatioTable() {
                 <td style="min-width:90px;vertical-align:middle;">
                     <div style="display:flex;flex-direction:column;gap:3px;align-items:center;padding:4px 0;">
                         <b style="font-size:13px;color:#d84315;">Cuộn ${i}</b>
+                        
+                        <!-- [SỬA] Tỉ số biến định mức cho từng cuộn -->
+                        <select id="ti_ratio_dm_w${i}" onchange="calculateRatio(${i})" style="font-size:10px;width:100%;padding:3px 4px;border-radius:3px;border:1px solid var(--border);">
+                            <option value="200">200</option>
+                            <option value="400" selected>400</option>
+                            <option value="600">600</option>
+                            <option value="800">800</option>
+                            <option value="1000">1.000</option>
+                            <option value="1200">1.200</option>
+                            <option value="1500">1.500</option>
+                            <option value="2000">2.000</option>
+                            <option value="3000">3.000</option>
+                        </select>
+
                         <select id="ti_i2_dm_w${i}" onchange="calculateRatio(${i})" style="font-size:10px;width:100%;padding:3px 4px;border-radius:3px;border:1px solid var(--border);">
                             <option value="1" selected>Thứ cấp 1A</option>
                             <option value="5">Thứ cấp 5A</option>
                         </select>
+
                         <select id="ti_acc_w${i}" onchange="calculateRatio(${i})" style="font-size:10px;width:100%;padding:3px 4px;border-radius:3px;border:1px solid var(--border);">
                             <option value="0.2">Cấp 0.2</option>
                             <option value="0.5" selected>Cấp 0.5</option>
                             <option value="5P">Cấp 5P</option>
                             <option value="10P">Cấp 10P</option>
                         </select>
-                        <span style="font-size:10px;color:#1565c0;font-weight:600;background:#e3f2fd;padding:2px 8px;border-radius:3px;width:100%;text-align:center;">
-                            Ratio: <span id="ti_kdm_w${i}">-</span>
-                        </span>
+
+
                     </div>
                 </td>
         `;
@@ -996,43 +1004,27 @@ function renderRatioTable() {
         ['A', 'B', 'C'].forEach(pha => {
             let bgColor = '', borderLeft = '', borderRight = '';
             let phaseClass = '';
-        
             
             html += `
                 <td style="background:${bgColor};border-left:${borderLeft};border-right:${borderRight};padding:4px 2px;">
                     <div class="ratio-cell">
                         <div class="input-group">
-                            <!-- [SỬA] Ô I₂ - gọi calculateRatio với source='i2' -->
-							<div class="input-row" style="display:none;">
-
-                                <input type="number" step="any" 
-                                    id="ti_i2_w${i}_${pha}" 
-                                    class="${phaseClass}"
-                                    placeholder="I2_đo"
-                                    oninput="handleNewInput(event); calculateRatio(${i}, '${pha}', 'i2')" 
-                                    onfocus="this.select()"
-                                    onkeydown="handleRatioTab(event, ${i}, '${pha}', 'i2')"
-                                    style="font-size:12px;background:#fff;width:100%;"
-                                >
-                                <span class="unit">mA</span>
-                            </div>
-                            <!-- [SỬA] Ô Sai số - gọi calculateRatio với source='err' -->
+                            <!-- [SỬA] Ô Sai số - nhập % -->
                             <div class="input-row">
-                                <input type="number" step="any" 
+                                <input type="number" step="0.01" 
                                     id="ti_err_w${i}_${pha}" 
                                     class="${phaseClass}"
-                                    placeholder="± Sai số %"
+                                    placeholder="± % sai số"
                                     oninput="handleNewInput(event); calculateRatio(${i}, '${pha}', 'err')" 
                                     onfocus="this.select()"
                                     onkeydown="handleRatioTab(event, ${i}, '${pha}', 'err')"
                                     style="font-size:12px;background:#fff;width:100%;"
                                 >
-                                <span class="unit">%</span>
                             </div>
                         </div>
                         <div class="ratio-info">
-                            <!-- [SỬA] Bỏ err-display, chỉ hiển thị TSB -->
-                            <span class="kdo" id="ti_kdo_w${i}_${pha}">TSB_đo: -</span>
+                            <!-- [SỬA] Hiển thị TSB thực tế -->
+                            <span class="kdo" id="ti_kdo_w${i}_${pha}">TSB: </span>
                         </div>
                     </div>
                 </td>
@@ -1051,15 +1043,19 @@ function renderRatioTable() {
         }
     }, 100);
 }
+
 // ==================== TÍNH TOÁN TỈ SỐ BIẾN ====================
 
 // ============================================================
-// PHẦN 9B: calculateRatio - Tỉ số biến (2 chiều + màu sắc)
+// PHẦN 9B: calculateRatio - TÍNH TSB THỰC TẾ TỪ SAI SỐ
 // ============================================================
 function calculateRatio(winding, pha, source = null) {
     const i1_tn = parseFloat(document.getElementById('ti_i1_tn')?.value) || 10;
-    const tsBienStr = document.getElementById('ti_tsbien')?.value || "400:1";
-    const i1_dm = parseFloat(tsBienStr.split(':')[0]) || 400;
+    
+    // [SỬA] Lấy tỉ số biến định mức của từng cuộn
+    const ratioDmStr = document.getElementById(`ti_ratio_dm_w${winding}`)?.value || "400";
+    const ratio_dm = parseFloat(ratioDmStr) || 400;
+    
     const i2_dm = parseFloat(document.getElementById(`ti_i2_dm_w${winding}`)?.value) || 5;
     const accStr = document.getElementById(`ti_acc_w${winding}`)?.value || "0.5";
 
@@ -1067,168 +1063,59 @@ function calculateRatio(winding, pha, source = null) {
     if (accStr === "5P") accLimit = 5;
     else if (accStr === "10P") accLimit = 10;
 
-    const K_dm = i1_dm / i2_dm;
+    // [SỬA] Kđm = tỉ số biến định mức (không chia i2_dm nữa)
+    const K_dm = ratio_dm;
     const kdmEl = document.getElementById(`ti_kdm_w${winding}`);
     if (kdmEl) kdmEl.textContent = K_dm.toFixed(2);
 
-    // Nếu không có pha → tính lại tất cả theo nguồn đã lưu
+    // Nếu không có pha → tính lại tất cả
     if (!pha) {
         ['A', 'B', 'C'].forEach(p => {
-            const i2El = document.getElementById(`ti_i2_w${winding}_${p}`);
             const errEl = document.getElementById(`ti_err_w${winding}_${p}`);
-            
-            if (i2El?.dataset.source === 'i2') {
-                calculateRatio(winding, p, 'i2');
-            } else if (errEl?.dataset.source === 'err') {
+            if (errEl?.dataset.source === 'err') {
                 calculateRatio(winding, p, 'err');
-            } else if (i2El?.value !== '' && i2El?.value !== null) {
-                calculateRatio(winding, p, 'i2');
+            } else if (errEl?.value !== '' && errEl?.value !== null) {
+                calculateRatio(winding, p, 'err');
             }
         });
         return;
     }
 
-    const i2El = document.getElementById(`ti_i2_w${winding}_${pha}`);
     const errEl = document.getElementById(`ti_err_w${winding}_${pha}`);
     const kdoEl = document.getElementById(`ti_kdo_w${winding}_${pha}`);
 
-    if (!i2El || !errEl || !kdoEl) return;
+    if (!errEl || !kdoEl) return;
 
-    // ===== TRƯỜNG HỢP 1: NHẬP I₂ =====
-    if (source === 'i2') {
-        const i2_mA = parseFloat(i2El.value);
-
-        if (!isNaN(i2_mA) && i2_mA > 0) {
-            const i2_do = i2_mA / 1000;
-            const K_do = i1_tn / i2_do;
-            const error = ((K_dm * i2_do) - i1_tn) / i1_tn * 100;
-
-            kdoEl.textContent = `TSB_đo: ${K_do.toFixed(2)}`;
-            errEl.value = error.toFixed(3);
-
-            // [SỬA] Đánh giá qua màu sắc
-            const isPass = Math.abs(error) <= accLimit;
-            errEl.style.color = isPass ? '#1565c0' : '#c62828';
-            errEl.style.fontWeight = 'bold';
-            errEl.style.background = '#fff';
-
-            i2El.dataset.source = 'i2';
-            errEl.dataset.source = 'i2';
-
-        } else {
-            errEl.value = '';
-            kdoEl.textContent = 'TSB_đo: -';
-            errEl.style.color = '';
-            errEl.style.fontWeight = '';
-            errEl.style.background = '#fff';
-            delete i2El.dataset.source;
-            delete errEl.dataset.source;
-        }
-        return;
-    }
-
-    // ===== TRƯỜNG HỢP 2: NHẬP SAI SỐ =====
+    // ===== NHẬP SAI SỐ → TÍNH TSB THỰC TẾ =====
     if (source === 'err') {
         const error = parseFloat(errEl.value);
 
         if (!isNaN(error)) {
-            const i2_do = i1_tn * (1 + error / 100) / K_dm;
-            const i2_mA = i2_do * 1000;
+            // [SỬA] TSB thực tế = Kđm × (1 + error/100)
+            const K_do = K_dm * (1 + error / 100);
+            kdoEl.textContent = `TSB: ${K_do.toFixed(2)}`;
 
-            i2El.value = i2_mA.toFixed(3);
-
-            const K_do = i1_tn / i2_do;
-            kdoEl.textContent = `TSB_đo: ${K_do.toFixed(2)}`;
-
-            // [SỬA] Đánh giá qua màu sắc
+            // Đánh giá qua màu sắc
             const isPass = Math.abs(error) <= accLimit;
             errEl.style.color = isPass ? '#1565c0' : '#c62828';
             errEl.style.fontWeight = 'bold';
             errEl.style.background = '#fff';
 
-            i2El.dataset.source = 'err';
             errEl.dataset.source = 'err';
 
         } else {
-            i2El.value = '';
-            kdoEl.textContent = 'TSB_đo: -';
+            kdoEl.textContent = 'TSB: -';
             errEl.style.color = '';
             errEl.style.fontWeight = '';
             errEl.style.background = '#fff';
-            delete i2El.dataset.source;
             delete errEl.dataset.source;
         }
         return;
     }
 }
-// ==================== TÍNH TỪ SAI SỐ → I₂ ĐO ====================
-
-function calculateRatioFromError(winding, pha) {
-    const i1_tn = parseFloat(document.getElementById('ti_i1_tn')?.value) || 10;
-    const tsBienStr = document.getElementById('ti_tsbien')?.value || "400:1";
-    const i1_dm = parseFloat(tsBienStr.split(':')[0]) || 400;
-    const i2_dm = parseFloat(document.getElementById(`ti_i2_dm_w${winding}`)?.value) || 5;
-    const accStr = document.getElementById(`ti_acc_w${winding}`)?.value || "0.5";
-    
-    let accLimit = parseFloat(accStr) || 0.5;
-    if (accStr === "5P") accLimit = 5.0;
-    else if (accStr === "10P") accLimit = 10.0;
-    
-    const errEl = document.getElementById(`ti_err_w${winding}_${pha}`);
-    const i2El = document.getElementById(`ti_i2_w${winding}_${pha}`);
-    const kdoEl = document.getElementById(`ti_kdo_w${winding}_${pha}`);
-    const errDisplayEl = document.getElementById(`ti_err_display_w${winding}_${pha}`);
-    
-    if (errEl && i2El && kdoEl && errDisplayEl) {
-        const error = parseFloat(errEl.value);
-        
-        if (!isNaN(error)) {
-            const K_dm = i1_dm / i2_dm;
-            
-            // Từ sai số tính ra I₂ đo (A)     
-            const i2_do = i1_tn * (1 + error / 100) / K_dm;
-            
-            // Chuyển sang mA và hiển thị
-            const i2_mA = i2_do * 1000;
-            i2El.value = i2_mA.toFixed(3);
 
 
 
-            
-           
-
-
-
-
-
-
-
-
-
-
-
- // Tính TSB_đo
-            const K_do = i1_tn / i2_do;
-            kdoEl.textContent = `TSB_đo: ${K_do.toFixed(2)}`;
-            
-            // Đánh giá kết quả
-            const isPass = Math.abs(error) <= accLimit;
-            errDisplayEl.textContent = isPass ? '✔ ĐẠT' : '✘ KHÔNG ĐẠT';
-            errDisplayEl.className = `err-display ${isPass ? 'pass' : 'fail'}`;
-            
-            errEl.style.color = isPass ? '#2e7d32' : '#c62828';
-            errEl.style.fontWeight = 'bold';
-            
-        } else {
-            i2El.value = '';
-            kdoEl.textContent = 'TSB_đo: -';
-            errDisplayEl.textContent = '-';
-            errDisplayEl.className = 'err-display empty';
-            errEl.style.color = '';
-            errEl.style.fontWeight = '';
-        }
-    }
-}
 
     // [ĐÃ SỬA] Bảng Tgδ - Đơn giản mỗi pha 1 giá trị Tgδ và C
 // [ĐÃ SỬA] Bảng Tgδ - KHÔNG phụ thuộc số cuộn, chỉ 3 pha A,B,C
@@ -1619,84 +1506,54 @@ function getVal(id) {
 
 // ==================== ĐIỀU HƯỚNG TAB CHO BẢNG TỈ SỐ BIẾN MỚI ====================
 
+// ============================================================
+// handleRatioTab - Điều hướng Tab cho bảng tỉ số biến
+// ============================================================
 function handleRatioTab(event, currentWinding, pha, fieldType) {
-    // fieldType: 'i2' cho ô I₂, 'err' cho ô Sai số
     if (event.key !== 'Tab' && event.key !== 'Enter') return;
     event.preventDefault();
     
     const numWindings = parseInt(document.getElementById('ti_num_windings')?.value) || 4;
     const phases = ['A', 'B', 'C'];
-    const fields = ['i2', 'err']; // Thứ tự: I₂ → Sai số
+    const fields = ['err']; // [SỬA] Chỉ còn 1 ô nhập
     
     let phaIndex = phases.indexOf(pha);
-    let fieldIndex = fields.indexOf(fieldType);
     let nextWinding = currentWinding;
     let nextPha = pha;
-    let nextField = fieldType;
 
     if (!event.shiftKey) {
-        // Bấm Tab/Next: đi tới
-        if (fieldIndex < fields.length - 1) {
-            // Cùng pha, chuyển từ I₂ sang Sai số
-            nextField = fields[fieldIndex + 1];
+        if (currentWinding < numWindings) {
+            nextWinding = currentWinding + 1;
         } else {
-            // Đã ở Sai số, chuyển xuống cuộn tiếp theo cùng pha
-            if (currentWinding < numWindings) {
-                nextWinding = currentWinding + 1;
-                nextField = 'i2'; // Quay lại I₂ của cuộn tiếp theo
+            if (phaIndex < phases.length - 1) {
+                nextPha = phases[phaIndex + 1];
+                nextWinding = 1;
             } else {
-                // Đã hết cuộn của pha này, chuyển sang pha tiếp theo
-                if (phaIndex < phases.length - 1) {
-                    nextPha = phases[phaIndex + 1];
-                    nextWinding = 1; // Về cuộn 1 của pha mới
-                    nextField = 'i2';
-                } else {
-                    // Đã hết tất cả -> thoát
-                    event.target.blur();
-                    return;
-                }
+                event.target.blur();
+                return;
             }
         }
     } else {
-        // Bấm Shift+Tab: đi lùi
-        if (fieldIndex > 0) {
-            // Cùng pha, chuyển từ Sai số về I₂
-            nextField = fields[fieldIndex - 1];
+        if (currentWinding > 1) {
+            nextWinding = currentWinding - 1;
         } else {
-            // Đã ở I₂, chuyển lên cuộn trước cùng pha
-            if (currentWinding > 1) {
-                nextWinding = currentWinding - 1;
-                nextField = 'err'; // Vào Sai số của cuộn trước
+            if (phaIndex > 0) {
+                nextPha = phases[phaIndex - 1];
+                nextWinding = numWindings;
             } else {
-                // Đã ở cuộn 1, chuyển về pha trước
-                if (phaIndex > 0) {
-                    nextPha = phases[phaIndex - 1];
-                    nextWinding = numWindings; // Về cuộn cuối của pha trước
-                    nextField = 'err';
-                } else {
-                    // Đã ở đầu -> thoát
-                    event.target.blur();
-                    return;
-                }
+                event.target.blur();
+                return;
             }
         }
     }
 
-    // Tạo ID của ô tiếp theo
-    let nextId = '';
-    if (nextField === 'i2') {
-        nextId = `ti_i2_w${nextWinding}_${nextPha}`;
-    } else {
-        nextId = `ti_err_w${nextWinding}_${nextPha}`;
-    }
-    
+    const nextId = `ti_err_w${nextWinding}_${nextPha}`;
     const nextEl = document.getElementById(nextId);
     if (nextEl) {
         nextEl.focus();
         nextEl.select();
     }
-}
-// 1. ĐIỀU HƯỚNG PHÍM TAB CHO BẢNG RDC (Điện trở 1 chiều)
+}// 1. ĐIỀU HƯỚNG PHÍM TAB CHO BẢNG RDC (Điện trở 1 chiều)
 // [ĐÃ SỬA] Hàm điều hướng Tab cho bảng RDC - Bổ sung cột 'terminal'
 function handleRdcTab(event, currentWinding, colType) {
     if (event.key === 'Enter' || event.key === 'Tab') {
