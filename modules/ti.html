@@ -599,11 +599,19 @@ function applyLatestData(data) {
     const prefix = typeof MODULE_PREFIX !== 'undefined' ? MODULE_PREFIX : 'ti_';
     const numWindingsId = prefix + 'num_windings';
 
+     // [SỬA] Cập nhật số cuộn dây và render lại bảng
     if (data[numWindingsId] !== undefined) { 
         const el = document.getElementById(numWindingsId); 
-        //if(el) el.value = data[numWindingsId]; 
-		if (oldVal !== data[numWindingsId]) {
-                changeWindingCount(); }
+        if(el) {
+            // Lưu giá trị cũ để so sánh
+            const oldVal = el.value;
+            el.value = data[numWindingsId];
+            
+            // [SỬA QUAN TRỌNG] Nếu số cuộn thay đổi, render lại bảng
+            if (oldVal !== data[numWindingsId]) {
+                changeWindingCount(); // Hàm này đã gọi renderAllTables()
+            }
+        }
     }
     
 //    if (typeof refreshTables === 'function') refreshTables();
