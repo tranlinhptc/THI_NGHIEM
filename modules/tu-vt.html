@@ -425,16 +425,24 @@
             });
     }
 
-    // Hàm phụ trợ vẽ các thẻ option
-    function populateSelect(data) {
-        const select = document.getElementById('info_tram');
-        select.innerHTML = '<option value="" disabled selected>-- Chọn Trạm --</option>';
-        data.forEach(tram => {
-            let option = document.createElement("option");
-            option.value = tram; option.text = tram;
-            select.appendChild(option);
-        });
+    // Hàm phụ trợ vẽ các thẻ option()để tự động khôi phục draft sau khi tải trạm xong:**
+
+function populateSelect(data) {
+    const select = document.getElementById('info_tram');
+    select.innerHTML = '<option value="" disabled selected>-- Chọn Trạm --</option>';
+    data.forEach(tram => {
+        let option = document.createElement("option");
+        option.value = tram; 
+        option.text = tram;
+        select.appendChild(option);
+    });
+
+    // [SỬA] Sau khi có option, gọi loadDraftData() để khôi phục trạm và các giá trị khác
+    if (localStorage.getItem(MODULE_PREFIX + 'DRAFT')) {
+        loadDraftData();
+        checkUnlockForm();
     }
+}
 
 
     // KIỂM TRA MỞ KHÓA FORM
@@ -463,7 +471,7 @@
         
         // Load nháp nếu có, nếu có nháp nghĩa là đã có Trạm/Ngăn lộ -> Thử mở khóa luôn
         if (localStorage.getItem(MODULE_PREFIX + 'DRAFT')) {
-            loadDraftData();
+            
             checkUnlockForm();
         }
     };
@@ -634,20 +642,34 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
 
 
 
-    function loadDraftData() {
-        const str = localStorage.getItem(MODULE_PREFIX + 'DRAFT');
-        if (str) {
-            const data = JSON.parse(str);
-            if (data['info_tram']) document.getElementById('info_tram').value = data['info_tram'];
-            if (data['info_nganlo']) document.getElementById('info_nganlo').value = data['info_nganlo'];
-            // if (data['info_ngay']) document.getElementById('info_ngay').value = data['info_ngay'];
+//### ✅ **Bước 3: Cải tiến `loadDraftData()` để không ghi đè dữ liệu mới nhập nếu ô đang có dữ liệu mới:**
 
-            ['tu_num_windings'].forEach(id => { if(data[id]) document.getElementById(id).value = data[id]; });
-            refreshTables();
-            for(let key in data) { const el = document.getElementById(key); if(el) el.value = data[key]; }
-            calculateAll();
+function loadDraftData() {
+    const str = localStorage.getItem(MODULE_PREFIX + 'DRAFT');
+    if (!str) return;
+    
+    const data = JSON.parse(str);
+    
+    // Điền Trạm và Ngăn lộ trước (đã có option trong dropdown)
+    if (data['info_tram']) document.getElementById('info_tram').value = data['info_tram'];
+    if (data['info_nganlo']) document.getElementById('info_nganlo').value = data['info_nganlo'];
+    
+    // Set số cuộn dây rồi render lại bảng
+    if (data['ti_num_windings']) {
+        document.getElementById('ti_num_windings').value = data['ti_num_windings'];
+        renderAllTables();  // Hoặc changeWindingCount()
+    }
+
+    // Đổ lại toàn bộ input/select (chỉ đổ vào value, không đổi placeholder)
+    for (let key in data) {
+        const el = document.getElementById(key);
+        if (el && data[key] !== "") {
+            el.value = data[key];
         }
     }
+    
+    calculateAll();
+}
 
 
     function clearDraft() {
@@ -951,12 +973,7 @@ function renderRdcTable() {
 
 
 
-    function clearDraft() {
-        if (confirm("⚠️ Anh có chắc muốn xóa toàn bộ dữ liệu tạm lưu để làm mới không?")) {
-            localStorage.removeItem('TU_DRAFT');
-            location.reload();
-        }
-    }
+
 
     function syncOneDrive() {
         showLoading("Đang up dữ liệu ...");
