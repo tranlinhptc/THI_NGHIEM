@@ -354,7 +354,7 @@ function applyLatestData(data) {
                 <label class="chk-disable"><input type="checkbox" id="chk_sec2" onchange="toggleSection('body_sec2', this)"> ✏️ Nhập</label>
         </div>
             	<div id="body_sec2" class="table-responsive hidden-section">
-            <div class="note-text">*Quy đổi 75°C</div>
+            <div class="note-text">* TI động quy đổi 75°C và đánh giá NGAY KHI NHẬ.</div>
             <div class="table-responsive" id="table_rdc_container"></div>
         </div>
         </div>
@@ -475,7 +475,7 @@ function applyLatestData(data) {
         const cachedTrams = localStorage.getItem('CACHE_TRAMS');
         const select = document.getElementById('info_tram');
         
-        // Nếu đã có cache, load ngay lập tức
+        // Nếu đã có cache, load ngay lập TIc
         if (cachedTrams) {
             populateSelect(JSON.parse(cachedTrams));
         } else {
@@ -503,7 +503,7 @@ function applyLatestData(data) {
             });
     }
 
-    // Hàm phụ trợ vẽ các thẻ option()để tự động khôi phục draft sau khi tải trạm xong:**
+    // Hàm phụ trợ vẽ các thẻ option
 function populateSelect(data) {
     const select = document.getElementById('info_tram');
     select.innerHTML = '<option value="" disabled selected>-- Chọn Trạm --</option>';
@@ -548,6 +548,7 @@ function populateSelect(data) {
         
         // Load nháp nếu có, nếu có nháp nghĩa là đã có Trạm/Ngăn lộ -> Thử mở khóa luôn
        if (localStorage.getItem(MODULE_PREFIX + 'DRAFT')) {
+         // loadDraftData();
             checkUnlockForm();
         }
     };
@@ -578,9 +579,7 @@ function populateSelect(data) {
 	
 
 
-/
-
-// HÀM MỚI: Tải ngay lập tức dữ liệu mới nhất từ sheet LATEST
+// HÀM MỚI: Tải ngay lập TI dữ liệu mới nhất TI sheet LATEST
     function loadLatestData() {
         const nganLo = encodeURIComponent(document.getElementById('info_nganlo').value.trim());
         const tram = encodeURIComponent(document.getElementById('info_tram').value);
