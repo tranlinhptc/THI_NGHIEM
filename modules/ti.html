@@ -565,8 +565,10 @@ function applyLatestData(data) {
         }).catch(err => { hideLoading(); alert("❌ Lỗi tải data: " + err); });
     }
 
+	
 
-// HÀM MỚI: Tải ngay lập TIc dữ liệu mới nhất TI sheet LATEST
+
+// HÀM MỚI: Tải ngay lập TI dữ liệu mới nhất TI sheet LATEST
     function loadLatestData() {
         const nganLo = encodeURIComponent(document.getElementById('info_nganlo').value.trim());
         const tram = encodeURIComponent(document.getElementById('info_tram').value);
@@ -599,10 +601,12 @@ function applyLatestData(data) {
 
     if (data[numWindingsId] !== undefined) { 
         const el = document.getElementById(numWindingsId); 
-        if(el) el.value = data[numWindingsId]; 
+        //if(el) el.value = data[numWindingsId]; 
+		if (oldVal !== data[numWindingsId]) {
+                changeWindingCount(); }
     }
     
-    if (typeof refreshTables === 'function') refreshTables();
+//    if (typeof refreshTables === 'function') refreshTables();
 
     for (let key in data) {
         const el = document.getElementById(key);
@@ -629,7 +633,7 @@ function applyLatestData(data) {
     }
 
     // Tự động mở các section kiểm tra
-    ['chk_sec1', 'chk_sec2', 'chk_sec3', 'chk_sec4', 'chk_sec5'].forEach(id => {
+    ['chk_sec6', 'chk_sec2', 'chk_sec3', 'chk_sec4', 'chk_sec5'].forEach(id => {
         const chk = document.getElementById(id);
         if(chk) {
             chk.checked = true;
@@ -679,6 +683,21 @@ function applyHistoryData(index) {
     if (typeof closeHistoryModal === 'function') closeHistoryModal();
     const data = globalHistoryData[index];
     let warnCount = 0;
+
+	   // [SỬA] Cập nhật số cuộn dây và render lại bảng
+    const numWindingsId = MODULE_PREFIX + 'num_windings';
+    if (data[numWindingsId] !== undefined) { 
+        const el = document.getElementById(numWindingsId); 
+        if(el) {
+            const oldVal = el.value;
+            el.value = data[numWindingsId];
+            
+            // [SỬA QUAN TRỌNG] Nếu số cuộn thay đổi, render lại bảng
+            if (oldVal !== data[numWindingsId]) {
+                renderAllTables(); // Render lại tất cả bảng
+            }
+        }
+	}
 
     for (let key in data) {
         const el = document.getElementById(key);
@@ -1842,7 +1861,7 @@ function handleNewInput(event) {
             el.placeholder = '';
         }
         delete el.dataset.dataType;
-        delete el.dataset.oldval;
+        //delete el.dataset.oldval;
         el.classList.remove('warning-degradation', 'warning-increase');
         el.title = '';
     } else {
