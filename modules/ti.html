@@ -392,15 +392,21 @@ function applyLatestData(data) {
     	</div>
 
 	    <!-- 2. TỪ HÓA-->
-    <div class="card">
-        <div class="card-title">
-            <span>4. Từ hóa</span>
-                <label class="chk-disable"><input type="checkbox" id="chk_sec5" onchange="toggleSection('body_sec5', this)"> ✏️ Nhập</label>
+
+<div class="card">
+    <div class="card-title">
+        <span>4. Từ Hóa</span>
+        <label class="chk-disable"><input type="checkbox" id="chk_sec5" onchange="toggleSection('body_sec5', this)"> ✏️ Nhập</label>
+    </div>
+    <div id="body_sec5" class="table-responsive hidden-section">
+        <!-- Container cho 3 pha -->
+        <div id="table_tuhoa_container">
+            <div id="table_tuhoa_a_container"></div>
+            <div id="table_tuhoa_b_container"></div>
+            <div id="table_tuhoa_c_container"></div>
         </div>
-            	<div id="body_sec5" class="table-responsive hidden-section">
-            <div class="table-responsive" id="table_Tuhoa_container"></div>
-        </div>
-	</div>
+    </div>
+</div>
 
 
 
@@ -767,6 +773,7 @@ function renderAllTables() {
         renderRcdTable();
         renderRdcTable();
         renderRatioTable();
+	    renderTuHoaTables(); 
         renderTgTable();
         calculateAll();
     }
@@ -1118,7 +1125,7 @@ function calculateRatio(winding, pha, source = null) {
 }
 
 	function renderTuHoaTables() {
-    const prefix = typeof MODULE_PREFIX !== 'undefined' ? MODULE_PREFIX : 'tu_';
+    const prefix = typeof MODULE_PREFIX !== 'undefined' ? MODULE_PREFIX : 'ti_';
     const numWindingsEl = document.getElementById(prefix + 'num_windings');
     const num = numWindingsEl ? parseInt(numWindingsEl.value) || 4 : 4;
 
