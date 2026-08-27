@@ -285,7 +285,7 @@ function applyLatestData(data) {
 
 		
     <!-- 1. KIỂM TRA BÊN NGOÀI -->
-	<div class="card">
+	<div class="card" style="display:none">
      		<div class="card-title">
             	<span>1. Kiểm Tra Bên Ngoài</span>
                 <label class="chk-disable"><input type="checkbox" id="chk_sec1" onchange="toggleSection('body_sec1', this)"> ✏️ Nhập</label>
@@ -299,7 +299,7 @@ function applyLatestData(data) {
     <!-- 2. ĐIỆN TRỞ MỘT CHIỀU NHỊ THỨ -->
     <div class="card">
         <div class="card-title">
-            <span>2. R Một Chiều[Ω]</span>
+            <span>1. R Một Chiều[Ω]</span>
                 <label class="chk-disable"><input type="checkbox" id="chk_sec2" onchange="toggleSection('body_sec2', this)"> ✏️ Nhập</label>
         </div>
             	<div id="body_sec2" class="table-responsive hidden-section">
@@ -315,7 +315,7 @@ function applyLatestData(data) {
     <!-- 3. ĐO ĐIỆN TRỞ CÁCH ĐIỆN -->
     <div class="card">
         <div class="card-title">
-            <span>3. Cách Điện [MΩ]</span>
+            <span>2. Cách Điện [MΩ]</span>
                 <label class="chk-disable"><input type="checkbox" id="chk_sec3" onchange="toggleSection('body_sec3', this)"> ✏️ Nhập</label>
         </div>
             	<div id="body_sec3" class="table-responsive hidden-section">
@@ -343,7 +343,7 @@ function applyLatestData(data) {
 <!-- 4. TỈ SỐ BIẾN -->
     <div class="card">
         <div class="card-title">
-            <span>4. Tỉ Số Biến</span>
+            <span>3. Tỉ Số Biến</span>
                 <label class="chk-disable"><input type="checkbox" id="chk_sec4" onchange="toggleSection('body_sec4', this)"> ✏️ Nhập</label>
         </div>
             	<div id="body_sec4" class="table-responsive hidden-section">
@@ -366,7 +366,7 @@ function applyLatestData(data) {
     <!-- 6. TAN DELTA & ĐIỆN DUNG -->
     <div class="card">
         <div class="card-title">
-            <span>5. Tgδ(%)& Điện Dung (pF)</span>
+            <span>4. Tgδ(%)& Điện Dung (pF)</span>
             <div>
                 <label class="chk-disable"><input type="checkbox" id="chk_sec5" onchange="toggleSection('body_sec5', this)"> ✏️ Nhập</label>
             </div>
@@ -989,16 +989,6 @@ function renderRdcTable() {
             }
         });
     }
-
-    function saveDraftManually() {
-        const draftData = captureCurrentInputValues();
-        localStorage.setItem('TU_DRAFT', JSON.stringify(draftData));
-        alert("💾 Đã tạm lưu bản nháp thành công vào thiết bị!");
-    }
-
-
-
-
 
     function syncOneDrive() {
         showLoading("Đang up dữ liệu ...");
