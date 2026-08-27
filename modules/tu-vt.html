@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+I<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -93,6 +93,27 @@
             margin-top: 8px;
             font-style: italic;
         }
+
+		javascript
+
+
+function applyLatestData(data) {
+    ['ti_num_windings'].
+
+/* ---------- CẢNH BÁO SUY GIẢM RCD ---------- */
+/* Cảnh báo suy giảm >30% so với giá trị cũ - nền vàng */
+.warning-degradation {
+    background-color: #fff9c4 !important;
+    border: 2px solid #f57f17 !important;
+    color: #e65100 !important;
+    font-weight: bold !important;
+}
+/* Cảnh báo tăng >0.7% so với giá trị cũ - viền cam */
+.warning-increase {
+    border: 2px solid #ff6f00 !important;
+    background-color: #fff3e0 !important;
+    color: #e65100 !important;
+    font-weight: bold !important;
     </style>
 
 </head>
@@ -239,7 +260,11 @@
                 <label>Độ ẩm (%):</label>
                 <input type="number" id="tu_humidity" value="" oninput="calculateAll()">
             </div>
-			
+
+						<div class="form-group">
+                <label>Ghi chú:</label>
+                <input type="text" id="tu_ghichu" placeholder="Nhập ghi chú nếu cần">
+						</div>
 			<!--div class="form-group">
                 <label>Uđm (kV):</label>
                 <select id="tu_udm" onchange="calculateAll()">
