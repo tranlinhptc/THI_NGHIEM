@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+để<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -391,6 +391,17 @@ function applyLatestData(data) {
 	</div>
     	</div>
 
+	    <!-- 2. TỪ HÓA-->
+    <div class="card">
+        <div class="card-title">
+            <span>4. Từ hóa</span>
+                <label class="chk-disable"><input type="checkbox" id="chk_sec5" onchange="toggleSection('body_sec5', this)"> ✏️ Nhập</label>
+        </div>
+            	<div id="body_sec5" class="table-responsive hidden-section">
+            <div class="table-responsive" id="table_tuhoa_container"></div>
+        </div>
+	</div>
+
 
 
 <!-- 6. TAN DELTA & ĐIỆN DUNG -->
@@ -578,42 +589,53 @@ function applyLatestData(data) {
 // HÀM MỚI: Rải dữ liệu mờ (Placeholder) vào form (Bỏ qua bước chọn Popup)
 
 function applyLatestData(data) {
-    ['ti_num_windings'].forEach(id => {
-        if(data[id] !== undefined) { const el = document.getElementById(id); if(el) el.value = data[id]; }
-    });
-    refreshTables();
+    // Tự động tìm tiền tố module hiện tại (ví dụ: 'ti_', 'mc_', 'tu_') từ MODULE_PREFIX
+    const prefix = typeof MODULE_PREFIX !== 'undefined' ? MODULE_PREFIX : 'ti_';
+    const numWindingsId = prefix + 'num_windings';
+
+    if (data[numWindingsId] !== undefined) { 
+        const el = document.getElementById(numWindingsId); 
+        if(el) el.value = data[numWindingsId]; 
+    }
+    
+    if (typeof refreshTables === 'function') refreshTables();
 
     for (let key in data) {
         const el = document.getElementById(key);
         if (el && data[key] !== undefined && data[key] !== '') {
-            if (el.tagName === 'INPUT' && !['ti_temp', 'ti_nsx', 'ti_no', 'ti_namsx', 'ti_udm', 'ti_idm', 'ti_inm', 'ti_kieu', 'ti_ghichu', 'info_ngay', 'info_tram', 'info_nganlo'].includes(key)) {
-                el.value = ""; 
-                el.placeholder = data[key];
-                // [SỬA] Xóa tất cả class cũ, chỉ thêm old-data-latest
-                el.classList.remove('old-data-history', 'old-data', 'new-data', 'pass-color', 'fail-color');
-                el.classList.add('old-data-latest');
-                el.dataset.oldval = data[key];
-                el.dataset.dataType = 'latest';
-                // [SỬA] Reset màu style
-                el.style.color = '';
-                el.style.fontWeight = '';
+            if (el.tagName === 'INPUT') {
+                if (isConfigField(key)) {
+                    // Cấu hình cố định / đầu dây -> Điền thẳng vào Value thật
+                    el.value = data[key];
+                } else {
+                    // Ô kết quả đo đạc -> Đẩy vào Placeholder mờ để đối chiếu và nhập mới
+                    el.value = ""; 
+                    el.placeholder = data[key];
+                    el.classList.remove('old-data-history', 'old-data', 'new-data', 'pass-color', 'fail-color');
+                    el.classList.add('old-data-latest');
+                    el.dataset.oldval = data[key];
+                    el.dataset.dataType = 'latest';
+                    el.style.color = '';
+                    el.style.fontWeight = '';
+                }
             } else if (el.tagName === 'SELECT' && key !== 'info_tram') { 
                 el.value = data[key]; 
-            } else if (['ti_temp', 'ti_nsx', 'ti_no', 'ti_namsx', 'ti_udm', 'ti_idm', 'ti_inm', 'ti_kieu', 'ti_ghichu'].includes(key)) {
-                el.value = data[key];
             }
         }
     }
 
+    // Tự động mở các section kiểm tra
     ['chk_sec1', 'chk_sec2', 'chk_sec3', 'chk_sec4', 'chk_sec5'].forEach(id => {
         const chk = document.getElementById(id);
         if(chk) {
             chk.checked = true;
-            toggleSection(id.replace('chk', 'body'), chk);
+            if (typeof toggleSection === 'function') {
+                toggleSection(id.replace('chk', 'body'), chk);
+            }
         }
     });
 
-    calculateAll();
+    if (typeof calculateAll === 'function') calculateAll();
     alert(`⚡ Đã nhập các số liệu mới nhất!`);
 }
 
@@ -650,7 +672,7 @@ div.innerHTML = `<div class="history-date">📅 Ngày: ${row.ngayTN || '?'}</div
 // PHẦN 3: HÀM applyHistoryData - Dữ liệu lịch sử (đen, mờ)
 // ============================================================
 function applyHistoryData(index) {
-    closeHistoryModal();
+    if (typeof closeHistoryModal === 'function') closeHistoryModal();
     const data = globalHistoryData[index];
     let warnCount = 0;
 
@@ -658,24 +680,31 @@ function applyHistoryData(index) {
         const el = document.getElementById(key);
         if (el && data[key] !== undefined && data[key] !== '') {
             if (el.tagName === 'INPUT') {
-                // [SỬA] Xóa tất cả class cũ, chỉ thêm old-data-history
-                el.classList.remove('old-data-latest', 'old-data', 'new-data', 'pass-color', 'fail-color');
-                el.classList.add('old-data-history');
-                el.placeholder = data[key];
-                el.dataset.oldval = data[key];
-                el.dataset.dataType = 'history';
-                // [SỬA] Reset màu style
-                el.style.color = '';
-                el.style.fontWeight = '';
-                
-                // Cảnh báo suy giảm RCD
-                if (el.value !== "" && key.includes("rcd")) {
-                    // ... giữ nguyên logic cảnh báo
+                if (isConfigField(key)) {
+                    // Cấu hình cố định / đầu dây -> Điền thẳng vào Value thật
+                    el.value = data[key];
+                } else {
+                    // Ô kết quả đo đạc -> Đẩy vào Placeholder mờ
+                    el.classList.remove('old-data-latest', 'old-data', 'new-data', 'pass-color', 'fail-color');
+                    el.classList.add('old-data-history');
+                    el.placeholder = data[key];
+                    el.dataset.oldval = data[key];
+                    el.dataset.dataType = 'history';
+                    el.style.color = '';
+                    el.style.fontWeight = '';
                 }
+                
+                // Cảnh báo suy giảm (nếu có logic rcd)
+                if (el.value !== "" && key.includes("rcd")) {
+                    // Giữ nguyên logic cảnh báo nếu cần
+                }
+            } else if (el.tagName === 'SELECT' && key !== 'info_tram') {
+                el.value = data[key];
             }
         }
     }
-    calculateAll();
+
+    if (typeof calculateAll === 'function') calculateAll();
     let msg = `⚡ Đã tải xong kết quả ngày ${data.ngayTN || ''} để đối chiếu!`;
     if (warnCount > 0) msg += `\n⚠️ CẢNH BÁO: Phát hiện ${warnCount} vị trí có sự thay đổi bất thường!`;
     alert(msg);
@@ -1466,22 +1495,37 @@ function getVal(id) {
     const el = document.getElementById(id);
     if (!el) return "";
 
-	// NẾU LÀ SPAN HOẶC DIV, TRẢ VỀ INNERTEXT
+    // NẾU LÀ SPAN HOẶC DIV, TRẢ VỀ INNERTEXT
     if (el.tagName === "SPAN" || el.tagName === "DIV") return el.innerText.trim();
 
-    // Danh sách các ID thuộc phần cấu hình cố định cần GIỮ LẠI TRỊ SỐ CŨ (value thật)
-    const fixedConfigIds = [
-        'ti_nsx', 'ti_no', 'ti_namsx', 'ti_udm', 'ti_kieu'
-        // Anh có thể thêm các ID cấu hình khác vào đây nếu muốn
-    ];
-
-    // Nếu là ô cấu hình cố định VÀ ô nhập đang trống -> Lấy placeholder (dữ liệu cũ làm giá trị thật)
-    if (fixedConfigIds.includes(id)) {
+    // Sử dụng chung hàm isConfigField để quyết định lấy value hay placeholder
+    if (isConfigField(id)) {
         return (el.value && el.value.trim() !== "") ? el.value : (el.placeholder || "");
     }
 
-    // Riêng Nhiệt độ, độ ẩm hoặc các kết quả đo thông thường: Chỉ lấy giá trị mới nhập
+    // Riêng các kết quả đo thông thường: Chỉ lấy giá trị mới nhập
     return el.value || "";
+}
+
+
+	// ============================================================
+// HÀM DÙNG CHUNG: Cấu hình các trường luôn lấy Value thật (Không dùng Placeholder)
+// ============================================================
+function isConfigField(id) {
+    // 1. Các từ khóa/hậu tố chung của cấu hình cố định trên mọi thiết bị (ti, mc, tu, mba...)
+    const commonSuffixes = [
+        '_nsx', '_no', '_namsx', '_udm', '_idm', '_inm', '_kieu', '_ghichu', 
+        '_temp', '_humidity', '_csuat', '_ddung', '_kieu',
+        '_terminal_' // Tự động bắt tất cả các ô đầu dây như ti_rdc_terminal_1, mba_rdc_terminal_2,...
+    ];
+
+    // 2. Các ID định danh hệ thống
+    const systemIds = ['info_ngay', 'info_tram', 'info_nganlo'];
+
+    if (systemIds.includes(id)) return true;
+
+    // Kiểm tra nếu id kết thúc hoặc chứa các hậu tố cấu hình cố định
+    return commonSuffixes.some(suffix => id.includes(suffix));
 }
 // HÀM ĐIỀU HƯỚNG PHÍM TAB THEO CỘT DỌC (DÀNH RIÊNG CHO BẢNG TỈ SỐ BIẾN)
 
