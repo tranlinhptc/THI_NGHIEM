@@ -398,7 +398,7 @@ function applyLatestData(data) {
                 <label class="chk-disable"><input type="checkbox" id="chk_sec5" onchange="toggleSection('body_sec5', this)"> ✏️ Nhập</label>
         </div>
             	<div id="body_sec5" class="table-responsive hidden-section">
-            <div class="table-responsive" id="table_tuhoa_container"></div>
+            <div class="table-responsive" id="table_Tuhoa_container"></div>
         </div>
 	</div>
 
@@ -409,14 +409,12 @@ function applyLatestData(data) {
     <div class="card-title">
         <span>5. Tgδ(%) & Điện Dung (pF)</span>
         <div>
-            <label class="chk-disable"><input type="checkbox" id="chk_sec5" onchange="toggleSection('body_sec5', this)"> ✏️ Nhập</label>
+            <label class="chk-disable"><input type="checkbox" id="chk_sec6" onchange="toggleSection('body_sec6', this)"> ✏️ Nhập</label>
         </div>
     </div>
-    <div id="body_sec5" class="table-responsive hidden-section">
+    <div id="body_sec6" class="table-responsive hidden-section">
         <div class="note-text">
-            * Tiêu chuẩn Tgδ: Giấy ≤0.5% (mới)/0.8% (cũ); Film-Giấy ≤0.2%/0.3%; Film ≤0.1%/0.15%.<br>
-            * Điện dung C cho phép sai số -5% ÷ +10% so với C_NSX.
-        </div>
+)))        </div>
         <div class="table-responsive" id="table_tg_container"></div>
     </div>
 </div>
@@ -1119,6 +1117,57 @@ function calculateRatio(winding, pha, source = null) {
     }
 }
 
+	function renderTuHoaTables() {
+    const prefix = typeof MODULE_PREFIX !== 'undefined' ? MODULE_PREFIX : 'tu_';
+    const numWindingsEl = document.getElementById(prefix + 'num_windings');
+    const num = numWindingsEl ? parseInt(numWindingsEl.value) || 4 : 4;
+
+    const phases = [
+        { id: 'a', name: 'Pha A', color: '#fff9c4' },
+        { id: 'b', name: 'Pha B', color: '#ffebee' },
+        { id: 'c', name: 'Pha C', color: '#e3f2fd' }
+    ];
+
+    phases.forEach(pha => {
+        const container = document.getElementById(`table_tuhoa_${pha.id}_container`);
+        if (!container) return;
+
+        let html = `<table>
+            <thead>
+                <tr>
+                    <th style="font-size:10px;">Cuộn / Đầu dây</th>
+                    <th style="font-size:10px;">Điện áp (3 giá trị)</th>
+                    <th style="font-size:10px;">Dòng điện (3 giá trị)</th>
+                </tr>
+            </thead>
+            <tbody>`;
+
+        for (let i = 1; i <= num; i++) {
+            html += `<tr>
+                <td style="background:${pha.color};">
+                    <b>C${i}</b><br>
+                    <input type="text" id="${prefix}th_${pha.id}_term_${i}" value="${i}S1-${i}S" style="font-size:10px; padding:2px; text-align:center;">
+                </td>
+                <td style="padding:2px;">
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                        <input type="number" step="0.001" id="${prefix}th_${pha.id}_u1_${i}" placeholder="U1" oninput="handleNewInput(event); calculateAll()" style="font-size:11px; padding:3px;">
+                        <input type="number" step="0.001" id="${prefix}th_${pha.id}_u2_${i}" placeholder="U2" oninput="handleNewInput(event); calculateAll()" style="font-size:11px; padding:3px;">
+                        <input type="number" step="0.001" id="${prefix}th_${pha.id}_u3_${i}" placeholder="U3" oninput="handleNewInput(event); calculateAll()" style="font-size:11px; padding:3px;">
+                    </div>
+                </td>
+                <td style="padding:2px;">
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                        <input type="number" step="0.0001" id="${prefix}th_${pha.id}_i1_${i}" placeholder="I1" oninput="handleNewInput(event); calculateAll()" style="font-size:11px; padding:3px;">
+                        <input type="number" step="0.0001" id="${prefix}th_${pha.id}_i2_${i}" placeholder="I2" oninput="handleNewInput(event); calculateAll()" style="font-size:11px; padding:3px;">
+                        <input type="number" step="0.0001" id="${prefix}th_${pha.id}_i3_${i}" placeholder="I3" oninput="handleNewInput(event); calculateAll()" style="font-size:11px; padding:3px;">
+                    </div>
+                </td>
+            </tr>`;
+        }
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+    });
+	}
 // 5. TANG=================================================
 function renderTgTable() {
     const container = document.getElementById('table_tg_container');
