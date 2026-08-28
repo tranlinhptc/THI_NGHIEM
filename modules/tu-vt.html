@@ -838,6 +838,7 @@
 
         for (let i = 1; i <= num; i++) {
             html += `
+			<input type="hidden" id="tu_u2_avg_hidden_w${i}_${pha}" value="">
                 <tr>
                     <td style="min-width:90px;vertical-align:middle;">
                         <div style="display:flex;flex-direction:column;gap:3px;align-items:center;padding:4px 0;">
@@ -887,18 +888,32 @@
                     <td style="background:${bgColor};border-left:${borderLeft};border-right:${borderRight};padding:4px 2px;">
                         <div class="ratio-cell">
                             <div class="input-group">
-                                <div class="input-row">
-                                    <input type="number" step="any" 
-                                        id="tu_u2_w${i}_${pha}" 
-                                        class="${phaseClass}"
-                                        placeholder="U₂ đo"
-                                        oninput="handleNewInput(event); calculateRatio(${i}, '${pha}', 'u2')" 
-                                        onfocus="this.select()"
-                                        onkeydown="handleRatioTab(event, ${i}, '${pha}', 'u2')"
-                                        style="font-size:12px;background:#fff;width:100%;"
-                                    >
-                                    <span class="unit">V</span>
-                                </div>
+
+<div style="display:flex; flex-direction:column; gap:2px; width:100%;">
+    <div style="display:flex; gap:2px; width:100%;">
+        <input type="number" step="any" 
+            id="tu_u2_w${i}_${pha}_1" 
+            class="${phaseClass}"
+            placeholder="L1"
+            oninput="handleNewInput(event); calculateU2Avg(${i}, '${pha}')" 
+            onfocus="this.select()"
+            style="font-size:11px;background:#fff;width:50%;"
+        >
+        <input type="number" step="any" 
+            id="tu_u2_w${i}_${pha}_2" 
+            class="${phaseClass}"
+            placeholder="L2"
+            oninput="handleNewInput(event); calculateU2Avg(${i}, '${pha}')" 
+            onfocus="this.select()"
+            style="font-size:11px;background:#fff;width:50%;"
+        >
+    </div>
+    <div style="font-size:10px;color:#1565c0;text-align:center;font-weight:bold;">
+        U₂ TB: <span id="tu_u2_avg_w${i}_${pha}">-</span> V
+    </div>
+</div>
+
+
                                 <div class="input-row">
                                     <input type="number" step="any" 
                                         id="tu_err_w${i}_${pha}" 
@@ -936,7 +951,24 @@
     // ============================================================
     // TÍNH TOÁN TỈ SỐ BIẾN
     // ============================================================
-    function calculateRatio(winding, pha, source = null) {
+   // Them ham tinh trung binh dien ap 2 lan do
+	function calculateU2Avg(winding, pha) {
+    const u2_1 = parseFloat(document.getElementById(`tu_u2_w${winding}_${pha}_1`)?.value) || 0;
+    const u2_2 = parseFloat(document.getElementById(`tu_u2_w${winding}_${pha}_2`)?.value) || 0;
+    const avgEl = document.getElementById(`tu_u2_avg_w${winding}_${pha}`);
+    
+    if (u2_1 > 0 && u2_2 > 0) {
+        const avg = (u2_1 + u2_2) / 2;
+        avgEl.textContent = avg.toFixed(4);
+        // Gửi giá trị trung bình vào ô ẩn để tính
+        document.getElementById(`tu_u2_avg_hidden_w${winding}_${pha}`).value = avg;
+        calculateRatio(winding, pha, 'u2');
+    } else {
+        avgEl.textContent = '-';
+    }
+	}
+	
+	function calculateRatio(winding, pha, source = null) {
         const u1_tn = parseFloat(document.getElementById('tu_u1_tn')?.value) || 10;
         const u1_tn_val = u1_tn * 1000;
         
@@ -947,9 +979,9 @@
         if (accStr === "3P") accLimit = 3.0;
         else if (accStr === "6P") accLimit = 6.0;
         
-        const u1_dm = parseFloat(document.getElementById('tu_udm')?.value) || 220;
-        const u1_dm_val = u1_dm * 1000;
-        const K_dm = u1_dm_val / u2_dm;
+ const u1_dm = parseFloat(document.getElementById('tu_udm')?.value) || 220;
+const u1_dm_val = (u1_dm / Math.sqrt(3)) * 1000;  // [SỬA] Chia căn 3
+const K_dm = u1_dm_val / u2_dm;
         
         const kdmEl = document.getElementById(`tu_kdm_w${winding}`);
         if (kdmEl) kdmEl.textContent = K_dm.toFixed(2);
@@ -983,8 +1015,10 @@
 
         // NHẬP U₂
         if (source === 'u2') {
-            const u2_do = parseFloat(u2El.value);
+const avgHidden = document.getElementById(`tu_u2_avg_hidden_w${winding}_${pha}`);
+const u2_do = avgHidden ? parseFloat(avgHidden.value) : parseFloat(u2El.value);
 
+			
             if (!isNaN(u2_do) && u2_do > 0) {
                 const K_do = u1_tn_val / u2_do;
                 kdoEl.textContent = `Kđo: ${K_do.toFixed(2)}`;
@@ -1282,25 +1316,52 @@
             let nextCol = colType;
 
             if (event.key === 'Enter' || !event.shiftKey) {
-                if (currentWinding < numWindings) {
-                    nextWinding++;
-                } else {
-                    nextWinding = 1;
-                    colIndex = (colIndex + 1) % cols.length;
-                    nextCol = cols[colIndex];
-                    if (colIndex === 0) { event.target.blur(); return; }
-                }
-            } else {
-                if (currentWinding > 1) {
-                    nextWinding--;
-                } else {
-                    nextWinding = numWindings;
-                    colIndex = (colIndex - 1 + cols.length) % cols.length;
-                    nextCol = cols[colIndex];
-                    if (colIndex === cols.length - 1) { event.target.blur(); return; }
-                }
-            }
+    // [SỬA] Tab Forward: Cuộn 1→n cùng pha, hết cuộn thì sang pha tiếp theo
+    if (isPri) {
+        nextWinding = 1;
+        nextIsPri = false;
+    } else if (currentWinding < numWindings) {
+        nextWinding++;  // Cuộn tiếp theo cùng pha
+    } else {
+        // Hết cuộn của pha này → sang pha tiếp theo
+        colIndex = (colIndex + 1) % cols.length;
+        if (colIndex === 0) {
+            event.target.blur();
+            return;
+        }
+        nextCol = cols[colIndex];
+        nextWinding = 1;  // Về cuộn 1 của pha mới
+        nextIsPri = false;
+    }
+}
 
+			
+} else {
+    // [SỬA] Shift+Tab: Cuộn n→1 cùng pha, hết cuộn thì sang pha trước
+    if (isPri) {
+        if (colIndex <= 0) {
+            event.target.blur();
+            return;
+        }
+        colIndex--;
+        nextCol = cols[colIndex];
+        nextWinding = numWindings;
+        nextIsPri = false;
+    } else if (currentWinding > 1) {
+        nextWinding--;  // Cuộn trước cùng pha
+    } else {
+        // Hết cuộn của pha này → sang pha trước
+        if (colIndex > 0) {
+            colIndex--;
+            nextCol = cols[colIndex];
+            nextWinding = numWindings;
+            nextIsPri = false;
+        } else {
+            event.target.blur();
+            return;
+        }
+    }
+		}
             let nextId = `tu_rdc_${nextCol === 'ref' ? 'ref' : 'm'}_${nextWinding}${nextCol !== 'ref' ? '_' + nextCol : ''}`;
             const nextEl = document.getElementById(nextId);
             if (nextEl) { nextEl.focus(); nextEl.select(); }
