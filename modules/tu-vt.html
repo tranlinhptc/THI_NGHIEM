@@ -2,9 +2,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BIẾN ĐIỆN ÁP (TU)</title>
-    <!-- Cụm thư viện xuất Word chuẩn gốc -->
     <script src="https://unpkg.com/pizzip@3.1.4/dist/pizzip.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -60,150 +59,45 @@
         .bg-warning { background-color: #fff9c4 !important; border-color: #fbc02d !important; color: #c62828 !important; font-weight: bold; }
         .err-box { background: #ffebee; border: 1px solid #ef5350; border-radius: 4px; padding: 2px; margin-top: 2px;}
 
-        .old-data {
-            color: #d32f2f !important;
-            opacity: 1 !important;
-            font-weight: bold !important;
-            font-style: normal !important;
-        }
-        .old-data::placeholder {
-            color: #2e7d32 !important;
-            opacity: 1 !important;
-            font-weight: bold !important;
-        }
+        .old-data { color: #d32f2f !important; opacity: 1 !important; font-weight: bold !important; font-style: normal !important; }
+        .old-data::placeholder { color: #2e7d32 !important; opacity: 1 !important; font-weight: bold !important; }
 
         /* CSS KHÓA FORM */
-        .form-locked {
-            opacity: 0.4;
-            pointer-events: none;
-            filter: grayscale(0.8);
-            transition: all 0.3s ease;
-        }
-        
-        #unlock_message {
-            color: #d32f2f;
-            font-size: 12px;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 8px;
-            font-style: italic;
-        }
+        .form-locked { opacity: 0.4; pointer-events: none; filter: grayscale(0.8); transition: all 0.3s ease; }
+        #unlock_message { color: #d32f2f; font-size: 12px; font-weight: bold; text-align: center; margin-top: 8px; font-style: italic; }
 
-        /* ============================================================
-           PHẦN CSS MỚI - THÊM VÀO CUỐI THẺ <style>
-           ============================================================ */
-        .phase-a { background-color: #fff9c4 !important; } /* Vàng */
-        .phase-b { background-color: #ffebee !important; } /* Đỏ nhạt */
-        .phase-c { background-color: #e3f2fd !important; } /* Xanh dương */
+        /* ========== CSS MÀU SẮC ========== */
+        .phase-a { background-color: #fff9c4 !important; }
+        .phase-b { background-color: #ffebee !important; }
+        .phase-c { background-color: #e3f2fd !important; }
 
-        .old-data-latest {
-            color: #2e7d32 !important;
-            opacity: 0.6 !important;
-            font-weight: bold !important;
-            font-style: italic !important;
-        }
-        .old-data-latest::placeholder {
-            color: #2e7d32 !important;
-            opacity: 0.6 !important;
-            font-weight: bold !important;
-        }
+        .old-data-latest { color: #2e7d32 !important; opacity: 0.6 !important; font-weight: bold !important; font-style: italic !important; }
+        .old-data-latest::placeholder { color: #2e7d32 !important; opacity: 0.6 !important; font-weight: bold !important; }
+        .old-data-history { color: #333333 !important; opacity: 0.6 !important; font-weight: bold !important; font-style: italic !important; }
+        .old-data-history::placeholder { color: #333333 !important; opacity: 0.6 !important; font-weight: bold !important; }
 
-        .old-data-history {
-            color: #333333 !important;
-            opacity: 0.6 !important;
-            font-weight: bold !important;
-            font-style: italic !important;
-        }
-        .old-data-history::placeholder {
-            color: #333333 !important;
-            opacity: 0.6 !important;
-            font-weight: bold !important;
-        }
+        .new-data { color: #000000; font-weight: bold !important; }
+        .pass-color { color: #1565c0 !important; font-weight: bold !important; }
+        .fail-color { color: #c62828 !important; font-weight: bold !important; }
 
-        .new-data {
-            color: #000000;
-            font-weight: bold !important;
-        }
+        .warning-degradation { background-color: #fff9c4 !important; border: 2px solid #f57f17 !important; color: #e65100 !important; font-weight: bold !important; }
+        .warning-increase { border: 2px solid #ff6f00 !important; background-color: #fff3e0 !important; color: #e65100 !important; font-weight: bold !important; }
 
-        .pass-color {
-            color: #1565c0 !important;
-            font-weight: bold !important;
-        }
-        .fail-color {
-            color: #c62828 !important;
-            font-weight: bold !important;
-        }
+        /* ========== CSS BẢNG TỈ SỐ BIẾN ========== */
+        .ratio-cell { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 90px; padding: 2px; }
+        .ratio-cell .input-group { display: flex; flex-direction: column; gap: 2px; width: 100%; }
+        .ratio-cell .input-row { display: flex; align-items: center; gap: 2px; width: 100%; }
+        .ratio-cell .input-row input { flex: 1; padding: 4px 4px; font-size: 11px; border: 1px solid var(--border); border-radius: 3px; text-align: center; min-width: 50px; width: 100%; }
+        .ratio-cell .input-row input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 2px rgba(216, 67, 21, 0.1); }
+        .ratio-cell .input-row .unit { font-size: 9px; color: #666; min-width: 14px; font-weight: 600; }
+        .ratio-info { font-size: 9px; color: #666; display: flex; flex-direction: column; align-items: center; gap: 1px; margin-top: 2px; width: 100%; }
+        .ratio-info .kdo { color: #1565c0; font-weight: 600; font-size: 10px; }
 
-        .warning-degradation {
-            background-color: #fff9c4 !important;
-            border: 2px solid #f57f17 !important;
-            color: #e65100 !important;
-            font-weight: bold !important;
-        }
-        .warning-increase {
-            border: 2px solid #ff6f00 !important;
-            background-color: #fff3e0 !important;
-            color: #e65100 !important;
-            font-weight: bold !important;
-        }
-
-        /* CSS CHO BẢNG TỈ SỐ BIẾN */
-        .ratio-cell {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            min-width: 90px;
-            padding: 2px;
-        }
-        .ratio-cell .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            width: 100%;
-        }
-        .ratio-cell .input-row {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            width: 100%;
-        }
-        .ratio-cell .input-row input {
-            flex: 1;
-            padding: 4px 4px;
-            font-size: 11px;
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            text-align: center;
-            min-width: 50px;
-            width: 100%;
-        }
-        .ratio-cell .input-row input:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(216, 67, 21, 0.1);
-        }
-        .ratio-cell .input-row .unit {
-            font-size: 9px;
-            color: #666;
-            min-width: 14px;
-            font-weight: 600;
-        }
-        .ratio-info {
-            font-size: 9px;
-            color: #666;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1px;
-            margin-top: 2px;
-            width: 100%;
-        }
-        .ratio-info .kdo {
-            color: #1565c0;
-            font-weight: 600;
-            font-size: 10px;
-        }
+        /* ========== CSS U₂ L1/L2 DỌC ========== */
+        .u2-input-group { display: flex; flex-direction: column; gap: 2px; width: 100%; }
+        .u2-input-group input { font-size: 11px; background: #fff; width: 100%; padding: 2px 4px; border: 1px solid var(--border); border-radius: 3px; text-align: center; }
+        .u2-input-group input:focus { border-color: var(--primary); outline: none; }
+        .u2-avg-display { font-size: 9px; color: #1565c0; text-align: center; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -228,7 +122,7 @@
         <a href="../index.html" class="btn-back">← Trang Chủ</a>
     </div>
 
-    <!-- 0. KHU VỰC BẮT BUỘC (ĐỊNH DANH) -->
+    <!-- 0. THÔNG TIN ĐỊNH DANH -->
     <div class="card" style="border: 2px solid var(--primary); box-shadow: 0 4px 10px rgba(216, 67, 21, 0.2);">
         <div class="card-title"><span>THÔNG TIN ĐỊNH DANH (BẮT BUỘC)</span></div>
         <div class="grid">
@@ -250,7 +144,7 @@
         <div id="unlock_message">⚠️ Vui lòng chọn Trạm và gõ Ngăn lộ để mở khóa Form nhập liệu!</div>
     </div>
 
-    <!-- KHU VỰC BỊ KHÓA (SẼ MỞ KHI ĐỦ ĐIỀU KIỆN) -->
+    <!-- KHU VỰC BỊ KHÓA -->
     <!--div id="locked_zone" class="form-locked"-->
         <!-- CẤU HÌNH THIẾT BỊ -->
         <div class="card">
@@ -283,7 +177,7 @@
                 <div class="form-group"><label>Kiểu (Type):</label><input type="text" id="tu_kieu" placeholder="LTB145"></div>
                 <div class="form-group"><label>Cấp chính xác:</label><input type="text" id="tu_ccx" placeholder="0.3/0.5"></div>
                 <div class="form-group"><label>Năm SX:</label><input type="number" id="tu_namsx" placeholder="2020"></div>
-                <div class="form-group"><label>Uđm (kV):</label><input type="number" id="tu_udm" onchange="calculateAll()" placeholder="550"></div>
+                <div class="form-group"><label>Uđm (kV):</label><input type="number" id="tu_udm" onchange="calculateAll()" value="550"></div>
                 <div class="form-group"><label>No:</label><input type="text" id="tu_no" placeholder="Serial:"></div>
                 <div class="form-group"><label>Công suất:</label><input type="text" id="tu_csuat" placeholder="50/50"></div>
                 <div class="form-group"><label>Điện dung (pF) (Type):</label><input type="number" id="tu_ddung" placeholder="4400"></div>
@@ -332,8 +226,7 @@
 
         <!-- 1. KIỂM TRA BÊN NGOÀI -->
         <div class="card" style="display:none">
-            <div class="card-title">
-                <span>1. Kiểm Tra Bên Ngoài</span>
+            <div class="card-title"><span>1. Kiểm Tra Bên Ngoài</span>
                 <label class="chk-disable"><input type="checkbox" id="chk_sec1" onchange="toggleSection('body_sec1', this)"> ✏️ Nhập</label>
             </div>
             <div id="body_sec1" class="table-responsive hidden-section">
@@ -341,7 +234,7 @@
             </div>
         </div>
 
-        <!-- 2. ĐIỆN TRỞ MỘT CHIỀU NHỊ THỨ -->
+        <!-- 2. RDC -->
         <div class="card">
             <div class="card-title">
                 <span>1. R Một Chiều [Ω]</span>
@@ -353,7 +246,7 @@
             </div>
         </div>
 
-        <!-- 3. ĐO ĐIỆN TRỞ CÁCH ĐIỆN -->
+        <!-- 3. RCD -->
         <div class="card">
             <div class="card-title">
                 <span>2. Cách Điện [MΩ]</span>
@@ -382,7 +275,7 @@
             </div>
         </div>
 
-        <!-- 5. TAN DELTA & ĐIỆN DUNG -->
+        <!-- 5. Tgδ -->
         <div class="card">
             <div class="card-title">
                 <span>4. Tgδ(%) & Điện Dung (pF)</span>
@@ -485,7 +378,6 @@
         fetchSubstations();
         renderAllTables();
         
-        // Mở tất cả các bảng
         ['chk_sec2', 'chk_sec3', 'chk_sec4', 'chk_sec5'].forEach(id => {
             const chk = document.getElementById(id);
             if(chk) {
@@ -641,9 +533,6 @@
                         el.style.color = '';
                         el.style.fontWeight = '';
                     }
-                    if (el.value !== "" && key.includes("rcd")) {
-                        // Giữ logic cảnh báo nếu cần
-                    }
                 } else if (el.tagName === 'SELECT' && key !== 'info_tram') {
                     el.value = data[key];
                 }
@@ -785,7 +674,7 @@
     }
 
     // ============================================================
-    // BẢNG RCD
+    // BẢNG RCD - CÓ ONKEYDOWN ĐỂ TAB THEO CUỘN
     // ============================================================
     function renderRcdTable() {
         const num = parseInt(document.getElementById('tu_num_windings').value);
@@ -794,18 +683,18 @@
         html += `<tr>
             <td><b>Sơ cấp - ∑</b></td>
             <td id="tu_std_rcd_pri">-</td>
-            <td><input type="number" id="tu_rcd_pri_a" class="phase-a" oninput="handleNewInput(event); calculateAll()"></td>
-            <td><input type="number" id="tu_rcd_pri_b" class="phase-b" oninput="handleNewInput(event); calculateAll()"></td>
-            <td><input type="number" id="tu_rcd_pri_c" class="phase-c" oninput="handleNewInput(event); calculateAll()"></td>
+            <td><input type="number" id="tu_rcd_pri_a" class="phase-a" oninput="handleNewInput(event); calculateAll()" onkeydown="handleRcdTab(event, 0, 'a', true)"></td>
+            <td><input type="number" id="tu_rcd_pri_b" class="phase-b" oninput="handleNewInput(event); calculateAll()" onkeydown="handleRcdTab(event, 0, 'b', true)"></td>
+            <td><input type="number" id="tu_rcd_pri_c" class="phase-c" oninput="handleNewInput(event); calculateAll()" onkeydown="handleRcdTab(event, 0, 'c', true)"></td>
         </tr>`;
         
         for(let i=1; i<=num; i++) {
             html += `<tr>
                 <td>Cuộn ${i} - ∑</td>
                 <td id="tu_std_rcd_sec${i}">-</td>
-                <td><input type="number" id="tu_rcd_sec${i}_a" class="phase-a" oninput="handleNewInput(event); calculateAll()"></td>
-                <td><input type="number" id="tu_rcd_sec${i}_b" class="phase-b" oninput="handleNewInput(event); calculateAll()"></td>
-                <td><input type="number" id="tu_rcd_sec${i}_c" class="phase-c" oninput="handleNewInput(event); calculateAll()"></td>
+                <td><input type="number" id="tu_rcd_sec${i}_a" class="phase-a" oninput="handleNewInput(event); calculateAll()" onkeydown="handleRcdTab(event, ${i}, 'a', false)"></td>
+                <td><input type="number" id="tu_rcd_sec${i}_b" class="phase-b" oninput="handleNewInput(event); calculateAll()" onkeydown="handleRcdTab(event, ${i}, 'b', false)"></td>
+                <td><input type="number" id="tu_rcd_sec${i}_c" class="phase-c" oninput="handleNewInput(event); calculateAll()" onkeydown="handleRcdTab(event, ${i}, 'c', false)"></td>
             </tr>`;
         }
         html += `</tbody></table>`;
@@ -813,7 +702,7 @@
     }
 
     // ============================================================
-    // BẢNG TỈ SỐ BIẾN
+    // BẢNG TỈ SỐ BIẾN - U₂ L1/L2 DỌC + 2 CHIỀU
     // ============================================================
     function renderRatioTable() {
         const num = parseInt(document.getElementById('tu_num_windings').value);
@@ -831,7 +720,6 @@
                             </div>
                         </th>
                     </tr>
-       
                 </thead>
                 <tbody>
         `;
@@ -844,9 +732,9 @@
                             <b style="font-size:13px;color:#d84315;">Cuộn ${i}</b>
                             
                             <select id="tu_u2_dm_w${i}" onchange="calculateRatio(${i})" style="font-size:10px;width:100%;padding:3px 4px;border-radius:3px;border:1px solid var(--border);">
-    				<option value="110" selected>110/√3 V</option>   <!-- → Kđm = 5000 -->
-    				<option value="63.5085296108588">110/3 V</option>             <!-- → Kđm = 8659 -->
-    				<option value="190.525588832577">110 V</option>                 <!-- → Kđm = 2886 -->
+                                <option value="110" selected>110/√3 V</option>
+                                <option value="63.5085296108588">110/3 V</option>
+                                <option value="190.525588832576">110 V</option>
                             </select>
 
                             <select id="tu_acc_w${i}" onchange="calculateRatio(${i})" style="font-size:10px;width:100%;padding:3px 4px;border-radius:3px;border:1px solid var(--border);">
@@ -887,41 +775,31 @@
                     <td style="background:${bgColor};border-left:${borderLeft};border-right:${borderRight};padding:4px 2px;">
                         <div class="ratio-cell">
                             <div class="input-group">
-
-
-
-
-
-
-
-
-
-
-<div style="display:flex; flex-direction:column; gap:2px; width:100%;">
-    <div style="display:flex; gap:2px; width:100%;">
-        <input type="number" step="any" 
-            id="tu_u2_w${i}_${pha}_1" 
-            class="${phaseClass}"
-            placeholder="L1"
-            oninput="handleNewInput(event); calculateU2Avg(${i}, '${pha}')" 
-            onfocus="this.select()"
-            style="font-size:11px;background:#fff;width:50%;"
-        >
-        <input type="number" step="any" 
-            id="tu_u2_w${i}_${pha}_2" 
-            class="${phaseClass}"
-            placeholder="L2"
-            oninput="handleNewInput(event); calculateU2Avg(${i}, '${pha}')" 
-            onfocus="this.select()"
-            style="font-size:11px;background:#fff;width:50%;"
-        >
-    </div>
-    <div style="font-size:10px;color:#1565c0;text-align:center;font-weight:bold;">
-        U₂ TB: <span id="tu_u2_avg_w${i}_${pha}">-</span> V
-    </div>
-
-<input type="hidden" id="tu_u2_avg_hidden_w${i}_${pha}" value="">
-</div>
+                                <!-- [SỬA] U₂ L1 và L2 bố trí dọc -->
+                                <div class="u2-input-group">
+                                    <input type="number" step="any" 
+                                        id="tu_u2_w${i}_${pha}_1" 
+                                        class="${phaseClass}"
+                                        placeholder="U₂ L1"
+                                        oninput="handleNewInput(event); calculateU2Avg(${i}, '${pha}')" 
+                                        onfocus="this.select()"
+                                        onkeydown="handleRatioTab(event, ${i}, '${pha}', 'u2')"
+                                    >
+                                    <input type="number" step="any" 
+                                        id="tu_u2_w${i}_${pha}_2" 
+                                        class="${phaseClass}"
+                                        placeholder="U₂ L2"
+                                        oninput="handleNewInput(event); calculateU2Avg(${i}, '${pha}')" 
+                                        onfocus="this.select()"
+                                        onkeydown="handleRatioTab(event, ${i}, '${pha}', 'u2')"
+                                    >
+                                    <div class="u2-avg-display" style="display:none">
+                                        U₂ TB: <span id="tu_u2_avg_w${i}_${pha}">-</span> V
+                                    </div>
+                                    <input type="hidden" id="tu_u2_avg_hidden_w${i}_${pha}" value="">
+                                </div>
+                                
+                                <!-- Ô Sai số -->
                                 <div class="input-row">
                                     <input type="number" step="any" 
                                         id="tu_err_w${i}_${pha}" 
@@ -956,24 +834,49 @@
         }, 100);
     }
 
-
-function calculateU2Avg(winding, pha) {
-    const u2_1 = parseFloat(document.getElementById(`tu_u2_w${winding}_${pha}_1`)?.value) || 0;
-    const u2_2 = parseFloat(document.getElementById(`tu_u2_w${winding}_${pha}_2`)?.value) || 0;
-    const avgEl = document.getElementById(`tu_u2_avg_w${winding}_${pha}`);
-    
-    if (u2_1 > 0 && u2_2 > 0) {
-        const avg = (u2_1 + u2_2) / 2;
-        avgEl.textContent = avg.toFixed(4);
-        // Gửi giá trị trung bình vào ô ẩn để tính
-        document.getElementById(`tu_u2_avg_hidden_w${winding}_${pha}`).value = avg;
-        calculateRatio(winding, pha, 'u2');
-    } else {
-        avgEl.textContent = '-';
-    }
-}
     // ============================================================
-    // TÍNH TOÁN TỈ SỐ BIẾN
+    // HÀM TÍNH TRUNG BÌNH U₂
+    // ============================================================
+    function calculateU2Avg(winding, pha) {
+        const u2_1 = parseFloat(document.getElementById(`tu_u2_w${winding}_${pha}_1`)?.value) || 0;
+        const u2_2 = parseFloat(document.getElementById(`tu_u2_w${winding}_${pha}_2`)?.value) || 0;
+        const avgEl = document.getElementById(`tu_u2_avg_w${winding}_${pha}`);
+        const hiddenEl = document.getElementById(`tu_u2_avg_hidden_w${winding}_${pha}`);
+        
+        if (u2_1 > 0 && u2_2 > 0) {
+            const avg = (u2_1 + u2_2) / 2;
+            avgEl.textContent = avg.toFixed(4);
+            if (hiddenEl) hiddenEl.value = avg;
+            // Gán vào ô U2 để tính
+            const u2El = document.getElementById(`tu_u2_w${winding}_${pha}`);
+            if (u2El) u2El.value = avg;
+            calculateRatio(winding, pha, 'u2');
+        } else if (u2_1 > 0 && u2_2 === 0) {
+            avgEl.textContent = u2_1.toFixed(4);
+            if (hiddenEl) hiddenEl.value = u2_1;
+            const u2El = document.getElementById(`tu_u2_w${winding}_${pha}`);
+            if (u2El) u2El.value = u2_1;
+            calculateRatio(winding, pha, 'u2');
+        } else if (u2_1 === 0 && u2_2 > 0) {
+            avgEl.textContent = u2_2.toFixed(4);
+            if (hiddenEl) hiddenEl.value = u2_2;
+            const u2El = document.getElementById(`tu_u2_w${winding}_${pha}`);
+            if (u2El) u2El.value = u2_2;
+            calculateRatio(winding, pha, 'u2');
+        } else {
+            avgEl.textContent = '-';
+            if (hiddenEl) hiddenEl.value = '';
+            const u2El = document.getElementById(`tu_u2_w${winding}_${pha}`);
+            if (u2El) u2El.value = '';
+            const errEl = document.getElementById(`tu_err_w${winding}_${pha}`);
+            const kdoEl = document.getElementById(`tu_kdo_w${winding}_${pha}`);
+            if (errEl) errEl.value = '';
+            if (kdoEl) kdoEl.textContent = 'Kđo: -';
+        }
+    }
+
+    // ============================================================
+    // TÍNH TOÁN TỈ SỐ BIẾN - 2 CHIỀU
     // ============================================================
     function calculateRatio(winding, pha, source = null) {
         const u1_tn = parseFloat(document.getElementById('tu_u1_tn')?.value) || 10;
@@ -986,44 +889,47 @@ function calculateU2Avg(winding, pha) {
         if (accStr === "3P") accLimit = 3.0;
         else if (accStr === "6P") accLimit = 6.0;
         
-	        const u1_dm = parseFloat(document.getElementById('tu_udm')?.value) || 0;
-		const u1_dm_val = u1_dm * 1000;  // 550/1.732 = 317.54 kV → 317,538 V
-		const K_dm = u1_dm_val / u2_dm;
+        const u1_dm = parseFloat(document.getElementById('tu_udm')?.value) || 0;
+        const u1_dm_val = u1_dm * 1000;
+        const K_dm = u1_dm_val / u2_dm;
         
         const kdmEl = document.getElementById(`tu_kdm_w${winding}`);
         if (kdmEl) kdmEl.textContent = K_dm.toFixed(3);
 
         if (!pha) {
             ['A', 'B', 'C'].forEach(p => {
-                const u2El = document.getElementById(`tu_u2_w${winding}_${p}`);
                 const errEl = document.getElementById(`tu_err_w${winding}_${p}`);
-                const kdoEl = document.getElementById(`tu_kdo_w${winding}_${p}`);
+                if (!errEl) return;
                 
-                if (!u2El || !errEl || !kdoEl) return;
-                
-                if (u2El?.dataset.source === 'u2') {
-                    calculateRatio(winding, p, 'u2');
-                } else if (errEl?.dataset.source === 'err') {
+                // Xác định nguồn từ dataset
+                if (errEl.dataset.source === 'err') {
                     calculateRatio(winding, p, 'err');
-                } else if (u2El.value !== '' && u2El.value !== null) {
-                    calculateRatio(winding, p, 'u2');
-                } else if (errEl.value !== '' && errEl.value !== null) {
-                    calculateRatio(winding, p, 'err');
+                } else {
+                    // Kiểm tra xem có U₂ không
+                    const hiddenEl = document.getElementById(`tu_u2_avg_hidden_w${winding}_${p}`);
+                    const u2Val = hiddenEl ? parseFloat(hiddenEl.value) : NaN;
+                    if (!isNaN(u2Val) && u2Val > 0) {
+                        calculateRatio(winding, p, 'u2');
+                    }
                 }
             });
             return;
         }
 
-        const u2El = document.getElementById(`tu_u2_w${winding}_${pha}`);
         const errEl = document.getElementById(`tu_err_w${winding}_${pha}`);
         const kdoEl = document.getElementById(`tu_kdo_w${winding}_${pha}`);
 
-        if (!u2El || !errEl || !kdoEl) return;
+        if (!errEl || !kdoEl) return;
 
-        // NHẬP U₂
+        // ===== NHẬP U₂ → TÍNH SAI SỐ =====
         if (source === 'u2') {
-const avgHidden = document.getElementById(`tu_u2_avg_hidden_w${winding}_${pha}`);
-const u2_do = avgHidden ? parseFloat(avgHidden.value) : parseFloat(u2El.value);
+            const hiddenEl = document.getElementById(`tu_u2_avg_hidden_w${winding}_${pha}`);
+            let u2_do = hiddenEl ? parseFloat(hiddenEl.value) : NaN;
+            if (isNaN(u2_do) || u2_do <= 0) {
+                // Fallback: lấy từ ô U2
+                const u2El = document.getElementById(`tu_u2_w${winding}_${pha}`);
+                u2_do = u2El ? parseFloat(u2El.value) : NaN;
+            }
 
             if (!isNaN(u2_do) && u2_do > 0) {
                 const K_do = u1_tn_val / u2_do;
@@ -1033,28 +939,31 @@ const u2_do = avgHidden ? parseFloat(avgHidden.value) : parseFloat(u2El.value);
                 errEl.value = error.toFixed(3);
                 
                 const isPass = Math.abs(error) <= accLimit;
+                // Chỉ đổi màu khi là dữ liệu mới nhập
                 if (errEl.classList.contains('new-data')) {
                     errEl.style.color = isPass ? '#1565c0' : '#c62828';
                     errEl.style.fontWeight = 'bold';
                 }
                 
-                u2El.dataset.source = 'u2';
                 errEl.dataset.source = 'u2';
 
             } else {
-                errEl.value = '';
-                kdoEl.textContent = 'Kđo: -';
-                if (!errEl.classList.contains('new-data')) {
-                    errEl.style.color = '';
-                    errEl.style.fontWeight = '';
+                // Không có U₂, không reset sai số
+                // Chỉ reset nếu sai số đang trống hoặc nguồn là u2
+                if (errEl.dataset.source === 'u2' || errEl.value === '') {
+                    errEl.value = '';
+                    kdoEl.textContent = 'Kđo: -';
+                    if (!errEl.classList.contains('new-data')) {
+                        errEl.style.color = '';
+                        errEl.style.fontWeight = '';
+                    }
+                    delete errEl.dataset.source;
                 }
-                delete u2El.dataset.source;
-                delete errEl.dataset.source;
             }
             return;
         }
 
-        // NHẬP SAI SỐ
+        // ===== NHẬP SAI SỐ → TÍNH U₂ =====
         if (source === 'err') {
             const error = parseFloat(errEl.value);
 
@@ -1062,7 +971,10 @@ const u2_do = avgHidden ? parseFloat(avgHidden.value) : parseFloat(u2El.value);
                 const K_do = K_dm * (1 + error / 100);
                 const u2_do = u1_tn_val / K_do;
                 
-                u2El.value = u2_do.toFixed(3);
+                // Gán vào ô U2 (không gán vào L1/L2 để tránh loạn)
+                const u2El = document.getElementById(`tu_u2_w${winding}_${pha}`);
+                if (u2El) u2El.value = u2_do.toFixed(3);
+                
                 kdoEl.textContent = `Kđo: ${K_do.toFixed(2)}`;
                 
                 const isPass = Math.abs(error) <= accLimit;
@@ -1071,17 +983,17 @@ const u2_do = avgHidden ? parseFloat(avgHidden.value) : parseFloat(u2El.value);
                     errEl.style.fontWeight = 'bold';
                 }
                 
-                u2El.dataset.source = 'err';
                 errEl.dataset.source = 'err';
 
             } else {
-                u2El.value = '';
+                // Xóa sai số → reset
+                const u2El = document.getElementById(`tu_u2_w${winding}_${pha}`);
+                if (u2El) u2El.value = '';
                 kdoEl.textContent = 'Kđo: -';
                 if (!errEl.classList.contains('new-data')) {
                     errEl.style.color = '';
                     errEl.style.fontWeight = '';
                 }
-                delete u2El.dataset.source;
                 delete errEl.dataset.source;
             }
             return;
@@ -1246,6 +1158,8 @@ const u2_do = avgHidden ? parseFloat(avgHidden.value) : parseFloat(u2El.value);
     // ============================================================
     // ĐIỀU HƯỚNG TAB
     // ============================================================
+    
+    // ===== TAB CHO BẢNG TỈ SỐ BIẾN =====
     function handleRatioTab(event, currentWinding, pha, fieldType) {
         if (event.key !== 'Tab' && event.key !== 'Enter') return;
         event.preventDefault();
@@ -1300,7 +1214,7 @@ const u2_do = avgHidden ? parseFloat(avgHidden.value) : parseFloat(u2El.value);
 
         let nextId = '';
         if (nextField === 'u2') {
-            nextId = `tu_u2_w${nextWinding}_${nextPha}`;
+            nextId = `tu_u2_w${nextWinding}_${nextPha}_1`;
         } else {
             nextId = `tu_err_w${nextWinding}_${nextPha}`;
         }
@@ -1312,6 +1226,7 @@ const u2_do = avgHidden ? parseFloat(avgHidden.value) : parseFloat(u2El.value);
         }
     }
 
+    // ===== TAB CHO BẢNG RDC =====
     function handleRdcTab(event, currentWinding, colType) {
         if (event.key === 'Enter' || event.key === 'Tab') {
             event.preventDefault();
@@ -1347,6 +1262,70 @@ const u2_do = avgHidden ? parseFloat(avgHidden.value) : parseFloat(u2El.value);
         }
     }
 
+    // ===== TAB CHO BẢNG RCD (Cuộn 1→n cùng pha, hết cuộn → pha tiếp theo) =====
+    function handleRcdTab(event, currentWinding, colType, isPri) {
+        if (event.key !== 'Tab' && event.key !== 'Enter') return;
+        event.preventDefault();
+
+        const numWindings = parseInt(document.getElementById('tu_num_windings')?.value) || 2;
+        const cols = ['a', 'b', 'c'];
+        let colIndex = cols.indexOf(colType);
+        let nextWinding = currentWinding;
+        let nextIsPri = isPri;
+        let nextCol = colType;
+
+        if (event.key === 'Enter' || !event.shiftKey) {
+            if (isPri) {
+                nextWinding = 1;
+                nextIsPri = false;
+            } else if (currentWinding < numWindings) {
+                nextWinding++;
+            } else {
+                colIndex = (colIndex + 1) % cols.length;
+                if (colIndex === 0) {
+                    event.target.blur();
+                    return;
+                }
+                nextCol = cols[colIndex];
+                nextWinding = 0;
+                nextIsPri = true;
+            }
+        } else {
+            if (isPri) {
+                if (colIndex <= 0) {
+                    event.target.blur();
+                    return;
+                }
+                colIndex--;
+                nextCol = cols[colIndex];
+                nextWinding = numWindings;
+                nextIsPri = false;
+            } else if (currentWinding > 1) {
+                nextWinding--;
+            } else {
+                if (colIndex > 0) {
+                    colIndex--;
+                    nextCol = cols[colIndex];
+                    nextWinding = 0;
+                    nextIsPri = true;
+                } else {
+                    event.target.blur();
+                    return;
+                }
+            }
+        }
+
+        const nextId = nextIsPri
+            ? `tu_rcd_pri_${nextCol}`
+            : `tu_rcd_sec${nextWinding}_${nextCol}`;
+
+        const nextEl = document.getElementById(nextId);
+        if (nextEl) {
+            nextEl.focus();
+            nextEl.select();
+        }
+    }
+
     function handleEnterToNext(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
@@ -1379,11 +1358,15 @@ const u2_do = avgHidden ? parseFloat(avgHidden.value) : parseFloat(u2El.value);
         };
 
         document.querySelectorAll(`input[id^="${MODULE_PREFIX}"], select[id^="${MODULE_PREFIX}"]`).forEach(el => {
-         //   let value = el.value.trim() || el.placeholder?.trim() || "";
-            
-			let value = ""; if (el.tagName === "INPUT") {value = el.value.trim() || el.value.trim();} else if (el.tagName === "SELECT") {value = el.value;} else {value = el.value; }
-
-value = value ? value.replace("75°C:", "").replace("ms", "").trim() : "";
+            let value = ""; 
+            if (el.tagName === "INPUT") {
+                value = el.value.trim() || el.value.trim();
+            } else if (el.tagName === "SELECT") {
+                value = el.value;
+            } else {
+                value = el.value;
+            }
+            value = value ? value.replace("75°C:", "").replace("ms", "").trim() : "";
             if (value && value !== '-' && value !== 'NaN' && value !== '0') payload[el.id] = value;
         });
 
