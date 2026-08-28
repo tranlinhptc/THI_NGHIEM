@@ -251,7 +251,7 @@
     </div>
 
     <!-- KHU VỰC BỊ KHÓA (SẼ MỞ KHI ĐỦ ĐIỀU KIỆN) -->
-    <div id="locked_zone" class="form-locked">
+    <!--<div id="locked_zone" class="form-locked">-->
         <!-- CẤU HÌNH THIẾT BỊ -->
         <div class="card">
             <div class="card-title"><span>CẤU HÌNH THIẾT BỊ</span>
@@ -838,7 +838,6 @@
 
         for (let i = 1; i <= num; i++) {
             html += `
-			<input type="hidden" id="tu_u2_avg_hidden_w${i}_${pha}" value="">
                 <tr>
                     <td style="min-width:90px;vertical-align:middle;">
                         <div style="display:flex;flex-direction:column;gap:3px;align-items:center;padding:4px 0;">
@@ -911,6 +910,9 @@
     <div style="font-size:10px;color:#1565c0;text-align:center;font-weight:bold;">
         U₂ TB: <span id="tu_u2_avg_w${i}_${pha}">-</span> V
     </div>
+
+				<input type="hidden" id="tu_u2_avg_hidden_w${i}_${pha}" value="">
+
 </div>
 
 
