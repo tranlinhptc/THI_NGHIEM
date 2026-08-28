@@ -251,7 +251,7 @@
     </div>
 
     <!-- KHU VỰC BỊ KHÓA (SẼ MỞ KHI ĐỦ ĐIỀU KIỆN) -->
-    <!--<div id="locked_zone" class="form-locked">-->
+    <!--div id="locked_zone" class="form-locked"-->
         <!-- CẤU HÌNH THIẾT BỊ -->
         <div class="card">
             <div class="card-title"><span>CẤU HÌNH THIẾT BỊ</span>
@@ -283,7 +283,7 @@
                 <div class="form-group"><label>Kiểu (Type):</label><input type="text" id="tu_kieu" placeholder="LTB145"></div>
                 <div class="form-group"><label>Cấp chính xác:</label><input type="text" id="tu_ccx" placeholder="0.3/0.5"></div>
                 <div class="form-group"><label>Năm SX:</label><input type="number" id="tu_namsx" placeholder="2020"></div>
-                <div class="form-group"><label>Uđm (kV):</label><input type="number" id="tu_udm" placeholder="245"></div>
+                <div class="form-group"><label>Uđm (kV):</label><input type="number" id="tu_udm" onchange="calculateAll()" placeholder="550"></div>
                 <div class="form-group"><label>No:</label><input type="text" id="tu_no" placeholder="Serial:"></div>
                 <div class="form-group"><label>Công suất:</label><input type="text" id="tu_csuat" placeholder="50/50"></div>
                 <div class="form-group"><label>Điện dung (pF) (Type):</label><input type="number" id="tu_ddung" placeholder="4400"></div>
@@ -844,9 +844,9 @@
                             <b style="font-size:13px;color:#d84315;">Cuộn ${i}</b>
                             
                             <select id="tu_u2_dm_w${i}" onchange="calculateRatio(${i})" style="font-size:10px;width:100%;padding:3px 4px;border-radius:3px;border:1px solid var(--border);">
-                                <option value="63.51">110/√3 V</option>
-                                <option value="36.67" selected>110/3 V</option>
-                                <option value="110">110 V</option>
+    				<option value="110" selected>110/√3 V</option>   <!-- → Kđm = 5000 -->
+    				<option value="63.5085296108588">110/3 V</option>             <!-- → Kđm = 8659 -->
+    				<option value="190.525588832577">110 V</option>                 <!-- → Kđm = 2886 -->
                             </select>
 
                             <select id="tu_acc_w${i}" onchange="calculateRatio(${i})" style="font-size:10px;width:100%;padding:3px 4px;border-radius:3px;border:1px solid var(--border);">
@@ -888,6 +888,15 @@
                         <div class="ratio-cell">
                             <div class="input-group">
 
+
+
+
+
+
+
+
+
+
 <div style="display:flex; flex-direction:column; gap:2px; width:100%;">
     <div style="display:flex; gap:2px; width:100%;">
         <input type="number" step="any" 
@@ -911,11 +920,8 @@
         U₂ TB: <span id="tu_u2_avg_w${i}_${pha}">-</span> V
     </div>
 
-				<input type="hidden" id="tu_u2_avg_hidden_w${i}_${pha}" value="">
-
+<input type="hidden" id="tu_u2_avg_hidden_w${i}_${pha}" value="">
 </div>
-
-
                                 <div class="input-row">
                                     <input type="number" step="any" 
                                         id="tu_err_w${i}_${pha}" 
@@ -950,11 +956,8 @@
         }, 100);
     }
 
-    // ============================================================
-    // TÍNH TOÁN TỈ SỐ BIẾN
-    // ============================================================
-   // Them ham tinh trung binh dien ap 2 lan do
-	function calculateU2Avg(winding, pha) {
+
+function calculateU2Avg(winding, pha) {
     const u2_1 = parseFloat(document.getElementById(`tu_u2_w${winding}_${pha}_1`)?.value) || 0;
     const u2_2 = parseFloat(document.getElementById(`tu_u2_w${winding}_${pha}_2`)?.value) || 0;
     const avgEl = document.getElementById(`tu_u2_avg_w${winding}_${pha}`);
@@ -968,25 +971,27 @@
     } else {
         avgEl.textContent = '-';
     }
-	}
-	
-	function calculateRatio(winding, pha, source = null) {
+}
+    // ============================================================
+    // TÍNH TOÁN TỈ SỐ BIẾN
+    // ============================================================
+    function calculateRatio(winding, pha, source = null) {
         const u1_tn = parseFloat(document.getElementById('tu_u1_tn')?.value) || 10;
         const u1_tn_val = u1_tn * 1000;
         
-        const u2_dm = parseFloat(document.getElementById(`tu_u2_dm_w${winding}`)?.value) || 36.67;
+        const u2_dm = parseFloat(document.getElementById(`tu_u2_dm_w${winding}`)?.value) || 63.51;
         const accStr = document.getElementById(`tu_acc_w${winding}`)?.value || "0.5";
         
         let accLimit = parseFloat(accStr) || 0.5;
         if (accStr === "3P") accLimit = 3.0;
         else if (accStr === "6P") accLimit = 6.0;
         
- const u1_dm = parseFloat(document.getElementById('tu_udm')?.value) || 220;
-const u1_dm_val = (u1_dm / Math.sqrt(3)) * 1000;  // [SỬA] Chia căn 3
-const K_dm = u1_dm_val / u2_dm;
+	        const u1_dm = parseFloat(document.getElementById('tu_udm')?.value) || 0;
+		const u1_dm_val = u1_dm * 1000;  // 550/1.732 = 317.54 kV → 317,538 V
+		const K_dm = u1_dm_val / u2_dm;
         
         const kdmEl = document.getElementById(`tu_kdm_w${winding}`);
-        if (kdmEl) kdmEl.textContent = K_dm.toFixed(2);
+        if (kdmEl) kdmEl.textContent = K_dm.toFixed(3);
 
         if (!pha) {
             ['A', 'B', 'C'].forEach(p => {
@@ -1020,7 +1025,6 @@ const K_dm = u1_dm_val / u2_dm;
 const avgHidden = document.getElementById(`tu_u2_avg_hidden_w${winding}_${pha}`);
 const u2_do = avgHidden ? parseFloat(avgHidden.value) : parseFloat(u2El.value);
 
-			
             if (!isNaN(u2_do) && u2_do > 0) {
                 const K_do = u1_tn_val / u2_do;
                 kdoEl.textContent = `Kđo: ${K_do.toFixed(2)}`;
@@ -1318,52 +1322,25 @@ const u2_do = avgHidden ? parseFloat(avgHidden.value) : parseFloat(u2El.value);
             let nextCol = colType;
 
             if (event.key === 'Enter' || !event.shiftKey) {
-    // [SỬA] Tab Forward: Cuộn 1→n cùng pha, hết cuộn thì sang pha tiếp theo
-    if (isPri) {
-        nextWinding = 1;
-        nextIsPri = false;
-    } else if (currentWinding < numWindings) {
-        nextWinding++;  // Cuộn tiếp theo cùng pha
-    } else {
-        // Hết cuộn của pha này → sang pha tiếp theo
-        colIndex = (colIndex + 1) % cols.length;
-        if (colIndex === 0) {
-            event.target.blur();
-            return;
-        }
-        nextCol = cols[colIndex];
-        nextWinding = 1;  // Về cuộn 1 của pha mới
-        nextIsPri = false;
-    }
-}
+                if (currentWinding < numWindings) {
+                    nextWinding++;
+                } else {
+                    nextWinding = 1;
+                    colIndex = (colIndex + 1) % cols.length;
+                    nextCol = cols[colIndex];
+                    if (colIndex === 0) { event.target.blur(); return; }
+                }
+            } else {
+                if (currentWinding > 1) {
+                    nextWinding--;
+                } else {
+                    nextWinding = numWindings;
+                    colIndex = (colIndex - 1 + cols.length) % cols.length;
+                    nextCol = cols[colIndex];
+                    if (colIndex === cols.length - 1) { event.target.blur(); return; }
+                }
+            }
 
-			
-} else {
-    // [SỬA] Shift+Tab: Cuộn n→1 cùng pha, hết cuộn thì sang pha trước
-    if (isPri) {
-        if (colIndex <= 0) {
-            event.target.blur();
-            return;
-        }
-        colIndex--;
-        nextCol = cols[colIndex];
-        nextWinding = numWindings;
-        nextIsPri = false;
-    } else if (currentWinding > 1) {
-        nextWinding--;  // Cuộn trước cùng pha
-    } else {
-        // Hết cuộn của pha này → sang pha trước
-        if (colIndex > 0) {
-            colIndex--;
-            nextCol = cols[colIndex];
-            nextWinding = numWindings;
-            nextIsPri = false;
-        } else {
-            event.target.blur();
-            return;
-        }
-    }
-		}
             let nextId = `tu_rdc_${nextCol === 'ref' ? 'ref' : 'm'}_${nextWinding}${nextCol !== 'ref' ? '_' + nextCol : ''}`;
             const nextEl = document.getElementById(nextId);
             if (nextEl) { nextEl.focus(); nextEl.select(); }
